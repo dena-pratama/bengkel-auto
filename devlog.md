@@ -4,6 +4,21 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.0.4] — 2026-11-03
+**Ringkasan:** Port Postgres di-publish untuk migration.
+
+### Added
+- Port Postgres Supabase di-publish di Coolify lokal: `127.0.0.1:54322` (via proxy container Coolify).
+- `DATABASE_URL` di `.env.local` diaktifkan. Login teruji: user `postgres`, PostgreSQL 15.8.
+
+### Catatan
+- Port publik hanya untuk development lokal. Jangan diaktifkan di staging/production.
+
+### File terdampak
+`devlog.md`, `fitur.md`, `VERSION`
+
+---
+
 ## [0.0.3] — 2026-11-03
 **Ringkasan:** Supabase self-host berjalan di Coolify lokal.
 
