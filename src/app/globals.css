@@ -39,6 +39,14 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-brand-red: var(--brand-red);
+  --color-brand-red-soft: var(--brand-red-soft);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-ink: var(--brand-blue-ink);
+  --color-brand-blue-soft: var(--brand-blue-soft);
+  --color-brand-sand: var(--brand-sand);
+  --color-brand-sand-soft: var(--brand-sand-soft);
+  --color-brand-cream: var(--brand-cream);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -48,39 +56,51 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Moodboard light mode: Merah #CE2626 (aksi utama), Biru #7DAACB (aksen),
+   Pasir #E8DBB3 (garis & chip), Krem #FFFDEB (latar halaman). */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --brand-red: #ce2626;
+  --brand-red-soft: #fbe9e6;
+  --brand-blue: #7daacb;
+  --brand-blue-ink: #3b6a8c;      /* biru gelap untuk teks (kontras ≥ 4.5:1 di putih) */
+  --brand-blue-soft: #e8f1f7;
+  --brand-sand: #e8dbb3;
+  --brand-sand-soft: #f5efdc;
+  --brand-cream: #fffdeb;
+
+  --background: #f7f4ea;
+  --foreground: #1f1d1a;
+  --card: #ffffff;
+  --card-foreground: #1f1d1a;
+  --popover: #ffffff;
+  --popover-foreground: #1f1d1a;
+  --primary: var(--brand-red);
+  --primary-foreground: #ffffff;
+  --secondary: var(--brand-sand-soft);
+  --secondary-foreground: #4a4334;
+  --muted: #f3efe3;
+  --muted-foreground: #6f6a5f;
+  --accent: var(--brand-blue-soft);
+  --accent-foreground: var(--brand-blue-ink);
+  --destructive: #b42318;
+  --border: #ebe4d0;
+  --input: #e4dcc6;
+  --ring: var(--brand-blue);
+  --chart-1: var(--brand-red);
+  --chart-2: var(--brand-blue);
+  --chart-3: var(--brand-sand);
+  --chart-4: #8a8476;
+  --chart-5: #3b6a8c;
+  --radius: 0.875rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1f1d1a;
+  --sidebar-primary: var(--brand-red);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--brand-sand-soft);
+  --sidebar-accent-foreground: #1f1d1a;
+  --sidebar-border: #ebe4d0;
+  --sidebar-ring: var(--brand-blue);
+  color-scheme: light;
 }
 
 .dark {

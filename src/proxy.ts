@@ -1,7 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const PUBLIC_PATHS = ["/login", "/setup", "/api/v1/health"];
+const PUBLIC_PATHS = [
+  "/login",
+  "/setup",
+  "/api/v1/health",
+  // Pratinjau UI tanpa login, hanya di development (halamannya 404 di production)
+  ...(process.env.NODE_ENV === "development" ? ["/dev/preview"] : []),
+];
 // PRD §18: sesi otomatis keluar setelah 12 jam tidak aktif
 const IDLE_LIMIT_MS = 12 * 60 * 60 * 1000;
 const LAST_ACTIVITY_COOKIE = "bk_last_activity";
