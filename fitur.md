@@ -1,6 +1,6 @@
 # Daftar Fitur — Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.2.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.3.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -11,7 +11,8 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.2.0**
 | Dockerfile standalone + endpoint `/api/v1/health` | ✅ | 0.1.0 |
 | Skema dasar: branches, settings, number_sequences, audit_logs | ✅ | 0.2.0 |
 | Akses: employees, profiles, roles, permissions, helper RLS, PIN persetujuan | ✅ | 0.2.0 |
-| Auth (email + password), PIN persetujuan, auto-logout 12 jam | ⬜ | – |
+| Auth (email + password), PIN persetujuan, auto-logout 12 jam | ✅ | 0.3.0 |
+| Halaman login, setup Owner pertama, layout aplikasi & dashboard | ✅ | 0.3.0 |
 
 ## MVP
 | Modul | Fitur | Status | Versi |

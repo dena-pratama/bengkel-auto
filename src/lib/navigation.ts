@@ -1,0 +1,26 @@
+import type { PermissionAction } from "@/lib/auth";
+
+export type NavItem = {
+  href: string;
+  label: string;
+  icon: string; // nama ikon lucide, dipetakan di komponen klien
+  module?: string;
+  action?: PermissionAction;
+  ready: boolean;
+};
+
+/** Menu utama, urutan mengikuti modul PRD. `ready: false` = modul belum dibangun. */
+export const NAV_ITEMS: NavItem[] = [
+  { href: "/dashboard", label: "Beranda", icon: "home", ready: true },
+  { href: "/servis", label: "Servis & Work Order", icon: "wrench", module: "service_orders", ready: false },
+  { href: "/kasir", label: "Kasir", icon: "cart", module: "sales", ready: false },
+  { href: "/inventory", label: "Barang & Jasa", icon: "package", module: "master_data", ready: false },
+  { href: "/pembelian", label: "Pembelian", icon: "truck", module: "purchasing", ready: false },
+  { href: "/pelanggan", label: "Pelanggan", icon: "users", module: "customers", ready: false },
+  { href: "/stok-opname", label: "Stok Opname", icon: "clipboard", module: "stock_opname_count", ready: false },
+  { href: "/karyawan", label: "Karyawan", icon: "userCog", module: "employees", ready: false },
+  { href: "/keuangan", label: "Keuangan", icon: "wallet", module: "finance_reports", ready: false },
+  { href: "/pajak", label: "Pajak", icon: "receipt", module: "tax_settings", ready: false },
+  { href: "/ai", label: "AI Analyst", icon: "bot", module: "ai_analyst", ready: false },
+  { href: "/pengaturan", label: "Pengaturan", icon: "settings", module: "settings", ready: false },
+];

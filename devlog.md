@@ -4,6 +4,33 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.3.0] — 2026-11-03
+**Ringkasan:** Halaman login, setup Owner pertama, dan layout aplikasi (light mode).
+
+### Added
+- Migration `20261103000004_auth_bootstrap.sql`: `public.needs_setup()`, `public.bootstrap_owner()` (hanya service_role, sekali saja, terkunci dari race), `public.my_context()` (karyawan, cabang, role, izin).
+- `src/proxy.ts` (Next 16, pengganti middleware): refresh sesi Supabase, redirect ke `/login` jika belum masuk, logout otomatis setelah 12 jam tidak aktif.
+- `/setup` — buat akun Owner pertama (muncul hanya jika belum ada karyawan).
+- `/login` — email + password; pesan error Bahasa Indonesia (salah password, akun dinonaktifkan, akun tanpa karyawan).
+- Layout aplikasi: sidebar (desktop) + menu sheet (HP), header dengan nama, role, cabang, dan tombol keluar. Menu difilter sesuai izin; modul yang belum dibangun bertanda "Segera".
+- `/dashboard` — sapaan, tanggal WIB, kartu ringkasan (placeholder sampai modul terkait jadi).
+- `src/lib/auth.ts` (`getUserContext`, `requireUser`, `can`), `src/lib/supabase/admin.ts`, `src/lib/validation/auth.ts` (Zod dipakai di client & server), `src/components/form-field.tsx`.
+- shadcn: input, label, badge, separator, sheet.
+
+### Fixed
+- Halaman reload terus di dev: ada `package-lock.json` di folder home sehingga Turbopack salah root. `turbopack.root` dikunci ke folder proyek.
+- Font jatuh ke serif: variabel `--font-sans` dari shadcn merujuk dirinya sendiri, diarahkan ke Geist.
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Browser: `/` → `/login` → `/setup` (karena belum ada karyawan), validasi form tampil benar.
+- Belum diuji end-to-end: pembuatan Owner, login, dashboard, logout (menunggu user membuat akun Owner sendiri).
+
+### File terdampak
+`supabase/migrations/20261103000004_auth_bootstrap.sql`, `src/proxy.ts`, `src/app/(auth)/**`, `src/app/(app)/**`, `src/app/page.tsx`, `src/app/globals.css`, `src/components/**`, `src/lib/**`, `next.config.ts`, `package.json`, `devlog.md`, `fitur.md`, `VERSION`
+
+---
+
 ## [0.2.0] — 2026-11-03
 **Ringkasan:** Skema database fondasi: sistem, akses, role & RLS.
 
