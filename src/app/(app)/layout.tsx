@@ -1,18 +1,18 @@
 import { Suspense } from "react";
-import { AppShell, MobileHeaderView, SidebarSkeleton, SidebarView } from "@/components/app-shell";
+import { AppShell, RailSkeleton, RailView, TopbarView } from "@/components/app-shell";
 import { requireUser } from "@/lib/auth";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <AppShell
-      sidebar={
-        <Suspense fallback={<SidebarSkeleton />}>
-          <Sidebar />
+      rail={
+        <Suspense fallback={<RailSkeleton />}>
+          <Rail />
         </Suspense>
       }
-      mobileHeader={
+      topbar={
         <Suspense fallback={<div className="flex-1" />}>
-          <MobileHeader />
+          <Topbar />
         </Suspense>
       }
     >
@@ -21,10 +21,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-async function Sidebar() {
-  return <SidebarView ctx={await requireUser()} />;
+async function Rail() {
+  return <RailView ctx={await requireUser()} />;
 }
 
-async function MobileHeader() {
-  return <MobileHeaderView ctx={await requireUser()} />;
+async function Topbar() {
+  return <TopbarView ctx={await requireUser()} />;
 }

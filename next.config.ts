@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   // Jangan tulis argumen server action ke log dev (bisa berisi password)
   logging: { serverFunctions: false },
+  experimental: {
+    // Server MCP devtools menulis .next/dev/logs/next-development.log setiap request; di Windows
+    // penulisan itu memicu recompile → reload → log lagi (loop reload tanpa henti).
+    mcpServer: false,
+  },
   turbopack: {
     // Ada package-lock.json lain di folder home; kunci root ke proyek ini
     root: import.meta.dirname,

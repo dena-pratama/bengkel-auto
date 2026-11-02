@@ -1,59 +1,55 @@
 /**
  * Data contoh untuk tampilan dashboard selama modul operasional belum dibangun.
- * Setiap blok nanti diganti view database (PRD §15.3): v_sales_daily, v_low_stock, v_ap_aging, v_health_score, dll.
+ * Setiap blok nanti diganti view database (PRD §15.3): v_sales_daily, v_low_stock, v_ar_aging, v_mechanic_performance, dll.
  */
 
 export const DEMO = true;
 
-export const serviceToday = { masuk: 12, selesai: 7, diambil: 5 };
-
-export const serviceFlow = [
-  { key: "queue", label: "Antri", count: 3 },
-  { key: "working", label: "Dikerjakan", count: 4 },
-  { key: "waiting_part", label: "Menunggu Part", count: 1 },
-  { key: "qc", label: "Quality Check", count: 2 },
-  { key: "ready", label: "Siap Diambil", count: 2 },
-] as const;
-
-export const workshopStats = { avgDurationMin: 110, mechanicUtilization: 85 };
-
-export const alerts = [
-  { title: "WO melewati estimasi", body: "WO-2611-0014 · B 1932 TKA sudah 40 menit lewat estimasi durasi.", time: "13:48" },
-  { title: "Stok menipis", body: "Filter Oli Avanza tersisa 3 pcs (minimum 10).", time: "11:20" },
+export const notifications = [
+  {
+    kind: "alert" as const,
+    title: "WO melewati estimasi",
+    meta: "WO-2611-0014 · B 1932 TKA",
+    date: "Sel, 3 Nov",
+    time: "13:48",
+  },
+  {
+    kind: "message" as const,
+    title: "Pesan | Supplier",
+    meta: "dari PT Sumber Part",
+    preview: "Filter oli Avanza sudah dikirim, estimasi tiba besok pagi…",
+  },
 ];
 
-export const activeWorkOrder = {
-  number: "WO-2611-0012",
-  customer: "Budi Santoso",
+export const mechanicJob = {
+  category: "Servis berkala",
   plate: "B 1234 KJT",
-  vehicle: "Toyota Avanza 1.3 G · 2019",
-  km: 86420,
-  estimate: 1_250_000,
-  dpPaid: true,
-  progress: 60,
-  status: "Dikerjakan",
+  title: "Ganti oli, filter & tune up Toyota Avanza 2019",
+  priority: "Mendesak",
+  tag: "Paket Ganti Oli",
   mechanic: "Rudi",
-  eta: "2026-11-03T16:00:00+07:00",
-  serviceType: "Servis berkala 80.000 km",
 };
 
-export const bayCapacity = { used: 6, total: 8, mechanicsOnDuty: 5, liftsFree: 2 };
-
-// Omzet 7 hari terakhir (jasa + part, tanpa PPN), indeks terakhir = hari ini
-export const revenueTrend = [
-  { day: "28.10", value: 6_200_000 },
-  { day: "29.10", value: 7_900_000 },
-  { day: "30.10", value: 5_400_000 },
-  { day: "31.10", value: 9_100_000 },
-  { day: "01.11", value: 8_400_000 },
-  { day: "02.11", value: 4_300_000 },
-  { day: "03.11", value: 7_200_000 },
+export const agenda = [
+  { slot: "09.00–10.00", title: "Booking servis Honda Jazz", meta: "09.00 – 10.00 · B 2210 SNA", icon: "car" as const },
+  { slot: "13.30–14.30", title: "Terima barang dari supplier", meta: "13.30 – 14.30 · PO-2611-0007", icon: "truck" as const, urgent: true },
 ];
 
-export const healthScore = { score: 82, trend: [64, 70, 68, 74, 72, 79, 82] };
-
-export const reminders = [
-  { who: "Sistem", text: "5 kendaraan jatuh tempo servis berkala minggu ini.", action: "Kirim WA" },
-  { who: "Pembelian", text: "Hutang ke PT Sumber Part Rp 4.750.000 jatuh tempo 06.11.", action: "Lihat" },
-  { who: "Kasir", text: "Shift pagi ditutup dengan selisih Rp 0.", action: null },
+export const todayWorkOrders = [
+  { title: "Tune up mesin bensin", plate: "B 1234 KJT", start: "3 Nov, 08.20", duration: "02 j 45 m", progress: 90, parts: 4, mechanic: "Rudi" },
+  { title: "Ganti kampas rem depan", plate: "B 1932 TKA", start: "3 Nov, 09.05", duration: "01 j 30 m", progress: 50, parts: 2, mechanic: "Andi" },
+  { title: "Servis AC & isi freon", plate: "D 1288 XB", start: "3 Nov, 10.40", duration: "01 j 15 m", progress: 10, parts: 3, mechanic: "Joko" },
 ];
+
+export const lowStock = { count: 8, topItem: "Filter Oli Avanza", left: 3 };
+
+export const targets = [
+  { label: "Target omzet", group: "Bulan ini", pct: 72, note: "Rp 128 jt dari Rp 178 jt", tone: "blue" as const },
+  { label: "Piutang tertagih", group: "Pelanggan fleet", pct: 65, note: "3 invoice belum lunas", tone: "red" as const, action: "Tagih" },
+];
+
+export const cashShift = {
+  title: "Tutup kas shift pagi",
+  time: "Hari ini, 16.00",
+  detail: "Kasir: Sinta · Kas seharusnya Rp 4.820.000",
+};
