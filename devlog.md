@@ -4,6 +4,39 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.2.0] — 2026-11-03
+**Ringkasan:** Skema database fondasi: sistem, akses, role & RLS.
+
+### Added
+- Migration `20261103000001_foundation_system.sql`:
+  - schema `app`, `app.today_wib()`, `app.set_updated_at()`.
+  - Tabel `branches`, `settings`, `number_sequences`, `audit_logs` (append-only, tidak bisa update/delete/truncate).
+- Migration `20261103000002_access_control.sql`:
+  - Tabel `employees`, `profiles` (1–1 `auth.users`), `employee_status_history`, `roles`, `permissions`, `role_permissions` (scope `all`/`own`), `employee_roles`.
+  - Helper RLS: `app.current_employee_id()`, `app.current_branch_id()`, `app.is_superuser()`, `app.has_permission(module, action, scope)`.
+  - Audit trigger generik `app.audit_row_change()` (tanpa `pin_hash`).
+  - Status karyawan: riwayat otomatis + akun Nonaktif diblokir login (`auth.users.banned_until`).
+  - Penomoran dokumen atomik `app.next_document_number('INV')` → `INV-2611-0001`.
+  - PIN persetujuan bcrypt: `app.set_my_pin()`, `app.verify_approval_pin()` (tercatat di audit log).
+  - RLS aktif di semua tabel; anon tanpa akses; `pin_hash` dilindungi dengan grant per kolom.
+  - Hapus permanen diblokir untuk master (branches, employees, profiles, roles).
+- Migration `20261103000003_seed_roles_permissions.sql`: cabang `PST`, 5 setting awal, 27 modul × 6 aksi (162 izin), 5 role bawaan, matriks default PRD §16 (113 baris).
+- `supabase/tests/foundation_test.sql` + `scripts/test-db.mjs` + `npm run test:db`.
+
+### Verifikasi
+- `supabase db push` ke Supabase lokal berhasil.
+- `npm run test:db`: 33/33 tes lulus (izin kasir/mekanik/owner, RLS, penomoran, audit, PIN, status Nonaktif, integritas). Tes berjalan dalam transaksi + rollback, tidak meninggalkan data.
+
+### Catatan desain
+- `permissions` adalah katalog global, jadi tanpa `branch_id` (pengecualian konvensi §15.1).
+- Owner = role `is_superuser`, otomatis punya semua izin termasuk modul baru.
+- Batas percobaan PIN salah belum ada (perlu rate limit di layer aplikasi).
+
+### File terdampak
+`supabase/migrations/*`, `supabase/tests/foundation_test.sql`, `scripts/test-db.mjs`, `package.json`, `package-lock.json`, `devlog.md`, `fitur.md`, `VERSION`
+
+---
+
 ## [0.1.1] — 2026-11-03
 **Ringkasan:** `npm run dev` di host Windows terhubung ke Supabase.
 
