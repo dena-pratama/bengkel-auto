@@ -4,6 +4,32 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.1.0] — 2026-11-03
+**Ringkasan:** Setup proyek Next.js + Supabase + Docker.
+
+### Added
+- Next.js 16.4 (App Router, TypeScript, Tailwind v4, ESLint, `src/`), `lang="id"`.
+- shadcn/ui (button, card), Zod, React Hook Form, `@supabase/supabase-js`, `@supabase/ssr`, `server-only`.
+- Supabase CLI (devDependency) + folder `supabase/` (`config.toml`, `migrations/`).
+- `src/lib/env.ts` — validasi env dengan Zod.
+- `src/lib/supabase/client.ts` & `server.ts` — Supabase client browser/server (cookie session).
+- `GET /api/v1/health` — status app, versi, dan koneksi Supabase Auth.
+- `Dockerfile` (Node 24 alpine, standalone, user non-root, TZ Asia/Jakarta, healthcheck) + `.dockerignore`.
+- `next.config.ts` → `output: "standalone"`.
+- `.env.example` → `SUPABASE_INTERNAL_URL`.
+
+### Verifikasi
+- `tsc --noEmit`, `eslint`, `next build` lolos.
+- Image Docker dijalankan di jaringan Supabase: `/api/v1/health` → `{"status":"ok","version":"0.1.0","supabase":{"ok":true}}`, jam container WIB.
+
+### Catatan
+- Node.js di Windows tidak me-resolve `supabase.localhost` (browser bisa). Untuk `npm run dev` di host perlu entri hosts `127.0.0.1 supabase.localhost`.
+
+### File terdampak
+`package.json`, `package-lock.json`, `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `components.json`, `src/**`, `public/**`, `supabase/**`, `Dockerfile`, `.dockerignore`, `.gitignore`, `.env.example`, `AGENTS.md`, `devlog.md`, `fitur.md`, `VERSION`
+
+---
+
 ## [0.0.4] — 2026-11-03
 **Ringkasan:** Port Postgres di-publish untuk migration.
 

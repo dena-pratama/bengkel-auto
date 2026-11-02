@@ -1,13 +1,14 @@
 # Daftar Fitur — Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.0.4**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.1.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
 |---|---|---|
 | Supabase self-host di Coolify lokal | ✅ | 0.0.3 |
 | Akses Postgres langsung (port 54322) untuk migration | ✅ | 0.0.4 |
-| Setup proyek (Next.js, Tailwind, shadcn/ui, Supabase) | ⬜ | – |
+| Setup proyek (Next.js, Tailwind, shadcn/ui, Supabase) | ✅ | 0.1.0 |
+| Dockerfile standalone + endpoint `/api/v1/health` | ✅ | 0.1.0 |
 | Skema dasar: branches, settings, number_sequences, audit_logs | ⬜ | – |
 | Auth (email + password), PIN persetujuan, auto-logout 12 jam | ⬜ | – |
 
