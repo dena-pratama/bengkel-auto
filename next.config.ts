@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   output: "standalone",
   cacheComponents: true,
   partialPrefetching: true,
+  // Jangan tulis argumen server action ke log dev (bisa berisi password)
+  logging: { serverFunctions: false },
   turbopack: {
     // Ada package-lock.json lain di folder home; kunci root ke proyek ini
     root: import.meta.dirname,

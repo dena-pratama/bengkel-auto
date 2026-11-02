@@ -4,6 +4,25 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.3.1] — 2026-11-03
+**Ringkasan:** Perbaikan error dashboard & keamanan log dev.
+
+### Fixed
+- Error "unstable value `Date.now()` while prerendering" di `/dashboard`: `getUserContext()` kini memanggil `connection()` sebelum mengakses Supabase.
+- Error "uncached data outside of `<Suspense>`" di `/dashboard`: data user dipindah ke `DashboardContent` di dalam `<Suspense>` dengan skeleton.
+
+### Security
+- Next.js dev mencatat argumen server action ke terminal, termasuk password dari form setup/login. Dimatikan lewat `logging.serverFunctions: false`.
+
+### Verifikasi
+- Owner pertama berhasil dibuat lewat `/setup` (EMP-2611-0001, role owner, profil terhubung).
+- `tsc`, `eslint`, `next build` lolos.
+
+### File terdampak
+`src/lib/auth.ts`, `src/app/(app)/dashboard/page.tsx`, `next.config.ts`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.3.0] — 2026-11-03
 **Ringkasan:** Halaman login, setup Owner pertama, dan layout aplikasi (light mode).
 

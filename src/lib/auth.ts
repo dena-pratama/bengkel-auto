@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 export type PermissionAction = "view" | "create" | "update" | "void" | "approve" | "export";
@@ -16,6 +17,8 @@ export type UserContext = {
 
 /** Konteks karyawan yang sedang login, atau null. Di-cache per request. */
 export const getUserContext = cache(async (): Promise<UserContext | null> => {
+  // Data per user: render saat request (Supabase memakai Date.now() untuk cek kedaluwarsa sesi)
+  await connection();
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("my_context");
   if (error || !data) return null;
