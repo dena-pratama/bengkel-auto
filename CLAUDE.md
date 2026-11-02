@@ -20,7 +20,18 @@ Fase 2 / Coming Soon: booking online, WA otomatis, member, multi-cabang, Android
 - TanStack Table, Recharts; qrcode + html5-qrcode/@zxing/browser; exceljs
 - Supabase: PostgreSQL, Auth, Storage (S3-compatible), Realtime, pg_cron
 - MCP server: TypeScript MCP SDK, HTTP transport, OAuth per user
-- Hosting: Netlify (dev) → Docker di Coolify (prod). **Jangan** pakai fitur khusus Netlify.
+- Hosting: Docker di Coolify untuk semua environment. **Jangan** pakai fitur khusus vendor (Netlify/Vercel).
+
+## Environment (menggantikan PRD §19.2)
+| Lingkungan | Aplikasi | Database |
+|---|---|---|
+| Development | Docker + **Coolify lokal** (mesin developer) | Supabase self-host di Coolify lokal |
+| Staging | Coolify di VPS | Supabase self-host di Coolify |
+| Production | Coolify di VPS (8 GB RAM) | Supabase self-host + backup harian off-site |
+
+Konsekuensi: aplikasi wajib punya `Dockerfile` (Next.js `output: "standalone"`), semua config via env
+(`.env.example` selalu diperbarui), dan migration SQL dijalankan dengan Supabase CLI ke instance lokal.
+Karena dev sudah self-host, migrasi ke production cukup pindah ke VPS dengan stack yang sama.
 
 ## Aturan Teknis Wajib
 1. **Ledger, bukan edit.** Stok = jumlah `stock_movements`; uang = `journal_lines`. Tidak ada edit diam-diam.

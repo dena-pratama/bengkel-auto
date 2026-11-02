@@ -4,6 +4,17 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.0.2] — 2026-11-03
+**Ringkasan:** Environment development pindah ke Docker + Coolify lokal.
+
+### Changed
+- `CLAUDE.md` — development memakai Docker + Coolify lokal dengan Supabase self-host (bukan Netlify + Supabase Cloud). Ditambah tabel environment dan konsekuensinya (Dockerfile standalone, `.env.example`, Supabase CLI).
+
+### File terdampak
+`CLAUDE.md`, `devlog.md`, `fitur.md`, `VERSION`
+
+---
+
 ## [0.0.1] — 2026-11-03
 **Ringkasan:** Inisialisasi proyek & dokumentasi kerja.
 
