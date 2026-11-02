@@ -4,6 +4,20 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.1.1] — 2026-11-03
+**Ringkasan:** `npm run dev` di host Windows terhubung ke Supabase.
+
+### Fixed
+- Node.js di Windows tidak me-resolve `supabase.localhost`. Ditambah entri hosts `127.0.0.1 supabase.localhost` (setup manual sekali per mesin developer).
+
+### Verifikasi
+- `next dev` di host: `/api/v1/health` → `{"status":"ok","version":"0.1.0","supabase":{"ok":true}}`.
+
+### File terdampak
+`devlog.md`, `fitur.md`, `VERSION`
+
+---
+
 ## [0.1.0] — 2026-11-03
 **Ringkasan:** Setup proyek Next.js + Supabase + Docker.
 
