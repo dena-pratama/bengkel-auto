@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.16.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.17.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -72,7 +72,9 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.16.0**
 | | Laporan PPN (Keluaran, Masukan, selisih, daftar dokumen, setoran, ekspor Excel) | ✅ | 0.15.0 |
 | | PPh Final UMKM (omzet bebas OP, jurnal bulanan, peringatan 80%/95% batas, setor) & estimasi PPh tarif umum di laba rugi | ✅ | 0.15.0 |
 | | Ekspor faktur pajak format DJP | ⬜ | Coming Soon |
-| AI | MCP server read-only (11 tools), skor kesehatan, ringkasan mingguan | ⬜ | - |
+| AI | MCP server read-only (11 tools, token pribadi), skor kesehatan 9 indikator, ringkasan mingguan, log panggilan AI | ✅ | 0.17.0 |
+| | Tanya AI di aplikasi (butuh ANTHROPIC_API_KEY) | 🟨 | 0.17.0 (belum diuji dengan kunci) |
+| | OAuth per pengguna untuk MCP, ambang skor bisa diatur, kirim ringkasan ke WhatsApp | ⬜ | Backlog / Fase 2 |
 | Audit | Audit log | 🟨 | 0.2.0 (DB) |
 
 ## Fase 2

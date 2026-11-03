@@ -23,5 +23,5 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/penggajian", label: "Penggajian", icon: "banknote", module: "payroll", ready: true },
   { href: "/keuangan", label: "Keuangan", icon: "wallet", module: "expenses", ready: true },
   { href: "/pajak", label: "Pajak", icon: "receipt", module: "tax_settings", ready: true },
-  { href: "/ai", label: "AI Analyst", icon: "bot", module: "ai_analyst", ready: false },
+  { href: "/ai", label: "AI Analyst", icon: "bot", module: "ai_analyst", ready: true },
 ];

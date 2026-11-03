@@ -4,6 +4,42 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.17.0] 2026-11-04
+**Ringkasan:** Modul AI Business Analyst (PRD §13): 11 tool analitik read-only lewat server MCP dan aplikasi, skor kesehatan bisnis 9 indikator, ringkasan mingguan, token akses per pengguna, dan log setiap panggilan AI.
+
+### Added
+- Migration `20261103000020_ai_analyst.sql`:
+  - Tabel `ai_tokens` (hash sha256, token utuh tidak disimpan dan hanya tampil sekali), `ai_tool_calls` (log append-only: siapa, kapan, tool, parameter, hasil, durasi, sumber app/mcp), `ai_insights` (ringkasan mingguan).
+  - 11 tool sebagai fungsi database (bukan query bebas): `get_business_summary`, `get_health_score`, `get_sales_trend`, `get_stock_alerts`, `get_top_items`, `get_mechanic_performance`, `get_cash_position`, `get_receivables_payables`, `get_tax_summary`, `get_service_due_customers`, `get_inventory_accuracy`. Angka dihitung dari jurnal dan view yang sama dengan laporan Keuangan; setiap hasil menyebut sumbernya. Data pribadi pelanggan (HP, alamat) tidak pernah dikembalikan.
+  - Skor kesehatan 0-100 dari 9 indikator PRD §13.3 (margin kotor vs rata-rata 3 bulan, margin bersih, ketahanan kas, perputaran stok, dead stock, kualitas piutang, pertumbuhan omzet, retensi pelanggan, kedisiplinan selisih kas dan akurasi opname). Indikator tanpa data ditandai "belum ada data" dan tidak ikut dirata-rata.
+  - `ai_run_tool` (izin `ai_analyst`, mencatat log), `ai_run_tool_token` dan `save_ai_insight_token` (hanya service role; token diverifikasi hash, bertindak sebagai pemilik token dengan izinnya), `create_ai_token`, `revoke_ai_token`, `save_ai_insight`.
+- Tes DB `supabase/tests/ai_analyst_test.sql` (izin, 11 tool, log, token dibuat/dipakai/dicabut, hash tidak terbaca, log tidak bisa dihapus).
+- Server MCP `POST /api/v1/mcp` (JSON-RPC stateless: initialize, ping, tools/list, tools/call; auth Bearer token pribadi).
+- `POST /api/v1/ai/weekly` untuk penjadwal (Coolify scheduled task, Senin pagi) dengan token: membuat dan menyimpan ringkasan mingguan.
+- Halaman `/ai`: skor kesehatan dan rincian indikator, ringkasan mingguan (3 membaik, 3 perlu perhatian, saran, pengingat; berbasis aturan sehingga angkanya selalu sama dengan laporan), tombol buat ringkasan, Tanya AI, pengelola token dan alamat MCP, riwayat panggilan AI.
+- Tanya AI memakai Anthropic Messages API dengan tool yang sama. Env baru `ANTHROPIC_API_KEY` dan `AI_MODEL` (default `claude-sonnet-5-5`) di `.env.example`.
+
+### Changed
+- Menu **AI Analyst** aktif (Owner).
+- `src/proxy.ts`: `/api/v1/mcp` dan `/api/v1/ai/weekly` tidak memakai sesi login; dijaga token yang dicek di database.
+
+### Catatan
+- Deviasi dari PRD §13.1: server MCP ditulis manual di atas route Next.js (tanpa TypeScript MCP SDK) dan autentikasi memakai token pribadi, bukan OAuth. OAuth per pengguna menyusul.
+- Ambang skor kesehatan masih tetap di kode (belum bisa diatur). Alasan skor hanya berupa catatan per indikator.
+- Reminder servis memakai aturan sederhana (kendaraan belum servis lebih dari N bulan); aturan per jasa belum ada.
+- Ringkasan mingguan belum dikirim otomatis ke WhatsApp/email (Fase 2); tampil di halaman AI Analyst.
+
+### Verifikasi
+- `npm run test:db`: 13 suite lulus, termasuk AI Analyst.
+- Diuji nyata lewat HTTP ke dev server dengan token uji (sudah dicabut): tanpa token dan token palsu 401, initialize, tools/list, tools/call get_health_score (skor 73 dari data lokal), ringkasan mingguan tersimpan.
+- `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos.
+- **Belum diverifikasi:** halaman `/ai` belum dilihat di browser dengan login; Tanya AI belum diuji karena tidak ada `ANTHROPIC_API_KEY`; koneksi dari klien Claude sungguhan belum dicoba.
+
+### File terdampak
+`supabase/migrations/20261103000020_ai_analyst.sql`, `supabase/tests/ai_analyst_test.sql`, `src/lib/ai/**`, `src/app/(app)/ai/**`, `src/app/api/v1/mcp/route.ts`, `src/app/api/v1/ai/weekly/route.ts`, `src/proxy.ts`, `src/lib/navigation.ts`, `.env.example`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.16.0] 2026-11-04
 **Ringkasan:** Modul Penggajian (PRD §10.3-10.4): profil gaji, periode gaji bulanan/mingguan dengan alur Draft, Review Owner, Disetujui, Dibayar, kasbon dengan potongan otomatis, komisi mekanik dibayar bersama gaji, dan slip gaji yang bisa dicetak.
 

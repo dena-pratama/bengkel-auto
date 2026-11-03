@@ -5,6 +5,9 @@ const PUBLIC_PATHS = [
   "/login",
   "/setup",
   "/api/v1/health",
+  // Pakai token pribadi (Bearer abk_...), diverifikasi di database, bukan sesi login
+  "/api/v1/mcp",
+  "/api/v1/ai/weekly",
   // Pratinjau UI tanpa login, hanya di development (halamannya 404 di production)
   ...(process.env.NODE_ENV === "development" ? ["/dev/preview"] : []),
 ];
