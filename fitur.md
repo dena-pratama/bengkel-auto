@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.15.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.16.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -58,8 +58,11 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.15.0**
 | | Retur penjualan | ✅ | 0.12.0 |
 | Stok Opname | Menyeluruh, parsial, cycle count, blind count, posting | ✅ | 0.13.0 |
 | Karyawan | Data karyawan, role ganda, status + riwayat, akun login, PIN, role dinamis & matriks izin, RLS | ✅ | 0.5.0 |
-| | Komisi mekanik (aturan per jasa, porsi, diakui saat invoice lunas) | 🟨 | 0.11.0 (layar ringkasan komisi & pembayaran lewat penggajian menyusul) |
-| | Penggajian sederhana & kasbon, slip gaji | ⬜ | - |
+| | Komisi mekanik (aturan per jasa, porsi, diakui saat invoice lunas, ringkasan komisi berjalan, dibayar bersama gaji) | ✅ | 0.16.0 |
+| | Penggajian: profil gaji (bulanan/harian, tunjangan), periode bulanan/mingguan, lembur, bonus, potongan, alur Draft > Review > Disetujui > Dibayar + jurnal otomatis | ✅ | 0.16.0 |
+| | Kasbon: pencairan, cicilan potong gaji otomatis, pelunasan tunai | ✅ | 0.16.0 |
+| | Slip gaji (cetak browser) | ✅ | 0.16.0 |
+| | Slip gaji PDF, PPh 21 & BPJS otomatis, absensi digital | ⬜ | Backlog / Fase 2 |
 | Finance | Kas/bank (banyak akun), pemasukan lain, pengeluaran, transfer, setoran modal & prive, biaya rutin bulanan | ✅ | 0.14.0 |
 | | Foto bukti transaksi | ⬜ | - |
 | | Chart of accounts (tambah akun), jurnal otomatis semua modul, jurnal manual + pembalik, tutup buku bulanan | ✅ | 0.14.0 |

@@ -4,6 +4,39 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.16.0] 2026-11-04
+**Ringkasan:** Modul Penggajian (PRD §10.3-10.4): profil gaji, periode gaji bulanan/mingguan dengan alur Draft, Review Owner, Disetujui, Dibayar, kasbon dengan potongan otomatis, komisi mekanik dibayar bersama gaji, dan slip gaji yang bisa dicetak.
+
+### Added
+- Migration `20261103000019_payroll.sql`:
+  - Tabel `employee_pay_profiles` (gaji pokok bulanan atau tarif harian + tunjangan tetap), `payroll_periods`, `payslips`, `employee_loans`, `employee_loan_payments`; kolom `commissions.payslip_id` dan status komisi baru `paid`.
+  - `create_payroll_period`: slip dibuat untuk semua karyawan aktif/cuti berprofil gaji, komisi yang sudah diakui sampai akhir periode masuk otomatis, cicilan kasbon disarankan otomatis (jumlah cicilan atau sisa, mana yang lebih kecil). Periode yang tumpang tindih ditolak. Periode mingguan: gaji bulanan dan tunjangan dikali 7/30.
+  - `update_payslip` (Draft saja): hari masuk (harian), lembur (jam x tarif), bonus, potongan kasbon (tidak boleh melebihi sisa kasbon), potongan lain (BPJS, PPh 21, denda) dengan keterangan. Gaji bersih tidak boleh minus.
+  - Alur: `submit_payroll` (Draft ke Review), `approve_payroll` (Owner), `reopen_payroll` (kembali ke Draft), `pay_payroll`, `void_payroll`.
+  - Saat dibayar: jurnal Dr Beban Gaji dan Beban Komisi, Cr Kas/Bank (bersih), Cr Kasbon Karyawan (potongan kasbon), Cr Hutang Gaji/Potongan (potongan lain); potongan kasbon dialokasikan ke kasbon tertua; komisi menjadi `paid`. Batal gaji yang sudah dibayar: jurnal dibalik, cicilan kasbon dibatalkan, komisi kembali bisa dibayar.
+  - Kasbon: `create_employee_loan` (Dr Kasbon Karyawan, Cr Kas/Bank), `repay_employee_loan` (bayar tunai di luar gaji), `void_employee_loan` (hanya yang belum dicicil).
+  - View `v_payslips`, `v_employee_loans`.
+  - RLS: Owner melihat semua; mekanik dan gudang (izin `payroll` lingkup sendiri) hanya melihat slip, periode, dan kasbon miliknya, slip baru terlihat setelah gaji disetujui. Admin tidak punya akses.
+- Tes DB `supabase/tests/payroll_test.sql`.
+- Halaman `/penggajian` (daftar periode; untuk non-Owner menjadi "Slip gaji saya"), `/penggajian/[id]` (rincian per karyawan, input slip saat Draft, tombol alur, bayar gaji, batalkan), `/penggajian/slip/[id]` (slip gaji cetak), `/penggajian/kasbon`, `/penggajian/komisi` (komisi berjalan: menunggu lunas, diakui, dibayar; mekanik hanya miliknya), `/penggajian/profil` (gaji pokok dan tunjangan per karyawan).
+
+### Changed
+- Menu **Penggajian** (Owner, Mekanik, Gudang untuk slip sendiri).
+
+### Catatan
+- Belum ada: absensi digital (Fase 2, hari masuk diinput manual), perhitungan otomatis PPh 21 dan BPJS (backlog, diinput manual sebagai potongan), pengiriman slip sebagai PDF (gunakan cetak browser).
+- Karyawan tanpa profil gaji tidak dibuatkan slip.
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus, termasuk penggajian.
+- `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos. Bentuk query PostgREST halaman penggajian dicek terhadap DB lokal.
+- **Halaman penggajian belum dilihat di browser dengan login.**
+
+### File terdampak
+`supabase/migrations/20261103000019_payroll.sql`, `supabase/tests/payroll_test.sql`, `src/app/(app)/penggajian/**`, `src/lib/payroll.ts`, `src/lib/validation/payroll.ts`, `src/lib/navigation.ts`, `src/components/app-nav.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.15.0] 2026-11-04
 **Ringkasan:** Modul Pajak (PRD §12): profil pajak, tarif PPN bertanggal, laporan PPN, PPh Final UMKM bulanan dengan jurnal otomatis, estimasi PPh tarif umum, dan setor pajak.
 

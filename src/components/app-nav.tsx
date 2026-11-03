@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Banknote,
   Bot,
   ClipboardCheck,
   LayoutGrid,
@@ -35,6 +36,7 @@ const ICONS: Record<string, LucideIcon> = {
   clipboard: ClipboardCheck,
   userCog: UserCog,
   wallet: Wallet,
+  banknote: Banknote,
   receipt: Receipt,
   bot: Bot,
   settings: Settings,
