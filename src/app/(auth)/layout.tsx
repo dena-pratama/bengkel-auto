@@ -6,8 +6,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="mb-6">
         <span className="sr-only">AutoMobi</span>
         {/* Varian gelap: navy & biru dicerahkan agar terbaca di latar gelap */}
-        <Image src="/brand/automobi-logo.png" alt="" width={1062} height={559} className="h-auto w-52 dark:hidden" priority />
-        <Image src="/brand/automobi-logo-dark.png" alt="" width={1062} height={559} className="hidden h-auto w-52 dark:block" priority />
+        <Image src="/brand/automobi-logo.png" alt="" width={671} height={335} className="h-auto w-52 dark:hidden" priority />
+        <Image src="/brand/automobi-logo-dark.png" alt="" width={671} height={335} className="hidden h-auto w-52 dark:block" priority />
       </div>
       <div className="w-full max-w-sm">{children}</div>
     </main>

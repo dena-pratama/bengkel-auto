@@ -44,7 +44,7 @@ export function RailView({ ctx }: { ctx: UserContext }) {
       <div className="grid gap-2 px-3 pt-3 pb-2 group-data-[collapsed=true]/sb:justify-items-center">
         {/* Bentang: logo lengkap AutoMobi; ciut: ikon saja (tidak cukup ruang untuk tulisan) */}
         <span className="flex h-16 items-center justify-center rounded-[24px] bg-white px-4 shadow-sm group-data-[collapsed=true]/sb:hidden">
-          <Image src="/brand/automobi-logo.png" alt="AutoMobi" width={1062} height={559} className="h-12 w-auto" priority />
+          <Image src="/brand/automobi-logo.png" alt="AutoMobi" width={671} height={335} className="h-12 w-auto" priority />
         </span>
         <span className="hidden size-12 items-center justify-center rounded-full bg-white p-1.5 shadow-sm group-data-[collapsed=true]/sb:flex">
           <Image src="/brand/automobi-mark.png" alt="AutoMobi" width={64} height={64} className="size-full object-contain" priority />

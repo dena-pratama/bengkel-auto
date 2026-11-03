@@ -4,6 +4,32 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.13.1] 2026-11-03
+**Ringkasan:** Pembaruan logo 3D AutoMobi dengan transparansi penuh untuk mode terang, mode gelap, halaman login/setup, sidebar aplikasi, dan favicon tab browser.
+
+### Added
+- Aset sumber logo baru beresolusi tinggi: `design/automobi-logo-light-source.jpg` dan `design/automobi-logo-dark-source.jpg`.
+- Generator aset `scripts/make-logo.mjs`: mengekstrak siluet mobil 3D metalik, kunci pas, dan tipografi AutoMobi dengan eliminasi latar kotak-kotak catur (checkerboard) dan teks label mode, menghasilkan transparansi alpha anti-alias halus.
+
+### Changed
+- `public/brand/automobi-logo.png`: logo 3D AutoMobi transparan untuk latar terang (navy tua pada kunci pas dan teks Mobi).
+- `public/brand/automobi-logo-dark.png`: logo 3D AutoMobi transparan untuk latar gelap (biru sian cerah pada kunci pas dan teks Mobi).
+- `public/brand/automobi-mark.png`: ikon lambang mobil dan kunci pas bujur sangkar 512x512 transparan untuk sidebar ciut.
+- `src/app/icon.png`: favicon browser 256x256 bersumber dari lambang 3D baru.
+- `src/app/(auth)/layout.tsx`: penyesuaian dimensi gambar logo (`671x335`) pada halaman login dan setup.
+- `src/components/app-shell.tsx`: penyesuaian dimensi gambar logo (`671x335`) pada sidebar bentang.
+
+### Verifikasi
+- Bebas tanda pisah panjang: `npm run check:dashes` (222 file lolos).
+- Typecheck (`npx tsc --noEmit`) 0 error.
+- Linting (`npm run lint`) 0 error / 0 warning.
+- Kompilasi produksi Next.js (`npm run build`) 54 rute berhasil.
+
+### File terdampak
+`VERSION`, `package.json`, `devlog.md`, `design/*`, `public/brand/*`, `src/app/icon.png`, `scripts/make-logo.mjs`, `src/app/(auth)/layout.tsx`, `src/components/app-shell.tsx`
+
+---
+
 ## [0.13.0] 2026-11-03
 **Ringkasan:** Modul Stok Opname (PRD §9, §11.3): sesi opname menyeluruh, parsial rak/kategori, cycle count acak, mode blind count, persetujuan selisih dengan PIN owner, posting mutasi penyesuaian stok, dan jurnal otomatis selisih persediaan.
 
