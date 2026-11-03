@@ -4,6 +4,55 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.13.0] 2026-11-03
+**Ringkasan:** Modul Stok Opname (PRD §9, §11.3): sesi opname menyeluruh, parsial rak/kategori, cycle count acak, mode blind count, persetujuan selisih dengan PIN owner, posting mutasi penyesuaian stok, dan jurnal otomatis selisih persediaan.
+
+### Added
+- Migrasi `supabase/migrations/20261103000016_stock_opname.sql`:
+  - Enum `opname_type` ('full', 'location', 'category', 'cycle_count'), `opname_status` ('draft', 'in_progress', 'review', 'posted', 'void'), dan `opname_variance_reason` ('damaged', 'lost', 'input_error', 'misplaced', 'other').
+  - Tabel `public.stock_opnames` dan `public.stock_opname_items` lengkap dengan trigger audit perubahan baris `audit_row_change`, proteksi hapus `trg_no_delete_stock_opnames` untuk sesi posted/void, dan indeks performa.
+  - Setting cabang `opname_pin_threshold` bernilai Rp 500.000 untuk ambang batas otorisasi persetujuan PIN owner.
+  - Prosedur dan fungsi PostgreSQL:
+    - `public.create_stock_opname`: inisialisasi sesi opname dan otomatis memuat item berdasarkan cakupan (seluruh bengkel, rak/lokasi tertentu, kategori barang tertentu, atau cycle count sampel acak).
+    - `public.start_stock_opname`: mengunci saldo sistem (`book_qty`) pada waktu mulai dan mengubah status menjadi `in_progress`.
+    - `public.save_opname_counts`: penyimpanan bertahap hasil hitungan fisik (`physical_qty`).
+    - `public.complete_opname_count`: validasi kelengkapan hitungan fisik dan perpindahan status ke `review`.
+    - `public.recount_opname_item`: fasilitas hitung ulang item berselisih yang mengembalikan status sesi ke `in_progress`.
+    - `public.post_stock_opname`: persetujuan akhir sesi, validasi alasan selisih per item, verifikasi PIN owner bila total selisih melebihi ambang batas, posting mutasi penyesuaian stok via `app.post_stock_movement`, dan posting jurnal otomatis selisih persediaan via `app.post_journal` (Dr Beban Selisih Persediaan, Cr Persediaan Sparepart untuk selisih kurang, atau sebaliknya untuk selisih lebih).
+    - `public.void_stock_opname`: pembatalan sesi draft/in_progress/review dengan pencatatan alasan wajib.
+  - View pelaporan `public.v_stock_opnames` (metrik akurasi %, total item, item berselisih, selisih netto/nilai, nomor jurnal) dan `public.v_stock_opname_items`.
+  - Pengaturan RLS ketat berbasis izin `stock_opname:view`, `stock_opname:manage`, `stock_opname:count`, dan `stock_opname:approve`.
+- Rangkaian pengujian database `supabase/tests/stock_opname_test.sql`:
+  - Skenario 1: Validasi hak akses pembuatan opname (mekanik ditolak, admin/gudang diizinkan).
+  - Skenario 2: Inisialisasi sesi draft, pemilihan cakupan rak, dan penguncian saldo buku saat `start_stock_opname`.
+  - Skenario 3: Validasi input hitungan fisik (kuantitas negatif ditolak, penyelesaian sebelum semua item terhitung ditolak).
+  - Skenario 4: Perhitungan selisih fisik vs buku, fasilitas recount (hitung ulang) item, dan perbaikan hitungan.
+  - Skenario 5: Persetujuan dan posting penyesuaian (kasir ditolak, validasi alasan selisih wajib, verifikasi PIN jika selisih melampaui batas, penyesuaian saldo gudang, mutasi penyesuaian stok tercatat, jurnal selisih seimbang di buku besar, proteksi sesi posted dari penghapusan).
+  - Skenario 6: Pembatalan sesi opname (`void_stock_opname`) dengan validasi panjang alasan pembatalan.
+- Validasi data Zod di `src/lib/validation/stock-opname.ts` untuk pembuatan sesi, penyimpanan hitungan fisik, persetujuan dan posting, serta pembatalan sesi.
+- Modul data access di `src/lib/stock-opname.ts` (`listStockOpnames`, `getStockOpname`, `listOpnameLocations`, `listOpnameCategories`, `listOpnameEmployees`).
+- Server actions di `src/app/(app)/stok-opname/actions.ts`: `createStockOpnameAction`, `startStockOpnameAction`, `saveOpnameCountsAction`, `completeOpnameCountAction`, `recountOpnameItemAction`, `postStockOpnameAction`, `voidStockOpnameAction`.
+- Antarmuka pengguna Stok Opname di `src/app/(app)/stok-opname`:
+  - `page.tsx`: Halaman daftar sesi opname dengan ringkasan status, pencarian, dan filter status.
+  - `_components/create-dialog.tsx`: Modal pembuatan sesi baru dengan opsi cakupan (menyeluruh, per rak, per kategori, atau cycle count acak), mode blind count, dan penunjukan petugas hitung.
+  - `_components/count-sheet.tsx`: Lembar kerja hitung fisik interaktif dengan dukungan blind count (menyembunyikan stok sistem), penyimpanan progres sementara, dan konfirmasi selesai hitung.
+  - `_components/review-panel.tsx`: Panel telaah selisih dengan persentase akurasi, seleksi alasan selisih (rusak, hilang, salah input, salah letak, lainnya), tombol hitung ulang per item, dan persetujuan posting dengan PIN owner jika melampaui ambang batas.
+  - `_components/void-dialog.tsx`: Dialog pembatalan sesi opname dengan input alasan pembatalan.
+  - `[id]/page.tsx`: Halaman detail sesi terpadu yang menampilkan alur kerja status dinamis (draft, in progress, review, posted, void).
+  - Aktivasi menu Stok Opname pada sidebar navigasi `src/lib/navigation.ts`.
+
+### Verifikasi
+- Pengujian database lolos 100% untuk seluruh 9 test suite (`npm run test:db`).
+- Bebas tanda pisah panjang: `npm run check:dashes` (209 file lolos).
+- Typecheck (`npx tsc --noEmit`) 0 error.
+- Linting (`npm run lint`) 0 error / 0 warning.
+- Kompilasi produksi Next.js (`npm run build`) berhasil (termasuk halaman `/stok-opname` dan `/stok-opname/[id]`).
+
+### File terdampak
+`VERSION`, `package.json`, `fitur.md`, `devlog.md`, `src/lib/navigation.ts`, `supabase/migrations/20261103000016_stock_opname.sql`, `supabase/tests/stock_opname_test.sql`, `src/lib/validation/stock-opname.ts`, `src/lib/stock-opname.ts`, `src/app/(app)/stok-opname/actions.ts`, `src/app/(app)/stok-opname/_components/ui.tsx`, `src/app/(app)/stok-opname/_components/create-dialog.tsx`, `src/app/(app)/stok-opname/_components/count-sheet.tsx`, `src/app/(app)/stok-opname/_components/review-panel.tsx`, `src/app/(app)/stok-opname/_components/void-dialog.tsx`, `src/app/(app)/stok-opname/_components/opname-list.tsx`, `src/app/(app)/stok-opname/page.tsx`, `src/app/(app)/stok-opname/[id]/page.tsx`
+
+---
+
 ## [0.12.0] 2026-11-03
 **Ringkasan:** Modul Retur Penjualan (PRD §8.5, §11.3): uang kembali atau potong piutang, barang rusak ke rak karantina, jurnal pembalik otomatis, dan integrasi kasir.
 
