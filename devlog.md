@@ -4,6 +4,21 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.4.4] — 2026-11-03
+**Ringkasan:** Radius sudut kartu dashboard diperkecil.
+
+### Changed
+- Kartu dashboard `rounded-3xl` (±35px) → `rounded-md` (12,8px), termasuk skeleton & kartu merah stok menipis.
+- Elemen di dalam kartu (item notifikasi, baris WO, tile, ikon, badge, tombol) `rounded-2xl/xl/lg` → `rounded-sm` (9,6px) agar tidak lebih bulat dari kartunya. Bentuk lingkaran (`rounded-full`) tetap.
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos; browser 1440px: semua kartu radius 12,8px.
+
+### File terdampak
+`src/app/(app)/dashboard/widgets.tsx`, `src/app/(app)/dashboard/view.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.4.3] — 2026-11-03
 **Ringkasan:** Peringatan "Encountered a script tag while rendering React component" benar-benar dihilangkan.
 

@@ -24,7 +24,7 @@ import {
 import { agenda, cashShift, lowStock, mechanicJob, notifications, targets, todayWorkOrders } from "@/lib/demo/dashboard";
 import { cn } from "@/lib/utils";
 
-export const card = "min-w-0 rounded-3xl bg-card p-5 shadow-[0_1px_2px_rgb(23_36_51/0.04),0_8px_24px_-12px_rgb(23_36_51/0.08)]";
+export const card = "min-w-0 rounded-md bg-card p-5 shadow-[0_1px_2px_rgb(23_36_51/0.04),0_8px_24px_-12px_rgb(23_36_51/0.08)]";
 
 function CardHead({ title, children }: { title: React.ReactNode; children?: React.ReactNode }) {
   return (
@@ -49,7 +49,7 @@ function IconButton({ icon: Icon, label, tone = "muted" }: { icon: LucideIcon; l
     <span
       title={label}
       className={cn(
-        "flex size-8 items-center justify-center rounded-lg",
+        "flex size-8 items-center justify-center rounded-sm",
         tone === "blue" ? "bg-brand-blue-ink text-white" : "text-muted-foreground hover:bg-muted",
       )}
     >
@@ -87,20 +87,20 @@ export function QuickTiles() {
     <section className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:col-span-2 xl:col-span-7">
       <div
         title="Buat Work Order baru (tersedia setelah modul Servis)"
-        className="flex aspect-square flex-col items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-brand-blue/50 bg-brand-blue-soft/40 text-brand-blue-fg sm:aspect-auto"
+        className="flex aspect-square flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-brand-blue/50 bg-brand-blue-soft/40 text-brand-blue-fg sm:aspect-auto"
       >
-        <span className="flex size-10 items-center justify-center rounded-xl bg-brand-blue-ink text-white shadow-md shadow-brand-blue-ink/30">
+        <span className="flex size-10 items-center justify-center rounded-sm bg-brand-blue-ink text-white shadow-md shadow-brand-blue-ink/30">
           <Plus className="size-5" />
         </span>
         <span className="px-2 text-center text-xs font-medium">Work order baru</span>
       </div>
       {QUICK_TILES.map(({ title, desc, icon: Icon, badge: Badge }) => (
         <div key={title} className={cn(card, "flex flex-col gap-3 p-4")} title={`${title} (segera)`}>
-          <div className="relative mx-auto flex aspect-[4/3] w-full max-w-36 items-center justify-center rounded-2xl bg-brand-blue-soft">
+          <div className="relative mx-auto flex aspect-[4/3] w-full max-w-36 items-center justify-center rounded-sm bg-brand-blue-soft">
             <div className="absolute top-3 left-3 h-1.5 w-8 rounded-full bg-brand-blue/50" />
             <div className="absolute top-6 left-3 h-1.5 w-5 rounded-full bg-brand-blue/30" />
             <Icon className="size-12 text-brand-blue-fg" strokeWidth={1.5} />
-            <span className="absolute right-3 bottom-3 flex size-7 items-center justify-center rounded-lg bg-brand-red text-white shadow-md shadow-brand-red/30">
+            <span className="absolute right-3 bottom-3 flex size-7 items-center justify-center rounded-sm bg-brand-red text-white shadow-md shadow-brand-red/30">
               <Badge className="size-3.5" />
             </span>
           </div>
@@ -124,7 +124,7 @@ export function NotificationsCard() {
       </CardHead>
       <div className="grid grid-cols-1 gap-3">
         <div className="flex min-w-0 gap-2">
-          <div className="min-w-0 flex-1 rounded-2xl border border-border bg-card p-4 shadow-md shadow-brand-blue-ink/5">
+          <div className="min-w-0 flex-1 rounded-sm border border-border bg-card p-4 shadow-md shadow-brand-blue-ink/5">
             <div className="flex items-start justify-between gap-2">
               <p className="flex items-center gap-1.5 text-sm font-semibold">
                 {alert.title}
@@ -142,12 +142,12 @@ export function NotificationsCard() {
               </span>
             </div>
           </div>
-          <div className="flex flex-col justify-center gap-1 rounded-2xl bg-brand-blue-soft px-1">
+          <div className="flex flex-col justify-center gap-1 rounded-sm bg-brand-blue-soft px-1">
             <IconButton icon={Trash2} label="Hapus" />
             <IconButton icon={Pencil} label="Tindak lanjut" />
           </div>
         </div>
-        <div className="min-w-0 rounded-2xl border border-border p-4 sm:ml-4">
+        <div className="min-w-0 rounded-sm border border-border p-4 sm:ml-4">
           <div className="flex items-start justify-between gap-2">
             <p className="text-sm font-semibold">{message.title}</p>
             <MoreHorizontal className="size-4 text-muted-foreground" />
@@ -155,7 +155,7 @@ export function NotificationsCard() {
           <p className="flex items-center gap-1 text-xs text-muted-foreground">
             <Mail className="size-3.5" /> {message.meta}
           </p>
-          <p className="mt-2 truncate rounded-lg bg-brand-blue-soft px-3 py-1.5 text-xs text-brand-blue-deep">{message.preview}</p>
+          <p className="mt-2 truncate rounded-sm bg-brand-blue-soft px-3 py-1.5 text-xs text-brand-blue-deep">{message.preview}</p>
         </div>
       </div>
     </section>
@@ -170,7 +170,7 @@ export function MechanicJobCard() {
       <CardHead title="Pekerjaan mekanik">
         <GhostAction icon={Edit3}>Ubah</GhostAction>
       </CardHead>
-      <div className="rounded-2xl border border-border p-4 shadow-md shadow-brand-blue-ink/5">
+      <div className="rounded-sm border border-border p-4 shadow-md shadow-brand-blue-ink/5">
         <div className="flex items-center justify-between gap-2 text-xs">
           <p>
             <span className="font-medium text-brand-blue-fg">{job.category}</span>
@@ -181,10 +181,10 @@ export function MechanicJobCard() {
         </div>
         <div className="mt-3 flex items-start justify-between gap-3">
           <p className="text-[15px] leading-snug font-semibold">{job.title}</p>
-          <span className="shrink-0 rounded-lg bg-brand-red-soft px-2.5 py-1 text-xs font-medium text-brand-red">{job.priority}</span>
+          <span className="shrink-0 rounded-sm bg-brand-red-soft px-2.5 py-1 text-xs font-medium text-brand-red">{job.priority}</span>
         </div>
         <div className="mt-4 flex items-center justify-between gap-2">
-          <span className="rounded-lg bg-brand-blue px-2.5 py-1 text-xs font-medium text-[#1d3d57]">{job.tag}</span>
+          <span className="rounded-sm bg-brand-blue px-2.5 py-1 text-xs font-medium text-[#1d3d57]">{job.tag}</span>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             {job.mechanic}
             <span className="flex size-6 items-center justify-center rounded-full bg-brand-blue-soft text-2xs font-semibold text-brand-blue-fg">
@@ -193,7 +193,7 @@ export function MechanicJobCard() {
           </span>
         </div>
       </div>
-      <div className="mt-3 flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-brand-blue/50 bg-brand-blue-soft/40 py-4 text-sm font-medium text-brand-blue-fg">
+      <div className="mt-3 flex items-center justify-center gap-2 rounded-sm border-2 border-dashed border-brand-blue/50 bg-brand-blue-soft/40 py-4 text-sm font-medium text-brand-blue-fg">
         <span className="flex size-6 items-center justify-center rounded-md bg-brand-blue-ink text-white">
           <Plus className="size-4" />
         </span>
@@ -257,8 +257,8 @@ export function AgendaCard() {
                 {a.slot}
                 <span className="h-px flex-1 border-t border-dashed border-border" />
               </div>
-              <div className="flex items-center gap-3 rounded-2xl p-2 hover:bg-muted">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-blue-soft text-brand-blue-fg">
+              <div className="flex items-center gap-3 rounded-sm p-2 hover:bg-muted">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-sm bg-brand-blue-soft text-brand-blue-fg">
                   <Icon className="size-4" />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -309,7 +309,7 @@ export function TodayWorkOrdersCard() {
           <li
             key={wo.plate}
             className={cn(
-              "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 rounded-2xl p-3 sm:grid-cols-[minmax(0,1.5fr)_auto_minmax(110px,1fr)]",
+              "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 rounded-sm p-3 sm:grid-cols-[minmax(0,1.5fr)_auto_minmax(110px,1fr)]",
               i === 0 && "bg-card shadow-lg shadow-brand-blue-ink/10 ring-1 ring-border",
             )}
           >
@@ -349,10 +349,10 @@ export function TodayWorkOrdersCard() {
 /* ================================================================ Stok menipis (kartu sorotan merah) */
 export function LowStockCard() {
   return (
-    <section className="relative flex min-w-0 flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl bg-brand-red p-6 text-center text-white shadow-xl shadow-brand-red/25 xl:col-span-3">
+    <section className="relative flex min-w-0 flex-col items-center justify-center gap-3 overflow-hidden rounded-md bg-brand-red p-6 text-center text-white shadow-xl shadow-brand-red/25 xl:col-span-3">
       <div aria-hidden className="absolute -top-10 -right-10 size-32 rounded-full bg-white/10" />
       <div aria-hidden className="absolute -bottom-12 -left-8 size-28 rounded-full bg-white/10" />
-      <span className="relative flex size-16 items-center justify-center rounded-2xl bg-white/15">
+      <span className="relative flex size-16 items-center justify-center rounded-sm bg-white/15">
         <PackageX className="size-8" strokeWidth={1.5} />
       </span>
       <div className="relative">
@@ -361,7 +361,7 @@ export function LowStockCard() {
           {lowStock.topItem} tersisa {lowStock.left} pcs. Buat PO sebelum stok habis.
         </p>
       </div>
-      <span className="relative mt-1 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-brand-red shadow-md">Buat purchase order</span>
+      <span className="relative mt-1 rounded-sm bg-white px-5 py-2.5 text-sm font-semibold text-brand-red shadow-md">Buat purchase order</span>
     </section>
   );
 }
@@ -405,7 +405,7 @@ export function TargetsCards() {
             </div>
             <div className="grid min-w-0 gap-2">
               <p className="text-xs leading-snug text-muted-foreground">{t.note}</p>
-              {t.action && <span className="w-fit rounded-lg bg-brand-blue-ink px-3 py-1 text-xs font-medium text-white">{t.action}</span>}
+              {t.action && <span className="w-fit rounded-sm bg-brand-blue-ink px-3 py-1 text-xs font-medium text-white">{t.action}</span>}
             </div>
           </div>
         </section>
@@ -427,8 +427,8 @@ export function CashShiftCard() {
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between xl:flex-col xl:items-stretch">
         <p className="text-sm text-muted-foreground">{cashShift.detail}</p>
         <div className="flex shrink-0 gap-2 xl:justify-end">
-          <span className="rounded-xl bg-brand-blue-soft px-4 py-2 text-sm font-medium text-brand-blue-deep">Lihat</span>
-          <span className="rounded-xl bg-brand-blue-ink px-4 py-2 text-sm font-medium text-white">Tutup shift</span>
+          <span className="rounded-sm bg-brand-blue-soft px-4 py-2 text-sm font-medium text-brand-blue-deep">Lihat</span>
+          <span className="rounded-sm bg-brand-blue-ink px-4 py-2 text-sm font-medium text-white">Tutup shift</span>
         </div>
       </div>
     </section>

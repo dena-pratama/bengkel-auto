@@ -35,7 +35,7 @@ export function DashboardView({ ctx }: { ctx: UserContext }) {
             <span
               key={label}
               className={cn(
-                "flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium",
+                "flex shrink-0 items-center gap-1.5 rounded-sm px-3 py-2 text-sm font-medium",
                 active ? "bg-card text-foreground shadow-sm" : "text-muted-foreground",
               )}
               title={active ? undefined : `${label} (segera)`}
@@ -50,12 +50,12 @@ export function DashboardView({ ctx }: { ctx: UserContext }) {
         )}
         <div className="ml-auto flex gap-2">
           {showFinance && (
-            <span className="hidden items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium sm:flex" title="Segera">
+            <span className="hidden items-center gap-1.5 rounded-sm border border-border bg-card px-3 py-2 text-sm font-medium sm:flex" title="Segera">
               <Download className="size-4" /> Ekspor
               <span className="rounded-md bg-brand-blue-soft px-1.5 py-0.5 text-2xs text-brand-blue-fg">xlsx</span>
             </span>
           )}
-          <span className="flex items-center gap-1.5 rounded-xl bg-brand-blue-ink px-4 py-2 text-sm font-medium text-white shadow-md shadow-brand-blue-ink/25" title="Tersedia setelah modul Servis">
+          <span className="flex items-center gap-1.5 rounded-sm bg-brand-blue-ink px-4 py-2 text-sm font-medium text-white shadow-md shadow-brand-blue-ink/25" title="Tersedia setelah modul Servis">
             <Plus className="size-4" /> Work order
           </span>
         </div>
@@ -92,10 +92,10 @@ export function DashboardView({ ctx }: { ctx: UserContext }) {
 export function DashboardSkeleton() {
   return (
     <div className="mx-auto grid w-full max-w-[1440px] gap-4 md:grid-cols-2 xl:grid-cols-12">
-      <div className="h-40 animate-pulse rounded-3xl bg-card/70 md:col-span-2 xl:col-span-5" />
-      <div className="h-40 animate-pulse rounded-3xl bg-card/70 md:col-span-2 xl:col-span-7" />
+      <div className="h-40 animate-pulse rounded-md bg-card/70 md:col-span-2 xl:col-span-5" />
+      <div className="h-40 animate-pulse rounded-md bg-card/70 md:col-span-2 xl:col-span-7" />
       {[4, 4, 4].map((s, i) => (
-        <div key={i} className="h-64 animate-pulse rounded-3xl bg-card/70 xl:col-span-4" />
+        <div key={i} className="h-64 animate-pulse rounded-md bg-card/70 xl:col-span-4" />
       ))}
     </div>
   );
