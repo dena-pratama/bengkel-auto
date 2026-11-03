@@ -2,6 +2,7 @@ import ExcelJS from "exceljs";
 import { can, getUserContext } from "@/lib/auth";
 import { getBalanceSheet, getCashFlow, getMargin, getProfitLoss, listCashBankBalances, summarizeProfitLoss } from "@/lib/finance";
 import { addDays, todayWib } from "@/lib/format";
+import { getPpnDocuments, getPpnSummary } from "@/lib/tax";
 import { SOURCE_LABEL } from "@/lib/validation/finance";
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -16,7 +17,8 @@ function styleHeader(row: ExcelJS.Row) {
 export async function GET(request: Request) {
   const ctx = await getUserContext();
   if (!ctx) return Response.json({ error: "Sesi berakhir. Silakan masuk lagi." }, { status: 401 });
-  if (!can(ctx, "finance_reports", "view", false)) return Response.json({ error: "Anda tidak punya izin." }, { status: 403 });
+  const jenisParam = new URL(request.url).searchParams.get("jenis");
+  if (!can(ctx, "finance_reports", "view", false) && !(jenisParam === "ppn" && can(ctx, "tax_settings", "view", false))) return Response.json({ error: "Anda tidak punya izin." }, { status: 403 });
 
   const url = new URL(request.url);
   const today = todayWib();
@@ -87,6 +89,21 @@ export async function GET(request: Request) {
     ws.addRow(["Kenaikan (penurunan) kas bersih", null, null, rows.reduce((t, r) => t + r.inflow - r.outflow, 0)]).font = { bold: true };
     ws.addRow(["Saldo kas & bank akhir", null, null, closing.reduce((t, b) => t + b.balance, 0)]).font = { bold: true };
     for (const c of [2, 3, 4]) ws.getColumn(c).numFmt = RP;
+  } else if (jenis === "ppn") {
+    title = `PPN ${from} sd ${to}`;
+    const [sum, docs] = await Promise.all([getPpnSummary(from, to), getPpnDocuments(from, to)]);
+    const ws = wb.addWorksheet("PPN");
+    ws.columns = [{ width: 12 }, { width: 18 }, { width: 20 }, { width: 32 }, { width: 22 }, { width: 18 }, { width: 18 }, { width: 18 }];
+    ws.addRow([`Laporan PPN ${from} s/d ${to}`]).font = { bold: true, size: 13 };
+    ws.addRow(["PPN Keluaran", sum.keluaran]);
+    ws.addRow(["PPN Masukan", sum.masukan]);
+    ws.addRow([sum.selisih >= 0 ? "Kurang bayar" : "Lebih bayar", Math.abs(sum.selisih)]).font = { bold: true };
+    ws.addRow(["Sudah disetor", sum.disetor]);
+    ws.addRow([]);
+    styleHeader(ws.addRow(["Tanggal", "Jenis", "Nomor", "Pihak", "NPWP", "DPP", "PPN", "Total"]));
+    const label = { keluaran: "Keluaran", retur_keluaran: "Retur (Keluaran)", masukan: "Masukan" } as const;
+    for (const d of docs) ws.addRow([d.doc_date, label[d.kind], d.doc_no, d.party, d.npwp ?? "", d.dpp, d.ppn, d.total]);
+    for (const c of [2, 6, 7, 8]) ws.getColumn(c).numFmt = RP;
   } else if (jenis === "margin") {
     title = `Margin ${group} ${from} sd ${to}`;
     const rows = await getMargin(group, from, to);

@@ -16,6 +16,7 @@ import {
   type MarginRow,
   type PlRow,
 } from "@/lib/finance";
+import { getTaxSettings } from "@/lib/tax";
 import { addDays, formatDate, formatQty, formatRupiah, todayWib } from "@/lib/format";
 import { SOURCE_LABEL } from "@/lib/validation/finance";
 import { cn } from "@/lib/utils";
@@ -205,6 +206,9 @@ async function ProfitLoss({ from, to, prev }: { from: string; to: string; prev: 
   const cur = summarizeProfitLoss(rows);
   const pv = prevRows ? summarizeProfitLoss(prevRows) : null;
   const total = (label: string, key: string, c: number, p: number | null | undefined, strong = false): Line => ({ key, label, cur: c, prev: p ?? null, bold: true, strong });
+  const tax = await getTaxSettings().catch(() => null);
+  const general = tax?.pph_mode === "general" ? tax : null;
+  const estOf = (s: { beforeTax: number } | null) => (s && general ? Math.max(s.beforeTax, 0) * (general.general_rate / 100) : null);
   const lines: Line[] = [
     ...sectionLines("Pendapatan (tanpa PPN)", sec(rows, "revenue")!, sec(prevRows, "revenue"), "rev"),
     ...sectionLines("Harga pokok penjualan", sec(rows, "cogs")!, sec(prevRows, "cogs"), "cogs"),
@@ -213,8 +217,15 @@ async function ProfitLoss({ from, to, prev }: { from: string; to: string; prev: 
     total("Laba usaha", "op", cur.operatingProfit, pv?.operatingProfit, true),
     ...sectionLines("Pendapatan (beban) lain", sec(rows, "other")!, sec(prevRows, "other"), "oth"),
     total("Laba sebelum pajak", "pbt", cur.beforeTax, pv?.beforeTax, true),
-    ...sectionLines("Pajak penghasilan", sec(rows, "tax")!, sec(prevRows, "tax"), "tax"),
-    total("Laba bersih setelah pajak", "net", cur.net, pv?.net, true),
+    ...(general
+      ? [
+          { key: "est", label: `Estimasi PPh tarif umum (${general.general_rate}%)`, cur: estOf(cur) ?? 0, prev: estOf(pv), bold: true } as Line,
+          total("Laba bersih setelah estimasi pajak", "net", cur.beforeTax - (estOf(cur) ?? 0), pv ? pv.beforeTax - (estOf(pv) ?? 0) : null, true),
+        ]
+      : [
+          ...sectionLines("Pajak penghasilan", sec(rows, "tax")!, sec(prevRows, "tax"), "tax"),
+          total("Laba bersih setelah pajak", "net", cur.net, pv?.net, true),
+        ]),
   ];
   const margin = cur.revenue > 0 ? (cur.net / cur.revenue) * 100 : null;
   return (
@@ -233,7 +244,10 @@ async function ProfitLoss({ from, to, prev }: { from: string; to: string; prev: 
         ))}
       </section>
       <ReportTable lines={lines} showPrev={Boolean(prev)} head={["Periode ini", prev ? `${formatDate(prev.from)} s/d ${formatDate(prev.to)}` : undefined]} />
-      <p className="text-xs text-muted-foreground">Pendapatan dan HPP tanpa PPN. Beban garansi, selisih persediaan, dan selisih kas termasuk beban usaha.</p>
+      <p className="text-xs text-muted-foreground">
+        Pendapatan dan HPP tanpa PPN. Beban garansi, selisih persediaan, dan selisih kas termasuk beban usaha.
+        {general && " Pajak penghasilan adalah estimasi tarif umum, bukan jurnal; konsultasikan dengan konsultan pajak."}
+      </p>
     </>
   );
 }

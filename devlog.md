@@ -4,6 +4,41 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.15.0] 2026-11-04
+**Ringkasan:** Modul Pajak (PRD §12): profil pajak, tarif PPN bertanggal, laporan PPN, PPh Final UMKM bulanan dengan jurnal otomatis, estimasi PPh tarif umum, dan setor pajak.
+
+### Added
+- Migration `20261103000018_tax.sql`:
+  - Tabel `tax_settings` (bentuk usaha, status PKP, cara PPh, tarif Final 0,5%, tarif umum 22%, batas omzet Rp4,8 miliar, omzet bebas Rp500 juta untuk Orang Pribadi, akhir fasilitas CV/Firma/PT, tanggal setor), `tax_period_summaries` (PPh Final per bulan), `tax_payments` (setor PPh Final dan PPN). RLS untuk izin `tax_settings` dan `finance_reports`.
+  - `save_tax_settings`: PPN hanya bisa aktif jika PKP; CV/Firma/PT wajib mengisi tanggal akhir fasilitas bila memakai PPh Final; saklar `ppn_enabled` dan `prices_include_ppn` yang dibaca invoice ikut diperbarui dari profil pajak.
+  - `add_tax_rate`: tarif PPN baru berlaku mulai tanggal tertentu, tarif lama berakhir sehari sebelumnya (riwayat tarif utuh).
+  - `tax_overview` (omzet, kumulatif, kena pajak, PPh per bulan; omzet dari akun pendapatan sehingga diskon dan retur sudah terhitung), `post_pph_final` (hanya bulan yang sudah berakhir; jurnal Dr Beban PPh Final, Cr Hutang PPh Final bertanggal akhir bulan), `void_pph_final` (jurnal pembalik).
+  - Aturan §17.6: Orang Pribadi memakai omzet bebas Rp500 juta pertama setahun (contoh PRD: kumulatif Rp700 juta, kena pajak Rp200 juta, PPh Rp1.000.000); bentuk usaha lain seluruh omzet kena pajak.
+  - `post_tax_payment` / `void_tax_payment`: setor PPh Final (Dr Hutang PPh Final, Cr Kas/Bank, tidak boleh melebihi hutang) dan PPN (Dr PPN Keluaran, Cr Kas/Bank).
+  - `report_ppn` (Keluaran, Masukan, selisih kurang/lebih bayar, disetor) dan `report_ppn_documents` (faktur penjualan, retur, dan penerimaan barang ber-PPN dengan DPP, PPN, NPWP).
+- Tes DB `supabase/tests/tax_test.sql`.
+- Halaman `/pajak` (pengaturan profil pajak dan tarif PPN), `/pajak/ppn` (laporan PPN, daftar dokumen, setoran, ekspor Excel), `/pajak/pph` (PPh Final per bulan dengan posting, peringatan omzet 80% dan 95% dari batas, hutang dan setoran, atau estimasi tarif umum).
+- Laba rugi (`/keuangan/laporan`): untuk pilihan "Estimasi PPh tarif umum" menampilkan baris estimasi pajak dan laba bersih setelah estimasi (tidak dijurnal); pilihan PPh Final menampilkan beban PPh Final dari jurnal; PPh OFF: laba bersih sama dengan laba sebelum pajak.
+- Ekspor Excel PPN (`/api/v1/keuangan/export?jenis=ppn`).
+
+### Changed
+- Menu **Pajak** aktif (Owner).
+
+### Catatan
+- Belum ada: pengingat setor PPh sebagai notifikasi/dashboard (tanggal setor sudah tersimpan dan tampil di halaman PPh), pembatalan otomatis PPh Final saat dokumen sumber dibatalkan di bulan yang sudah diposting (batalkan posting lalu posting ulang), ekspor faktur pajak ke format DJP (Coming Soon di PRD).
+- Setor PPN mencatat Dr PPN Keluaran, Cr Kas/Bank; PPN Masukan tidak dikompensasi otomatis di jurnal (selisih tampil di laporan).
+- Aturan PPh bisa berubah: tarif, batas, dan omzet bebas ada di pengaturan, bukan di kode.
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus, termasuk pajak.
+- `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos. Bentuk query PostgREST halaman pajak dicek terhadap DB lokal.
+- **Halaman pajak belum dilihat di browser dengan login.**
+
+### File terdampak
+`supabase/migrations/20261103000018_tax.sql`, `supabase/tests/tax_test.sql`, `src/app/(app)/pajak/**`, `src/lib/tax.ts`, `src/lib/validation/tax.ts`, `src/app/(app)/keuangan/laporan/page.tsx`, `src/app/api/v1/keuangan/export/route.ts`, `src/lib/navigation.ts`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.14.0] 2026-11-04
 **Ringkasan:** Modul Finance (PRD §11): kas & bank, pemasukan dan pengeluaran, transfer, modal dan prive, biaya rutin, jurnal manual, bagan akun, tutup buku, dan laporan keuangan (laba rugi, neraca, arus kas, buku besar, margin) dengan ekspor Excel.
 

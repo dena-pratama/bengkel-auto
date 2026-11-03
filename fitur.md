@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.14.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.15.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -65,7 +65,10 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.14.0**
 | | Chart of accounts (tambah akun), jurnal otomatis semua modul, jurnal manual + pembalik, tutup buku bulanan | ✅ | 0.14.0 |
 | | Laba rugi (banding periode lalu), neraca, arus kas, buku besar, margin per jasa/barang/WO, ekspor Excel | ✅ | 0.14.0 |
 | | Ekspor PDF laporan (saat ini cetak lewat browser) | ⬜ | - |
-| Pajak | Profil pajak, PPN (DPP 11/12), PPh Final UMKM, estimasi PPh umum | ⬜ | - |
+| Pajak | Profil pajak (bentuk usaha, PKP, saklar PPN/PPh), tarif PPN bertanggal | ✅ | 0.15.0 |
+| | Laporan PPN (Keluaran, Masukan, selisih, daftar dokumen, setoran, ekspor Excel) | ✅ | 0.15.0 |
+| | PPh Final UMKM (omzet bebas OP, jurnal bulanan, peringatan 80%/95% batas, setor) & estimasi PPh tarif umum di laba rugi | ✅ | 0.15.0 |
+| | Ekspor faktur pajak format DJP | ⬜ | Coming Soon |
 | AI | MCP server read-only (11 tools), skor kesehatan, ringkasan mingguan | ⬜ | - |
 | Audit | Audit log | 🟨 | 0.2.0 (DB) |
 
