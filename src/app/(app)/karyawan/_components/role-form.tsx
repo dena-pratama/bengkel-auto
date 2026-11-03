@@ -230,7 +230,7 @@ export function RoleForm({
           <Button type="submit" disabled={pending}>
             {pending ? "Menyimpan..." : role ? "Simpan role" : "Buat role"}
           </Button>
-          <Button variant="outline" render={<Link href="/karyawan/role" />}>
+          <Button variant="outline" nativeButton={false} render={<Link href="/karyawan/role" />}>
             Kembali
           </Button>
           {role && !role.is_system && (

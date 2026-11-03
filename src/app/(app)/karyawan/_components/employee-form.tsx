@@ -80,7 +80,7 @@ export function CreateEmployeeForm({ roles, canAssignOwner }: { roles: RoleOptio
       <section className={cn(panel, "grid gap-3")}>
         <FormError message={warning.text} />
         <p className="text-sm text-muted-foreground">Akun login bisa dibuat nanti dari halaman detail karyawan.</p>
-        <Button render={<Link href={`/karyawan/${warning.id}`} />} className="w-fit">
+        <Button nativeButton={false} render={<Link href={`/karyawan/${warning.id}`} />} className="w-fit">
           Buka detail karyawan
         </Button>
       </section>
@@ -140,7 +140,7 @@ export function CreateEmployeeForm({ roles, canAssignOwner }: { roles: RoleOptio
           <Button type="submit" disabled={pending} className="flex-1 sm:flex-none">
             {pending ? "Menyimpan..." : "Simpan karyawan"}
           </Button>
-          <Button variant="outline" render={<Link href="/karyawan" />}>
+          <Button variant="outline" nativeButton={false} render={<Link href="/karyawan" />}>
             Batal
           </Button>
         </div>

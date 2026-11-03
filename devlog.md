@@ -4,6 +4,20 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.5.1] — 2026-11-03
+**Ringkasan:** Perbaiki peringatan Base UI pada tombol yang dirender sebagai link.
+
+### Fixed
+- "Base UI: A component that acts as a button expected a native <button>…": `Button` dengan `render={<Link />}` (Tambah karyawan, Tambah role, Batal/Kembali, Buka detail karyawan) kini memakai `nativeButton={false}` agar semantik link benar.
+
+### Verifikasi
+- `tsc`, `eslint` lolos; log dev server tidak berisi error lain selain peringatan ini (muncul 3× di `/karyawan`, `/karyawan/role`, `/karyawan/baru`).
+
+### File terdampak
+`src/app/(app)/karyawan/page.tsx`, `src/app/(app)/karyawan/role/page.tsx`, `src/app/(app)/karyawan/_components/employee-form.tsx`, `src/app/(app)/karyawan/_components/role-form.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.5.0] — 2026-11-03
 **Ringkasan:** Modul Karyawan & Role (PRD §2, §10.1–10.2, §16): kelola karyawan, role ganda, status, akun login, PIN, role dinamis dengan matriks hak akses.
 

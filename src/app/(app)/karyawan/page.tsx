@@ -31,7 +31,7 @@ async function Content() {
         description={`${employees.length} karyawan · ${active} aktif`}
         actions={
           can(ctx, "employees", "create", false) && (
-            <Button render={<Link href="/karyawan/baru" />}>
+            <Button nativeButton={false} render={<Link href="/karyawan/baru" />}>
               <Plus className="size-4" /> Tambah karyawan
             </Button>
           )

@@ -31,7 +31,7 @@ async function Content() {
         description="Satu karyawan boleh punya lebih dari satu role; izinnya digabung."
         actions={
           canEdit && (
-            <Button render={<Link href="/karyawan/role/baru" />}>
+            <Button nativeButton={false} render={<Link href="/karyawan/role/baru" />}>
               <Plus className="size-4" /> Tambah role
             </Button>
           )
