@@ -1,6 +1,6 @@
 # Daftar Fitur — Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.3.4**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.3.5**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -14,7 +14,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.3.4**
 | Auth (email + password), PIN persetujuan, auto-logout 12 jam | ✅ | 0.3.0 |
 | Halaman login, setup Owner pertama, layout aplikasi & dashboard | ✅ | 0.3.0 |
 | Tema biru & merah + dashboard bengkel responsif (data contoh) | ✅ | 0.3.3 |
-| Sidebar melayang yang bisa ditampilkan/disembunyikan (Ctrl+B) | ✅ | 0.3.4 |
+| Sidebar melayang: bentang berlabel / ciut jadi rail ikon (Ctrl+B) | ✅ | 0.3.5 |
 
 ## MVP
 | Modul | Fitur | Status | Versi |

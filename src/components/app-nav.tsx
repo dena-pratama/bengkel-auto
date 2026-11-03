@@ -7,6 +7,7 @@ import {
   Bot,
   ClipboardCheck,
   LayoutGrid,
+  Menu,
   Package,
   PanelLeftClose,
   PanelLeftOpen,
@@ -72,7 +73,7 @@ function writeDesktopPref(open: boolean) {
   window.dispatchEvent(new Event(STORAGE_EVENT));
 }
 
-type SidebarState = { open: boolean; toggle: () => void; close: () => void };
+type SidebarState = { open: boolean; toggle: () => void };
 const SidebarContext = createContext<SidebarState | null>(null);
 
 function useSidebar() {
@@ -82,9 +83,10 @@ function useSidebar() {
 }
 
 /**
- * Kerangka dengan sidebar melayang (floating) yang bisa ditampilkan/disembunyikan.
- * Desktop (≥1024px): default tampil, konten bergeser; pilihan disimpan di browser.
- * Tablet & HP: default tersembunyi, muncul di atas konten dengan latar gelap.
+ * Kerangka dengan sidebar melayang (floating) yang bisa dibentangkan/diciutkan.
+ * Desktop (≥1024px): bentang = panel berlabel, ciut = rail ikon; konten bergeser; pilihan disimpan di browser.
+ * Tablet (768–1023px): default rail ikon; saat dibentangkan muncul di atas konten dengan latar gelap.
+ * HP (<768px): tersembunyi; dibuka lewat tombol menu di top bar.
  * Pintasan: Ctrl/⌘ + B.
  */
 export function SidebarFrame({
@@ -98,7 +100,7 @@ export function SidebarFrame({
 }) {
   const desktopOpen = useSyncExternalStore(subscribeDesktopPref, readDesktopPref, () => true);
   const isDesktopView = useSyncExternalStore(subscribeViewport, readIsDesktop, () => true);
-  // HP: panel terbuka untuk path tertentu saja → pindah halaman otomatis menutupnya
+  // Tablet/HP: panel terbuka untuk path tertentu saja → pindah halaman otomatis menutupnya
   const pathname = usePathname();
   const [mobileOpenAt, setMobileOpenAt] = useState<string | null>(null);
   const mobileOpen = mobileOpenAt === pathname;
@@ -110,16 +112,10 @@ export function SidebarFrame({
     return () => cancelAnimationFrame(id);
   }, []);
 
-
   const toggle = useCallback(() => {
     if (readIsDesktop()) writeDesktopPref(!readDesktopPref());
     else setMobileOpenAt((at) => (at === pathname ? null : pathname));
   }, [pathname]);
-
-  const close = useCallback(() => {
-    if (readIsDesktop()) toggle();
-    else setMobileOpen(false);
-  }, [toggle, setMobileOpen]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -134,10 +130,12 @@ export function SidebarFrame({
     return () => window.removeEventListener("keydown", onKey);
   }, [toggle, mobileOpen, setMobileOpen]);
 
+  const open = isDesktopView ? desktopOpen : mobileOpen;
+
   return (
-    <SidebarContext value={{ open: isDesktopView ? desktopOpen : mobileOpen, toggle, close }}>
+    <SidebarContext value={{ open, toggle }}>
       <div className="relative flex min-h-full flex-1 bg-background">
-        {/* Latar gelap (HP) */}
+        {/* Latar gelap (tablet & HP) */}
         <div
           aria-hidden
           onClick={() => setMobileOpen(false)}
@@ -150,11 +148,14 @@ export function SidebarFrame({
         <aside
           id="app-sidebar"
           aria-label="Sidebar"
+          data-collapsed={!open}
           className={cn(
-            "fixed top-3 bottom-3 left-3 z-40 flex w-[248px] flex-col rounded-[28px] bg-brand-blue-ink text-white shadow-2xl shadow-brand-blue-deep/30",
-            ready && "transition-[translate,opacity] duration-300 ease-out",
-            mobileOpen ? "max-lg:translate-x-0" : "max-lg:pointer-events-none max-lg:-translate-x-[calc(100%+1.5rem)] max-lg:opacity-0",
-            desktopOpen ? "lg:translate-x-0" : "lg:pointer-events-none lg:-translate-x-[calc(100%+1.5rem)] lg:opacity-0",
+            "group/sb fixed top-3 bottom-3 left-3 z-40 flex flex-col rounded-[28px] bg-brand-blue-ink text-white shadow-2xl shadow-brand-blue-deep/30",
+            ready && "transition-[width,translate,opacity] duration-300 ease-out",
+            mobileOpen
+              ? "max-lg:w-[248px]"
+              : "max-lg:w-[72px] max-md:pointer-events-none max-md:-translate-x-[calc(100%+1.5rem)] max-md:opacity-0",
+            desktopOpen ? "lg:w-[248px]" : "lg:w-[72px]",
           )}
         >
           {sidebar}
@@ -162,9 +163,9 @@ export function SidebarFrame({
 
         <div
           className={cn(
-            "flex min-w-0 flex-1 flex-col",
+            "flex min-w-0 flex-1 flex-col md:pl-[88px]",
             ready && "transition-[padding] duration-300 ease-out",
-            desktopOpen ? "lg:pl-[264px]" : "lg:pl-0",
+            desktopOpen ? "lg:pl-[264px]" : "lg:pl-[88px]",
           )}
         >
           <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b border-border/70 bg-background/85 px-3 backdrop-blur sm:px-6">
@@ -177,42 +178,55 @@ export function SidebarFrame({
   );
 }
 
-/** Tombol tampil/sembunyikan sidebar (di top bar). */
+/** Tombol buka menu di top bar — hanya HP; di layar lebih besar rail ikon selalu tampil. */
 export function SidebarToggle() {
   const { open, toggle } = useSidebar();
-  const Icon = open ? PanelLeftClose : PanelLeftOpen;
   return (
     <button
       type="button"
       onClick={toggle}
       aria-controls="app-sidebar"
       aria-expanded={open}
-      aria-label={open ? "Sembunyikan menu" : "Tampilkan menu"}
-      title={`${open ? "Sembunyikan" : "Tampilkan"} menu (Ctrl+B)`}
-      className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-foreground shadow-sm transition-colors hover:bg-brand-blue-soft hover:text-brand-blue-ink"
+      aria-label="Buka menu"
+      title="Buka menu"
+      className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-foreground shadow-sm transition-colors hover:bg-brand-blue-soft hover:text-brand-blue-ink md:hidden"
     >
-      <Icon className="size-5" />
+      <Menu className="size-5" />
     </button>
   );
 }
 
-/** Tombol tutup di dalam sidebar. */
-export function SidebarClose() {
-  const { close } = useSidebar();
+/** Tombol bentangkan/ciutkan di dalam sidebar. */
+export function SidebarRailToggle() {
+  const { open, toggle } = useSidebar();
+  const Icon = open ? PanelLeftClose : PanelLeftOpen;
+  const label = open ? "Ciutkan menu" : "Bentangkan menu";
   return (
     <button
       type="button"
-      onClick={close}
-      aria-label="Sembunyikan menu"
-      title="Sembunyikan menu (Ctrl+B)"
+      onClick={toggle}
+      aria-controls="app-sidebar"
+      aria-expanded={open}
+      aria-label={label}
+      title={`${label} (Ctrl+B)`}
       className="flex size-9 shrink-0 items-center justify-center rounded-xl text-white/75 transition-colors hover:bg-white/12 hover:text-white"
     >
-      <PanelLeftClose className="size-[18px]" />
+      <Icon className="size-[18px]" />
     </button>
   );
 }
 
-/** Daftar menu berlabel di sidebar. */
+// Varian saat sidebar diciutkan (data-collapsed="true" di <aside>)
+const RAIL_ROW = "group-data-[collapsed=true]/sb:justify-center group-data-[collapsed=true]/sb:px-0 group-data-[collapsed=true]/sb:py-1.5";
+const RAIL_TOOLTIP = [
+  "group-data-[collapsed=true]/sb:pointer-events-none group-data-[collapsed=true]/sb:absolute group-data-[collapsed=true]/sb:left-full group-data-[collapsed=true]/sb:z-50",
+  "group-data-[collapsed=true]/sb:ml-4 group-data-[collapsed=true]/sb:hidden group-data-[collapsed=true]/sb:overflow-visible group-data-[collapsed=true]/sb:rounded-lg",
+  "group-data-[collapsed=true]/sb:bg-foreground group-data-[collapsed=true]/sb:px-2.5 group-data-[collapsed=true]/sb:py-1.5 group-data-[collapsed=true]/sb:text-xs",
+  "group-data-[collapsed=true]/sb:font-medium group-data-[collapsed=true]/sb:whitespace-nowrap group-data-[collapsed=true]/sb:text-white group-data-[collapsed=true]/sb:shadow-lg",
+  "group-data-[collapsed=true]/sb:group-hover:block group-data-[collapsed=true]/sb:group-focus-visible:block",
+].join(" ");
+
+/** Daftar menu di sidebar. Saat diciutkan hanya ikon; label muncul sebagai tooltip. */
 export function SideNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
@@ -223,7 +237,8 @@ export function SideNav({ items }: { items: NavItem[] }) {
         const Icon = ICONS[item.icon] ?? LayoutGrid;
         const active = isActive(item.href);
         const row = cn(
-          "group flex min-w-0 items-center gap-3 rounded-2xl px-3 py-2.5 text-sm transition-colors",
+          "group relative flex min-w-0 items-center gap-3 rounded-2xl px-3 py-2.5 text-sm transition-colors",
+          RAIL_ROW,
           active
             ? "bg-white font-semibold text-brand-blue-ink shadow-md"
             : item.ready
@@ -240,16 +255,24 @@ export function SideNav({ items }: { items: NavItem[] }) {
             <Icon className="size-4" />
           </span>
         );
+        const label = (
+          <span className={cn("min-w-0 truncate", !item.ready && "flex-1", RAIL_TOOLTIP)}>
+            {item.label}
+            {!item.ready && <span className="hidden text-white/60 group-data-[collapsed=true]/sb:inline"> · segera</span>}
+          </span>
+        );
         return item.ready ? (
-          <Link key={item.href} href={item.href} className={row} aria-current={active ? "page" : undefined}>
+          <Link key={item.href} href={item.href} className={row} aria-label={item.label} aria-current={active ? "page" : undefined}>
             {icon}
-            <span className="min-w-0 truncate">{item.label}</span>
+            {label}
           </Link>
         ) : (
-          <span key={item.href} className={row} aria-disabled>
+          <span key={item.href} className={row} aria-label={`${item.label} (segera)`} aria-disabled tabIndex={0}>
             {icon}
-            <span className="min-w-0 flex-1 truncate">{item.label}</span>
-            <span className="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/70">Segera</span>
+            {label}
+            <span className="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/70 group-data-[collapsed=true]/sb:hidden">
+              Segera
+            </span>
           </span>
         );
       })}

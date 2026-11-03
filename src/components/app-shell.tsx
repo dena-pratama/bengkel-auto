@@ -1,6 +1,6 @@
 import { Bell, LogOut, Search, Settings, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SideNav, SidebarClose, SidebarFrame, SidebarToggle } from "@/components/app-nav";
+import { SideNav, SidebarFrame, SidebarRailToggle, SidebarToggle } from "@/components/app-nav";
 import { can, type UserContext } from "@/lib/auth";
 import { NAV_ITEMS } from "@/lib/navigation";
 import { logoutAction } from "@/app/(auth)/actions";
@@ -39,27 +39,27 @@ export function initials(name: string) {
 export function RailView({ ctx }: { ctx: UserContext }) {
   return (
     <>
-      <div className="flex items-center gap-3 px-4 pt-4 pb-3">
+      <div className="flex items-center gap-3 px-4 pt-4 pb-3 group-data-[collapsed=true]/sb:flex-col group-data-[collapsed=true]/sb:gap-2 group-data-[collapsed=true]/sb:px-0">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-red text-white shadow-lg shadow-black/15">
           <Wrench className="size-5" />
         </span>
-        <div className="min-w-0 flex-1 leading-tight">
+        <div className="min-w-0 flex-1 leading-tight group-data-[collapsed=true]/sb:hidden">
           <p className="truncate text-sm font-semibold">Bengkel Mobil</p>
           <p className="truncate text-[11px] text-white/65">{ctx.branch.name}</p>
         </div>
-        <SidebarClose />
+        <SidebarRailToggle />
       </div>
 
-      <p className="px-5 pt-2 pb-2 text-[10px] font-semibold tracking-[0.14em] text-white/50 uppercase">Menu</p>
-      <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3 [scrollbar-width:thin] [scrollbar-color:rgb(255_255_255/0.2)_transparent]">
+      <p className="px-5 pt-2 pb-2 group-data-[collapsed=true]/sb:hidden text-[10px] font-semibold tracking-[0.14em] text-white/50 uppercase">Menu</p>
+      <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3 [scrollbar-width:thin] [scrollbar-color:rgb(255_255_255/0.2)_transparent] group-data-[collapsed=true]/sb:overflow-visible">
         <SideNav items={visibleNavItems(ctx)} />
       </div>
 
-      <div className="m-3 flex items-center gap-2.5 rounded-2xl bg-white/10 p-2.5">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white text-xs font-semibold text-brand-blue-ink">
+      <div className="m-3 flex items-center gap-2.5 rounded-2xl bg-white/10 p-2.5 group-data-[collapsed=true]/sb:flex-col group-data-[collapsed=true]/sb:bg-transparent group-data-[collapsed=true]/sb:p-0">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white text-xs font-semibold text-brand-blue-ink" title={ctx.employee.full_name}>
           {initials(ctx.employee.full_name)}
         </span>
-        <div className="min-w-0 flex-1 leading-tight">
+        <div className="min-w-0 flex-1 leading-tight group-data-[collapsed=true]/sb:hidden">
           <p className="truncate text-sm font-medium">{ctx.employee.full_name}</p>
           <p className="truncate text-[11px] text-white/65">{ctx.roles.map((r) => r.name).join(", ")}</p>
         </div>
