@@ -84,7 +84,7 @@ function useSidebar() {
 
 /**
  * Kerangka dengan sidebar melayang (floating) yang bisa dibentangkan/diciutkan.
- * Desktop (≥1024px): bentang = panel berlabel, ciut = rail ikon; konten bergeser; pilihan disimpan di browser.
+ * Desktop (≥1024px): bentang = panel berlabel 264px, ciut = rail ikon; konten bergeser; pilihan disimpan di browser.
  * Tablet (768–1023px): default rail ikon; saat dibentangkan muncul di atas konten dengan latar gelap.
  * HP (<768px): tersembunyi; dibuka lewat tombol menu di top bar.
  * Pintasan: Ctrl/⌘ + B.
@@ -153,9 +153,9 @@ export function SidebarFrame({
             "group/sb fixed top-3 bottom-3 left-3 z-40 flex flex-col rounded-[28px] bg-brand-rail text-white shadow-2xl shadow-brand-blue-ink/30 dark:shadow-black/40 dark:ring-1 dark:ring-white/5",
             ready && "transition-[width,translate,opacity] duration-300 ease-out",
             mobileOpen
-              ? "max-lg:w-[248px]"
+              ? "max-lg:w-[264px]"
               : "max-lg:w-[72px] max-md:pointer-events-none max-md:-translate-x-[calc(100%+1.5rem)] max-md:opacity-0",
-            desktopOpen ? "lg:w-[248px]" : "lg:w-[72px]",
+            desktopOpen ? "lg:w-[264px]" : "lg:w-[72px]",
           )}
         >
           {sidebar}
@@ -165,7 +165,7 @@ export function SidebarFrame({
           className={cn(
             "flex min-w-0 flex-1 flex-col md:pl-[88px]",
             ready && "transition-[padding] duration-300 ease-out",
-            desktopOpen ? "lg:pl-[264px]" : "lg:pl-[88px]",
+            desktopOpen ? "lg:pl-[280px]" : "lg:pl-[88px]",
           )}
         >
           <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b border-border/70 bg-background/85 px-3 backdrop-blur sm:px-6">
@@ -270,7 +270,7 @@ export function SideNav({ items }: { items: NavItem[] }) {
           <span key={item.href} className={row} aria-label={`${item.label} (segera)`} aria-disabled tabIndex={0}>
             {icon}
             {label}
-            <span className="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/70 group-data-[collapsed=true]/sb:hidden">
+            <span className="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-2xs text-white/70 group-data-[collapsed=true]/sb:hidden">
               Segera
             </span>
           </span>

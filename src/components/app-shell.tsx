@@ -46,12 +46,12 @@ export function RailView({ ctx }: { ctx: UserContext }) {
         </span>
         <div className="min-w-0 flex-1 leading-tight group-data-[collapsed=true]/sb:hidden">
           <p className="truncate text-sm font-semibold">Bengkel Mobil</p>
-          <p className="truncate text-[11px] text-white/65">{ctx.branch.name}</p>
+          <p className="truncate text-2xs text-white/65">{ctx.branch.name}</p>
         </div>
         <SidebarRailToggle />
       </div>
 
-      <p className="px-5 pt-2 pb-2 group-data-[collapsed=true]/sb:hidden text-[10px] font-semibold tracking-[0.14em] text-white/50 uppercase">Menu</p>
+      <p className="px-5 pt-2 pb-2 group-data-[collapsed=true]/sb:hidden text-2xs font-semibold tracking-[0.14em] text-white/50 uppercase">Menu</p>
       <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-4 [scrollbar-width:thin] [scrollbar-color:rgb(255_255_255/0.2)_transparent] group-data-[collapsed=true]/sb:overflow-visible">
         <SideNav items={visibleNavItems(ctx)} />
       </div>

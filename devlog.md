@@ -4,6 +4,24 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.4.1] — 2026-11-03
+**Ringkasan:** Ukuran huruf dinaikkan secara proporsional dan angka metrik diperbesar agar mudah dibaca owner.
+
+### Changed
+- Skala teks di tema (`@theme`): `xs` 12→13px, `sm` 14→15px, `base` 16→17px, `lg` 18→19px; ukuran baru `2xs` 12px. Semua teks 10–11px diganti `text-2xs`, jadi minimum 12px.
+- Metrik dashboard: persen cincin target 72px dengan angka tebal, progres & durasi work order `text-sm` tebal `tabular-nums` (bar progres lebih tebal), angka stok menipis `text-4xl`.
+- Kartu target disusun ulang (judul di atas, cincin + keterangan di bawah) agar label tidak meluber.
+- Sidebar bentang 248→264px (konten 280px) agar label menu tidak terlalu terpotong.
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Browser (`/dev/preview`): desktop 1440px, tablet 768px, HP 375px — lebar halaman = layar, tidak ada teks meluber.
+
+### File terdampak
+`src/app/globals.css`, `src/app/(app)/dashboard/widgets.tsx`, `src/app/(app)/dashboard/view.tsx`, `src/components/app-nav.tsx`, `src/components/app-shell.tsx`, `src/components/topbar-controls.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.4.0] — 2026-11-03
 **Ringkasan:** Dark mode + toggle di top bar; profil, pengaturan, dan keluar dipindah ke top bar.
 

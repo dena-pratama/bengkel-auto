@@ -1,6 +1,6 @@
 # Daftar Fitur — Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.4.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.4.1**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -16,6 +16,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.4.0**
 | Tema biru & merah + dashboard bengkel responsif (data contoh) | ✅ | 0.3.3 |
 | Sidebar melayang: bentang berlabel / ciut jadi rail ikon (Ctrl+B) | ✅ | 0.3.5 |
 | Dark mode + toggle; menu profil (profil, pengaturan, keluar) di top bar | ✅ | 0.4.0 |
+| Skala huruf lebih besar (min. 12px) + angka metrik menonjol | ✅ | 0.4.1 |
 
 ## MVP
 | Modul | Fitur | Status | Versi |

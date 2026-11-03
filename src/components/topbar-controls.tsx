@@ -87,7 +87,7 @@ export function ProfileMenu({
         </span>
         <span className="hidden text-left leading-tight lg:block">
           <span className="block text-sm font-medium">{name}</span>
-          <span className="block text-[11px] text-muted-foreground">{role}</span>
+          <span className="block text-2xs text-muted-foreground">{role}</span>
         </span>
         <ChevronDown className="size-4 text-muted-foreground" />
       </DropdownMenuTrigger>
@@ -107,11 +107,11 @@ export function ProfileMenu({
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled className="rounded-lg px-2 py-2">
           <UserRound /> Profil saya
-          <span className="ml-auto text-[10px] text-muted-foreground">Segera</span>
+          <span className="ml-auto text-2xs text-muted-foreground">Segera</span>
         </DropdownMenuItem>
         <DropdownMenuItem disabled className="rounded-lg px-2 py-2">
           <Settings /> Pengaturan
-          <span className="ml-auto text-[10px] text-muted-foreground">Segera</span>
+          <span className="ml-auto text-2xs text-muted-foreground">Segera</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

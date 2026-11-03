@@ -187,7 +187,7 @@ export function MechanicJobCard() {
           <span className="rounded-lg bg-brand-blue px-2.5 py-1 text-xs font-medium text-[#1d3d57]">{job.tag}</span>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             {job.mechanic}
-            <span className="flex size-6 items-center justify-center rounded-full bg-brand-blue-soft text-[10px] font-semibold text-brand-blue-fg">
+            <span className="flex size-6 items-center justify-center rounded-full bg-brand-blue-soft text-2xs font-semibold text-brand-blue-fg">
               {job.mechanic[0]}
             </span>
           </span>
@@ -235,7 +235,7 @@ export function AgendaCard() {
           const isToday = d.toDateString() === today.toDateString();
           return (
             <div key={d.toISOString()} className="grid gap-1.5">
-              <span className="text-[11px] text-muted-foreground">{dayName.format(d)}</span>
+              <span className="text-2xs text-muted-foreground">{dayName.format(d)}</span>
               <span
                 className={cn(
                   "mx-auto flex size-8 items-center justify-center rounded-full text-sm font-medium",
@@ -288,7 +288,7 @@ export function TodayWorkOrdersCard() {
             Work order hari ini
             <span className="flex -space-x-2">
               {["R", "A", "J"].map((m) => (
-                <span key={m} className="flex size-7 items-center justify-center rounded-full border-2 border-card bg-brand-blue-soft text-[10px] font-semibold text-brand-blue-fg">
+                <span key={m} className="flex size-7 items-center justify-center rounded-full border-2 border-card bg-brand-blue-soft text-2xs font-semibold text-brand-blue-fg">
                   {m}
                 </span>
               ))}
@@ -315,7 +315,7 @@ export function TodayWorkOrdersCard() {
           >
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">{wo.title}</p>
-              <p className="flex flex-wrap items-center gap-x-2 text-[11px] text-muted-foreground">
+              <p className="flex flex-wrap items-center gap-x-2 text-2xs text-muted-foreground">
                 <span className="font-mono font-medium text-foreground">{wo.plate}</span>
                 <span>{wo.start}</span>
                 <span className="flex items-center gap-0.5" title="Part dipakai">
@@ -327,12 +327,12 @@ export function TodayWorkOrdersCard() {
               </p>
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">Durasi</p>
-              <p className="text-xs font-semibold">{wo.duration}</p>
+              <p className="text-2xs text-muted-foreground">Durasi</p>
+              <p className="text-sm font-semibold tabular-nums">{wo.duration}</p>
             </div>
             <div className="col-span-2 flex items-center gap-2 sm:col-span-1">
-              <span className="w-8 text-xs font-medium">{wo.progress}%</span>
-              <span className="h-1 flex-1 rounded-full bg-brand-blue-soft">
+              <span className="w-11 text-sm font-semibold tabular-nums">{wo.progress}%</span>
+              <span className="h-1.5 flex-1 rounded-full bg-brand-blue-soft">
                 <span
                   className={cn("block h-full rounded-full", wo.progress >= 80 ? "bg-brand-blue-ink" : "bg-brand-blue")}
                   style={{ width: `${wo.progress}%` }}
@@ -356,7 +356,7 @@ export function LowStockCard() {
         <PackageX className="size-8" strokeWidth={1.5} />
       </span>
       <div className="relative">
-        <p className="text-2xl font-semibold">{lowStock.count} barang menipis</p>
+        <p className="text-2xl font-semibold"><span className="text-4xl font-bold tabular-nums">{lowStock.count}</span> barang menipis</p>
         <p className="mt-1 text-sm text-white/85">
           {lowStock.topItem} tersisa {lowStock.left} pcs. Buat PO sebelum stok habis.
         </p>
@@ -371,7 +371,7 @@ function Ring({ pct, tone }: { pct: number; tone: "blue" | "red" }) {
   const r = 26;
   const c = 2 * Math.PI * r;
   return (
-    <svg viewBox="0 0 64 64" className="size-16 shrink-0 -rotate-90" aria-hidden>
+    <svg viewBox="0 0 64 64" className="size-[72px] shrink-0 -rotate-90" aria-hidden>
       <circle cx="32" cy="32" r={r} fill="none" stroke="var(--brand-blue-soft)" strokeWidth="6" />
       <circle
         cx="32"
@@ -392,21 +392,21 @@ export function TargetsCards() {
     <>
       {targets.map((t) => (
         <section key={t.label} className={cn(card, "flex flex-col gap-3 p-4")}>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Ring pct={t.pct} tone={t.tone} />
-              <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold">{t.pct}%</span>
-            </div>
-            <div className="min-w-0">
-              <p className={cn("text-[10px] font-semibold tracking-wide uppercase", t.tone === "blue" ? "text-brand-blue-fg" : "text-brand-red")}>
-                {t.group}
-              </p>
-              <p className="text-sm font-semibold">{t.label}</p>
-            </div>
+          <div className="min-w-0">
+            <p className={cn("text-2xs font-semibold tracking-wide uppercase", t.tone === "blue" ? "text-brand-blue-fg" : "text-brand-red")}>
+              {t.group}
+            </p>
+            <p className="text-sm font-semibold">{t.label}</p>
           </div>
-          <div className="flex items-end justify-between gap-2">
-            <p className="text-[11px] leading-snug text-muted-foreground">{t.note}</p>
-            {t.action && <span className="rounded-lg bg-brand-blue-ink px-3 py-1 text-xs font-medium text-white">{t.action}</span>}
+          <div className="flex items-center gap-2.5">
+            <div className="relative shrink-0">
+              <Ring pct={t.pct} tone={t.tone} />
+              <span className="absolute inset-0 flex items-center justify-center text-base font-bold tabular-nums">{t.pct}%</span>
+            </div>
+            <div className="grid min-w-0 gap-2">
+              <p className="text-xs leading-snug text-muted-foreground">{t.note}</p>
+              {t.action && <span className="w-fit rounded-lg bg-brand-blue-ink px-3 py-1 text-xs font-medium text-white">{t.action}</span>}
+            </div>
           </div>
         </section>
       ))}

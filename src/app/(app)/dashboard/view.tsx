@@ -46,13 +46,13 @@ export function DashboardView({ ctx }: { ctx: UserContext }) {
           ))}
         </nav>
         {DEMO && (
-          <span className="rounded-full bg-brand-red-soft px-2.5 py-1 text-[11px] font-medium text-brand-red">Data contoh</span>
+          <span className="rounded-full bg-brand-red-soft px-2.5 py-1 text-2xs font-medium text-brand-red">Data contoh</span>
         )}
         <div className="ml-auto flex gap-2">
           {showFinance && (
             <span className="hidden items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium sm:flex" title="Segera">
               <Download className="size-4" /> Ekspor
-              <span className="rounded-md bg-brand-blue-soft px-1.5 py-0.5 text-[10px] text-brand-blue-fg">xlsx</span>
+              <span className="rounded-md bg-brand-blue-soft px-1.5 py-0.5 text-2xs text-brand-blue-fg">xlsx</span>
             </span>
           )}
           <span className="flex items-center gap-1.5 rounded-xl bg-brand-blue-ink px-4 py-2 text-sm font-medium text-white shadow-md shadow-brand-blue-ink/25" title="Tersedia setelah modul Servis">
