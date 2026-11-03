@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { PostgrestError } from "@supabase/supabase-js";
+import { dbError as toDbError, invalid, type ActionResult } from "@/lib/action-result";
 import { can, getUserContext } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -24,17 +24,9 @@ import {
   type StatusInput,
 } from "@/lib/validation/employee";
 
-export type ActionResult<T = undefined> = { ok: true; data: T } | { ok: false; error: string };
+export type { ActionResult };
 
-// Pesan dari fungsi database sudah berbahasa Indonesia (raise exception); error lain disamarkan.
-const KNOWN_DB_CODES = new Set(["42501", "22023", "23514", "23505", "P0001", "P0002"]);
-function dbError(error: PostgrestError): { ok: false; error: string } {
-  if (KNOWN_DB_CODES.has(error.code)) return { ok: false, error: error.message };
-  console.error("[karyawan] database error", error.code, error.message);
-  return { ok: false, error: "Terjadi kesalahan saat menyimpan. Coba lagi." };
-}
-
-const invalid = (issues: { message: string }[]) => ({ ok: false as const, error: issues[0].message });
+const dbError = (error: Parameters<typeof toDbError>[0]) => toDbError(error, "karyawan");
 
 function authError(code?: string) {
   if (code === "email_exists") return "Email sudah dipakai akun lain.";

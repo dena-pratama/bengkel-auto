@@ -4,6 +4,36 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.6.0] — 2026-11-03
+**Ringkasan:** Modul Master Data & Inventory (PRD §4): barang, jasa, paket servis, kategori/merek/satuan/lokasi, dan ledger stok dengan HPP rata-rata tertimbang.
+
+### Added
+- Migration `20261103000006_master_data.sql`: tabel `item_categories` (2 tingkat), `brands`, `units`, `locations` (Area › Rak › Bin), `items`, `item_units` (konversi), `item_part_numbers`, `vehicle_makes`/`vehicle_models`/`item_compatibilities`, `service_categories`, `services`, `packages`, `package_items`, `price_history` (trigger otomatis). RLS baca per cabang; tulis hanya lewat fungsi `save_item`, `save_service`, `save_package`, `save_item_category`, `save_brand`, `save_unit`, `save_location`, `save_service_category`, `set_master_active`. Kode otomatis BRG-00001, JS-001, PKT-001. `package_components()` mengalokasikan harga paket proporsional terhadap harga normal (sisa pembulatan ke komponen termahal). Data awal: 8 satuan, 6 kategori jasa, area "GDG Gudang Utama".
+- Migration `20261103000007_stock_ledger.sql`: `stock_movements` (append-only, 9 tipe mutasi), `stock_balances` (cache), `item_costs` (HPP). `app.post_stock_movement()` satu-satunya jalur tulis stok: kunci per barang, HPP rata-rata tertimbang pada mutasi masuk bernilai, keluar dinilai HPP rata-rata, tolak stok minus kecuali setting `allow_negative_stock` (pindah lokasi tetap tidak boleh minus). `post_opening_stock` (saldo awal, Owner saja), `transfer_stock` (pindah lokasi berpasangan). View `v_stock_on_hand`, `v_low_stock` (security_invoker).
+- **HPP rahasia** (PRD §10.2): `item_costs` hanya terbaca dengan izin laporan keuangan; kolom `stock_movements.unit_cost` tidak diberikan ke pengguna.
+- Migration `20261103000008_price_change_guard.sql`: perubahan harga data yang sudah ada selalu butuh izin `price_change` (sebelumnya perubahan ke 0 lolos).
+- Tes DB `supabase/tests/inventory_test.sql` (44 tes).
+- Halaman `/inventory` (Barang: cari nama/SKU/part number/merek, filter Aktif/Stok menipis/Nonaktif, TanStack Table v9; kartu di HP), `/inventory/barang/baru`, `/inventory/barang/[id]` (form + konversi satuan + part number, stok per lokasi, saldo awal, pindah lokasi, 50 mutasi terakhir, riwayat harga, HPP bila berizin), `/inventory/jasa` (+ baru/[id]: durasi, komisi persen/nominal, garansi, PPN), `/inventory/paket` (+ baru/[id]: komponen barang/jasa, harga normal vs paket, alokasi), `/inventory/master` (lokasi, kategori, satuan, merek, kategori jasa: tambah/ubah di baris/nonaktifkan).
+- Komponen bersama `src/components/page-kit.tsx`, `src/lib/action-result.ts`, `src/lib/format.ts` (Rupiah/angka/tanggal WIB); modul Karyawan ikut memakainya.
+
+### Changed
+- Menu sidebar **Barang & Jasa** aktif.
+- `scripts/test-db.mjs`: URL database dikirim lewat env container, tidak lagi tercetak (dengan password) saat tes gagal.
+
+### Catatan
+- Menyusul (0.6.x): QR label & scan, foto barang, UI kompatibilitas kendaraan. Stok bertambah lewat modul Pembelian (berikutnya); saldo awal untuk persiapan go-live.
+- Satuan HPP disimpan `numeric(18,2)` sesuai aturan uang proyek.
+
+### Verifikasi
+- `npm run test:db`: 44 tes inventory + 37 karyawan + 33 fondasi lulus. `tsc`, `eslint`, `next build` lolos.
+- Bentuk query PostgREST semua halaman inventory dicek terhadap DB lokal.
+- **Belum diverifikasi di browser dengan login.**
+
+### File terdampak
+`supabase/migrations/2026110300000{6,7,8}_*.sql`, `supabase/tests/inventory_test.sql`, `scripts/test-db.mjs`, `src/app/(app)/inventory/**`, `src/lib/inventory.ts`, `src/lib/validation/inventory.ts`, `src/lib/format.ts`, `src/lib/action-result.ts`, `src/components/page-kit.tsx`, `src/app/(app)/karyawan/_components/ui.tsx`, `src/app/(app)/karyawan/actions.ts`, `src/lib/navigation.ts`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.5.1] — 2026-11-03
 **Ringkasan:** Perbaiki peringatan Base UI pada tombol yang dirender sebagai link.
 

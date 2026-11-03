@@ -1,6 +1,6 @@
 # Daftar Fitur — Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.5.1**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.6.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -22,12 +22,14 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.5.1**
 ## MVP
 | Modul | Fitur | Status | Versi |
 |---|---|---|---|
-| Master Data & Inventory | Barang (SKU, kategori, merek, part number, kompatibilitas) | ⬜ | – |
-| | Lokasi Area > Rak > Bin, stok per lokasi | ⬜ | – |
+| Master Data & Inventory | Barang (SKU otomatis, kategori 2 tingkat, merek, part number OEM/alternatif, garansi, PPN) | ✅ | 0.6.0 |
+| | Kompatibilitas kendaraan | 🟨 | 0.6.0 (DB) |
+| | Lokasi Area > Rak > Bin, stok per lokasi, pindah lokasi | ✅ | 0.6.0 |
 | | QR label (cetak thermal/A4) & scan kamera/USB | ⬜ | – |
-| | Konversi satuan | ⬜ | – |
-| | Master jasa & paket servis (alokasi harga proporsional) | ⬜ | – |
-| | Mutasi stok (ledger) + peringatan stok minimum | ⬜ | – |
+| | Konversi satuan | ✅ | 0.6.0 |
+| | Foto barang | ⬜ | – |
+| | Master jasa & paket servis (alokasi harga proporsional) | ✅ | 0.6.0 |
+| | Mutasi stok (ledger) + HPP rata-rata tertimbang + saldo awal + peringatan stok minimum | ✅ | 0.6.0 |
 | Pembelian | Supplier, PO, penerimaan barang, HPP rata-rata | ⬜ | – |
 | | Retur ke supplier, hutang usaha & pembayaran | ⬜ | – |
 | Pelanggan | Pelanggan & kendaraan relasional, riwayat kepemilikan | ⬜ | – |
