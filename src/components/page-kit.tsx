@@ -5,8 +5,9 @@ import { cn } from "@/lib/utils";
 /** Komponen halaman modul yang dipakai bersama (kartu, header, tab bagian, tanpa akses). */
 
 export const panel = "min-w-0 rounded-md bg-card p-5 shadow-[0_1px_2px_rgb(23_36_51/0.04),0_8px_24px_-12px_rgb(23_36_51/0.08)]";
+// text-base (≥16px) di HP: Safari iOS otomatis zoom pada input bertekstur < 16px, halaman jadi bisa digeser
 export const inputClass =
-  "h-10 w-full rounded-sm border border-input bg-card px-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 aria-invalid:border-destructive disabled:opacity-60";
+  "h-10 w-full min-w-0 rounded-sm border border-input bg-card px-3 text-base outline-none sm:text-sm transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 aria-invalid:border-destructive disabled:opacity-60";
 
 export function PageHeader({
   title,

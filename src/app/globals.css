@@ -179,4 +179,10 @@
   html {
     @apply font-sans;
   }
+  /* Pengaman: elemen yang sedikit melebar tidak membuat seluruh halaman bisa digeser ke samping.
+     clip (bukan hidden) agar header sticky tetap berfungsi. */
+  html,
+  body {
+    overflow-x: clip;
+  }
 }

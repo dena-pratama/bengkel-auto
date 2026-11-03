@@ -4,6 +4,24 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.7.3] 2026-11-03
+**Ringkasan:** Perbaiki halaman HP yang bisa digeser ke samping.
+
+### Fixed
+- Kotak isian, select, dan pencarian (`inputClass`) kini bertekstur 17px di HP (15px mulai 640px). Sebelumnya 15px membuat Safari iOS otomatis zoom saat kotak diketuk, sehingga halaman terasa harus digeser ke kanan.
+- Pengaman `overflow-x: clip` pada `html`/`body`: elemen yang sedikit melebar tidak lagi membuat seluruh halaman bisa digeser. Memakai `clip` agar top bar sticky tetap berfungsi.
+- `inputClass` ditambah `min-w-0` agar select dengan pilihan panjang bisa menyusut di layar sempit.
+
+### Verifikasi
+- Browser `/dev/preview` pada lebar 320, 360, 375px: lebar halaman = lebar layar, tidak ada elemen melebar; top bar tetap menempel saat digulir. Halaman login 320px aman.
+- Halaman yang butuh login (Karyawan, Barang, Pembelian) diperiksa lewat kode; belum dilihat langsung dengan login.
+- `tsc`, `eslint`, `npm run check:dashes` lolos.
+
+### File terdampak
+`src/components/page-kit.tsx`, `src/app/globals.css`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.7.2] 2026-11-03
 **Ringkasan:** Sidebar berujung bulat penuh dengan logo AutoMobi bertulisan; kartu login/setup bersudut kecil dengan bayangan tipis.
 
