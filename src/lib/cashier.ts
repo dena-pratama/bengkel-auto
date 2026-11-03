@@ -35,6 +35,7 @@ export type SaleRow = {
   posted_at: string | null;
   created_at: string;
   paid: number;
+  returned_total: number;
   outstanding: number;
   days_overdue: number | null;
   age_bucket: string | null;
@@ -48,6 +49,7 @@ const toSale = (r: SaleRow): SaleRow => ({
   ppn_amount: num(r.ppn_amount),
   total: num(r.total),
   paid: num(r.paid),
+  returned_total: num(r.returned_total),
   outstanding: num(r.outstanding),
 });
 
@@ -66,10 +68,12 @@ export type SaleLine = {
   line_type: "service" | "part";
   description: string;
   qty: number;
+  returned_qty: number;
   unit_price: number;
   discount_amount: number;
   line_total: number;
   item_id: string | null;
+  location_id: string | null;
 };
 
 export type PaymentRow = {
@@ -87,14 +91,15 @@ export type PaymentRow = {
 
 export async function getSale(id: string) {
   const s = await createClient();
-  const [sale, items, payments] = await Promise.all([
+  const [sale, items, payments, returns] = await Promise.all([
     s.from("v_sales").select("*").eq("id", id).maybeSingle(),
-    s.from("sale_items").select("id, line_type, description, qty, unit_price, discount_amount, line_total, item_id").eq("sale_id", id).order("sort_order"),
+    s.from("sale_items").select("id, line_type, description, qty, returned_qty, unit_price, discount_amount, line_total, item_id, location_id").eq("sale_id", id).order("sort_order"),
     s
       .from("payments")
       .select("id, kind, method, amount, reference, status, void_reason, shift_id, created_at, cash_bank_accounts(name)")
       .eq("sale_id", id)
       .order("created_at"),
+    s.from("v_sale_returns").select("*").eq("sale_id", id).order("created_at", { ascending: false }),
   ]);
   const row = must<SaleRow | null>(sale, "penjualan");
   if (!row) return null;
@@ -104,11 +109,13 @@ export async function getSale(id: string) {
     lines: must<SaleLine[]>(items, "baris penjualan").map((l) => ({
       ...l,
       qty: num(l.qty),
+      returned_qty: num(l.returned_qty),
       unit_price: num(l.unit_price),
       discount_amount: num(l.discount_amount),
       line_total: num(l.line_total),
     })),
     payments: must<PayRow[]>(payments, "pembayaran").map(({ cash_bank_accounts, ...p }) => ({ ...p, amount: num(p.amount), account: cash_bank_accounts?.name ?? null })),
+    returns: must<SaleReturnRow[]>(returns, "retur penjualan").map(toSaleReturn),
   };
 }
 export type SaleDetail = NonNullable<Awaited<ReturnType<typeof getSale>>>;
@@ -277,4 +284,128 @@ export async function cashierSettings() {
   );
   const m = new Map(rows.map((r) => [r.key, r.value]));
   return { ppnEnabled: m.get("ppn_enabled") === true, pricesIncludePpn: m.get("prices_include_ppn") === true };
+}
+
+export type SaleReturnRow = {
+  id: string;
+  branch_id: string;
+  return_no: string;
+  sale_id: string;
+  sale_no: string | null;
+  sale_source: "pos" | "work_order";
+  wo_no: string | null;
+  plate_no: string | null;
+  customer_id: string | null;
+  customer_name: string | null;
+  customer_phone: string | null;
+  return_date: string;
+  settlement: "debt" | "refund";
+  payment_method: PayMethod | null;
+  cash_bank_account_id: string | null;
+  cash_bank_account_name: string | null;
+  shift_id: string | null;
+  shift_no: string | null;
+  amount: number;
+  ppn_amount: number;
+  total: number;
+  cogs_total: number;
+  reason: string;
+  status: "posted" | "void";
+  void_reason: string | null;
+  created_at: string;
+  created_by_name: string | null;
+  item_count: number;
+};
+
+export const toSaleReturn = (r: SaleReturnRow): SaleReturnRow => ({
+  ...r,
+  amount: num(r.amount),
+  ppn_amount: num(r.ppn_amount),
+  total: num(r.total),
+  cogs_total: num(r.cogs_total),
+  item_count: num(r.item_count),
+});
+
+export async function listSaleReturns(): Promise<SaleReturnRow[]> {
+  const s = await createClient();
+  return must<SaleReturnRow[]>(
+    await s.from("v_sale_returns").select("*").order("created_at", { ascending: false }).limit(200),
+    "retur penjualan",
+  ).map(toSaleReturn);
+}
+
+export type SaleReturnItemDetail = {
+  id: string;
+  sale_item_id: string;
+  item_id: string;
+  item_name: string;
+  item_sku: string;
+  base_unit: string;
+  condition: "good" | "damaged";
+  location_id: string;
+  location_code: string;
+  location_name: string;
+  qty: number;
+  unit_price: number;
+  line_total: number;
+  unit_cost: number;
+  cost_total: number;
+};
+
+export async function getSaleReturn(id: string) {
+  const s = await createClient();
+  const [ret, items] = await Promise.all([
+    s.from("v_sale_returns").select("*").eq("id", id).maybeSingle(),
+    s
+      .from("sale_return_items")
+      .select("id, sale_item_id, item_id, condition, location_id, qty, unit_price, line_total, unit_cost, cost_total, items(sku, name, units:base_unit_id(code)), locations(code, name)")
+      .eq("return_id", id),
+  ]);
+  const row = must<SaleReturnRow | null>(ret, "retur penjualan");
+  if (!row) return null;
+  type ItemRes = {
+    id: string;
+    sale_item_id: string;
+    item_id: string;
+    condition: "good" | "damaged";
+    location_id: string;
+    qty: number;
+    unit_price: number;
+    line_total: number;
+    unit_cost: number;
+    cost_total: number;
+    items: { sku: string; name: string; units: { code: string } | null } | null;
+    locations: { code: string; name: string } | null;
+  };
+  return {
+    ...toSaleReturn(row),
+    items: must<ItemRes[]>(items, "baris retur").map((i) => ({
+      id: i.id,
+      sale_item_id: i.sale_item_id,
+      item_id: i.item_id,
+      item_name: i.items?.name ?? "Barang",
+      item_sku: i.items?.sku ?? "-",
+      base_unit: i.items?.units?.code ?? "pcs",
+      condition: i.condition,
+      location_id: i.location_id,
+      location_code: i.locations?.code ?? "-",
+      location_name: i.locations?.name ?? "-",
+      qty: num(i.qty),
+      unit_price: num(i.unit_price),
+      line_total: num(i.line_total),
+      unit_cost: num(i.unit_cost),
+      cost_total: num(i.cost_total),
+    })),
+  };
+}
+export type SaleReturnDetail = NonNullable<Awaited<ReturnType<typeof getSaleReturn>>>;
+
+export type ReturnLocation = { id: string; code: string; name: string; type: string };
+
+export async function listReturnLocations(): Promise<ReturnLocation[]> {
+  const s = await createClient();
+  return must<ReturnLocation[]>(
+    await s.from("locations").select("id, code, name, type").in("type", ["rack", "bin"]).eq("is_active", true).order("code"),
+    "lokasi rak",
+  );
 }

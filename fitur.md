@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.11.7**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.12.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -55,7 +55,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.11.7**
 | | Nota/invoice: cetak lewat browser, kirim WA klik-ke-chat, DPP/PPN terpisah saat PPN aktif | 🟨 | 0.11.0 (thermal 58/80 mm khusus & PDF menyusul) |
 | | Buka-tutup kas shift (modal awal, kas keluar kecil, hitung per pecahan, selisih + persetujuan, rekap non-tunai) | ✅ | 0.11.0 |
 | | Piutang: rekap per pelanggan, umur 0-30/31-60/> 60, pelunasan sebagian | ✅ | 0.11.0 |
-| | Retur penjualan | ⬜ | - |
+| | Retur penjualan | ✅ | 0.12.0 |
 | Stok Opname | Menyeluruh, parsial, cycle count, blind count, posting | ⬜ | - |
 | Karyawan | Data karyawan, role ganda, status + riwayat, akun login, PIN, role dinamis & matriks izin, RLS | ✅ | 0.5.0 |
 | | Komisi mekanik (aturan per jasa, porsi, diakui saat invoice lunas) | 🟨 | 0.11.0 (layar ringkasan komisi & pembayaran lewat penggajian menyusul) |

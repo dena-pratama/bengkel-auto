@@ -12,12 +12,14 @@ import {
   openShiftSchema,
   paymentsSchema,
   reasonSchema,
+  saleReturnSchema,
   saleSchema,
   type CashOutInput,
   type CloseShiftInput,
   type DepositInput,
   type PaymentsInput,
   type SaleInput,
+  type SaleReturnInput,
 } from "@/lib/validation/cashier";
 
 const dbError = (error: Parameters<typeof toDbError>[0]) => toDbError(error, "kasir");
@@ -192,4 +194,29 @@ export async function voidSaleAction(id: string, reason: string, pin: string): P
   if (error) return dbError(error);
   refresh();
   return done();
+}
+
+export async function postSaleReturnAction(
+  saleId: string,
+  input: SaleReturnInput,
+): Promise<ActionResult<{ id: string }>> {
+  if (!isUuid(saleId)) return bad;
+  const parsed = saleReturnSchema.safeParse(input);
+  if (!parsed.success) return invalid(parsed.error.issues);
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("post_sale_return", {
+    p_sale_id: saleId,
+    p_data: {
+      return_date: parsed.data.return_date,
+      settlement: parsed.data.settlement,
+      payment_method: parsed.data.payment_method || null,
+      cash_bank_account_id: parsed.data.cash_bank_account_id || null,
+      reason: parsed.data.reason,
+    },
+    p_items: parsed.data.items,
+    p_pin: parsed.data.pin || null,
+  });
+  if (error) return dbError(error);
+  refresh();
+  return done({ id: data as string });
 }

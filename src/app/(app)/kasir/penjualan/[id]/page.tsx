@@ -3,10 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
-import { getSale, type SaleDetail } from "@/lib/cashier";
-import { formatDate, formatDateTime, formatQty, formatRupiah } from "@/lib/format";
-import { METHOD_LABEL } from "@/lib/validation/cashier";
+import { getMyOpenShift, getSale, listReturnLocations, type SaleDetail } from "@/lib/cashier";
+import { formatDate, formatDateTime, formatQty, formatRupiah, todayWib } from "@/lib/format";
+import { listCashBankAccounts } from "@/lib/purchasing";
+import { METHOD_LABEL, SETTLEMENT_LABEL } from "@/lib/validation/cashier";
 import { cn } from "@/lib/utils";
+import { ReturnDialog } from "../../_components/return-dialog";
 import { PayDialog, PrintAndShare, VoidPaymentButton, VoidSaleControl } from "../../_components/sale-actions";
 import { CashierNav, PaidBadge, SaleStatusBadge, UUID } from "../../_components/ui";
 
@@ -43,12 +45,19 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
   if (!UUID.test(id)) notFound();
   const ctx = await requireUser();
   if (!can(ctx, "sales", "view", false) && !can(ctx, "receivables", "view", false)) return <NoAccess />;
-  const s = await getSale(id);
+  const [s, locations, cashAccounts, openShift] = await Promise.all([
+    getSale(id),
+    listReturnLocations(),
+    listCashBankAccounts(),
+    ctx.employee?.id ? getMyOpenShift(ctx.employee.id) : null,
+  ]);
   if (!s) notFound();
   const canPay = (can(ctx, "sales", "create", false) || can(ctx, "receivables", "create", false)) && s.status === "posted" && s.outstanding > 0;
+  const canReturn = can(ctx, "sales", "create", false) && s.status === "posted" && s.lines.some((l) => l.line_type === "part" && l.qty - l.returned_qty > 0);
   const canVoid = can(ctx, "transaction_void", "create", false) || can(ctx, "transaction_void", "approve", false);
   const activePayments = s.payments.filter((p) => p.status === "posted");
   const dpp = s.total - s.ppn_amount;
+  const today = todayWib();
 
   return (
     <>
@@ -71,11 +80,22 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
           )}
         </div>
         {s.void_reason && <p className="text-sm text-brand-red">Alasan batal: {s.void_reason}</p>}
-        {canPay && (
-          <div className="print:hidden">
-            <PayDialog saleId={s.id} saleNo={s.sale_no ?? ""} outstanding={s.outstanding} />
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-3 print:hidden">
+          {canPay && <PayDialog saleId={s.id} saleNo={s.sale_no ?? ""} outstanding={s.outstanding} />}
+          {canReturn && (
+            <ReturnDialog
+              saleId={s.id}
+              saleNo={s.sale_no ?? ""}
+              items={s.lines}
+              locations={locations}
+              cashAccounts={cashAccounts}
+              shiftOpen={Boolean(openShift)}
+              outstanding={s.outstanding}
+              customerName={s.customer_name}
+              today={today}
+            />
+          )}
+        </div>
       </section>
 
       <section className={cn(panel, "grid gap-3")}>
@@ -84,7 +104,14 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
           {s.lines.map((l) => (
             <li key={l.id} className="flex items-center gap-3 py-2.5">
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium">{l.description}</p>
+                <p className="text-sm font-medium">
+                  {l.description}
+                  {l.returned_qty > 0 && (
+                    <span className="ml-2 text-xs font-semibold text-brand-red">
+                      (Diretur {formatQty(l.returned_qty)})
+                    </span>
+                  )}
+                </p>
                 <p className="text-xs text-muted-foreground tabular-nums">
                   {formatQty(l.qty)} × {formatRupiah(l.unit_price)}
                   {l.discount_amount > 0 && ` · diskon ${formatRupiah(l.discount_amount)}`}
@@ -115,6 +142,12 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
           <dd className="text-right text-xl font-bold">{formatRupiah(s.total)}</dd>
           <dt className="text-muted-foreground">Dibayar</dt>
           <dd className="text-right">{formatRupiah(s.paid)}</dd>
+          {s.returned_total > 0 && (
+            <>
+              <dt className="font-medium text-brand-red">Total retur</dt>
+              <dd className="text-right font-semibold text-brand-red">-{formatRupiah(s.returned_total)}</dd>
+            </>
+          )}
           {s.status === "posted" && s.outstanding > 0 && (
             <>
               <dt className="font-medium text-brand-red">Sisa tagihan</dt>
@@ -148,6 +181,35 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
                     <VoidPaymentButton id={p.id} />
                   </span>
                 )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {s.returns.length > 0 && (
+        <section className={cn(panel, "grid gap-2")}>
+          <h2 className="text-lg font-semibold">Retur Penjualan</h2>
+          <ul className="grid divide-y divide-border">
+            {s.returns.map((r) => (
+              <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 py-2.5">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`/kasir/retur/${r.id}`}
+                      className="font-mono text-sm font-bold text-brand-red hover:underline"
+                    >
+                      {r.return_no}
+                    </Link>
+                    <span className="rounded-sm bg-brand-sand-soft px-2 py-0.5 text-xs font-medium">
+                      {SETTLEMENT_LABEL[r.settlement]}
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {formatDate(r.return_date)} · Alasan: {r.reason}
+                  </p>
+                </div>
+                <span className="font-semibold tabular-nums text-brand-red">-{formatRupiah(r.total)}</span>
               </li>
             ))}
           </ul>

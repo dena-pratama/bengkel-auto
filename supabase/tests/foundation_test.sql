@@ -73,8 +73,8 @@ do $$ begin
   raise notice 'OK   kasir: tidak bisa mengubah setting';
 end $$;
 
-select pg_temp.check(app.next_document_number('INV') = 'INV-' || to_char(app.today_wib(), 'YYMM') || '-0001', 'penomoran: INV pertama -0001');
-select pg_temp.check(app.next_document_number('INV') = 'INV-' || to_char(app.today_wib(), 'YYMM') || '-0002', 'penomoran: INV kedua -0002');
+select pg_temp.check(app.next_document_number('DOC', date '2099-01-01') = 'DOC-9901-0001', 'penomoran: pertama -0001');
+select pg_temp.check(app.next_document_number('DOC', date '2099-01-01') = 'DOC-9901-0002', 'penomoran: kedua -0002');
 select pg_temp.check(app.next_document_number('WO', date '2026-12-15') = 'WO-2612-0001', 'penomoran: WO per periode bulan');
 
 -- ---------------------------------------------------------------------------

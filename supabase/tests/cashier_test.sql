@@ -125,7 +125,7 @@ select public.record_deposit(pg_temp.id('wo'), '{"method": "cash", "amount": 500
 reset role;
 select pg_temp.check(pg_temp.bal('customer_deposit') = -50000, 'DP: jurnal Cr Uang Muka Pelanggan 50.000');
 select pg_temp.login('u_cashier');
-select pg_temp.check(public.preview_work_order_invoice(pg_temp.id('wo')) = 170000 and not exists (select 1 from public.sales), 'pratinjau invoice: total tepat dan tidak menyimpan apa pun');
+select pg_temp.check(public.preview_work_order_invoice(pg_temp.id('wo')) = 170000 and not exists (select 1 from public.sales where work_order_id = pg_temp.id('wo')), 'pratinjau invoice: total tepat dan tidak menyimpan apa pun');
 select pg_temp.fails($q$ select public.post_work_order_invoice(pg_temp.id('wo'), '[{"method": "cash", "amount": 999999}]') $q$,
   'melebihi sisa tagihan', 'invoice: bayar melebihi tagihan ditolak');
 insert into t_ids select 'inv', public.post_work_order_invoice(pg_temp.id('wo'),

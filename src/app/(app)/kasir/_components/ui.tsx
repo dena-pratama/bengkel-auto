@@ -1,4 +1,4 @@
-import { Receipt, Timer, Wallet, WalletCards } from "lucide-react";
+import { Receipt, Timer, Undo2, Wallet, WalletCards } from "lucide-react";
 import { SectionNav } from "@/components/page-kit";
 import type { SaleStatus } from "@/lib/cashier";
 import { cn } from "@/lib/utils";
@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 const TABS = [
   { key: "cashier", href: "/kasir", label: "Kasir", icon: WalletCards },
   { key: "sales", href: "/kasir/penjualan", label: "Penjualan & invoice", icon: Receipt },
+  { key: "returns", href: "/kasir/retur", label: "Retur penjualan", icon: Undo2 },
   { key: "ar", href: "/kasir/piutang", label: "Piutang", icon: Wallet },
   { key: "shifts", href: "/kasir/shift", label: "Shift kas", icon: Timer },
 ] as const;

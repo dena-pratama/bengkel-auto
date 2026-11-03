@@ -66,3 +66,36 @@ export const closeShiftSchema = z.object({
 export type CloseShiftInput = z.input<typeof closeShiftSchema>;
 
 export const reasonSchema = z.string().trim().min(3, "Alasan wajib diisi").max(300);
+
+export const SETTLEMENTS = ["debt", "refund"] as const;
+export type ReturnSettlement = (typeof SETTLEMENTS)[number];
+export const SETTLEMENT_LABEL: Record<ReturnSettlement, string> = {
+  debt: "Potong piutang",
+  refund: "Uang kembali",
+};
+
+export const CONDITIONS = ["good", "damaged"] as const;
+export type ReturnCondition = (typeof CONDITIONS)[number];
+export const CONDITION_LABEL: Record<ReturnCondition, string> = {
+  good: "Kondisi baik (masuk rak)",
+  damaged: "Rusak / cacat (karantina)",
+};
+
+export const saleReturnItemSchema = z.object({
+  sale_item_id: z.uuid("Baris invoice tidak valid"),
+  qty: positive("Jumlah retur"),
+  condition: z.enum(CONDITIONS, { error: "Pilih kondisi barang" }).default("good"),
+  location_id: z.string().optional(),
+});
+export type SaleReturnItemInput = z.input<typeof saleReturnItemSchema>;
+
+export const saleReturnSchema = z.object({
+  return_date: z.string().min(1, "Tanggal retur wajib diisi"),
+  settlement: z.enum(SETTLEMENTS, { error: "Pilih penyelesaian retur" }),
+  payment_method: z.enum(METHODS).optional(),
+  cash_bank_account_id: z.string().optional(),
+  reason: z.string().trim().min(3, "Alasan retur minimal 3 karakter").max(300),
+  pin: text(6),
+  items: z.array(saleReturnItemSchema).min(1, "Pilih minimal satu barang yang diretur"),
+});
+export type SaleReturnInput = z.input<typeof saleReturnSchema>;

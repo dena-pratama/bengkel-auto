@@ -4,6 +4,38 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.12.0] 2026-11-03
+**Ringkasan:** Modul Retur Penjualan (PRD §8.5, §11.3): uang kembali atau potong piutang, barang rusak ke rak karantina, jurnal pembalik otomatis, dan integrasi kasir.
+
+### Added
+- Migrasi `supabase/migrations/20261103000015_sales_returns.sql`: tabel `public.sale_returns` dan `public.sale_return_items` lengkap dengan audit trigger, trigger proteksi hapus `trg_no_delete`, kolom `returned_qty` pada `sale_items`, setting `sales_return_max_days` (default 7 hari), serta inisialisasi rak karantina `KRT-01` per cabang.
+- Fungsi PostgreSQL `public.post_sale_return`: menangani pengembalian stok (barang bagus ke rak asal atau barang rusak ke rak karantina) via `app.post_stock_movement`, jurnal pembalik otomatis (Dr Retur Penjualan, Dr PPN Keluaran jika kena pajak, Cr Piutang/Kas, Dr Persediaan Sparepart, Cr HPP), pengembalian fisik uang kas kasir pada shift aktif (`cash_refund`), dan pemotongan sisa tagihan piutang pada penjualan tempo.
+- View pelaporan `v_sale_returns`, serta pembaruan `v_sales` (kolom `returned_total` dan pengurangan sisa piutang `outstanding`) dan `v_cash_shifts` (kolom `cash_refund` pengembalian kas).
+- Rangkaian pengujian database `supabase/tests/sales_returns_test.sql` mencakup 5 skenario lengkap (POS tunai + uang kembali, validasi batas retur dan alasan, barang rusak ke rak karantina, penjualan kredit + potong piutang, dan proteksi imutabilitas tabel).
+- Skema validasi Zod di `src/lib/validation/cashier.ts` dan fungsi query backend di `src/lib/cashier.ts` (`listSaleReturns`, `getSaleReturn`, `listReturnLocations`).
+- Server action `postSaleReturnAction` di `src/app/(app)/kasir/actions.ts`.
+- Komponen antarmuka kasir: dialog `ReturnDialog`, daftar retur `ReturnsList`, dan tab navigasi retur di `CashierNav`.
+- Halaman web `/kasir/retur` (daftar retur penjualan), `/kasir/retur/[id]` (detail retur dengan status, item, rak tujuan, dan nomor jurnal pembalik), serta integrasi tombol retur dan riwayat retur pada halaman detail invoice `/kasir/penjualan/[id]`.
+
+### Changed
+- `v_sales`: kolom `returned_total` ditambahkan dan `outstanding` otomatis terpotong saat ada retur piutang.
+- `v_cash_shifts`: menghitung akumulasi `cash_refund` sehingga kas kasir yang seharusnya berkurang akurat saat ada refund tunai.
+- `src/app/(app)/kasir/_components/ui.tsx`: menambahkan navigasi "Retur penjualan" ke `CashierNav`.
+
+### Fixed
+- Isolasi pengecekan penjualan di `supabase/tests/cashier_test.sql` agar tidak terganggu data uji yang sudah ada.
+- Penomoran sekuens dokumen di `supabase/tests/foundation_test.sql` agar tidak bentrok dengan invoice uji yang sudah dibuat di lokal.
+
+### Verifikasi
+- Pengujian database lolos 100% untuk semua 8 file pengujian (`npm run test:db`).
+- Bebas tanda pisah panjang: `npm run check:dashes` (209 file lolos).
+- Typecheck (`npx tsc --noEmit`), linting (`npm run lint`), dan kompilasi Next.js (`npm run build`) semuanya sukses tanpa peringatan atau error.
+
+### File terdampak
+`VERSION`, `package.json`, `fitur.md`, `devlog.md`, `supabase/migrations/20261103000015_sales_returns.sql`, `supabase/tests/sales_returns_test.sql`, `supabase/tests/cashier_test.sql`, `supabase/tests/foundation_test.sql`, `src/lib/validation/cashier.ts`, `src/lib/cashier.ts`, `src/app/(app)/kasir/actions.ts`, `src/app/(app)/kasir/_components/ui.tsx`, `src/app/(app)/kasir/_components/return-dialog.tsx`, `src/app/(app)/kasir/_components/returns-list.tsx`, `src/app/(app)/kasir/retur/page.tsx`, `src/app/(app)/kasir/retur/[id]/page.tsx`, `src/app/(app)/kasir/penjualan/[id]/page.tsx`
+
+---
+
 ## [0.11.7] 2026-11-03
 **Ringkasan:** Top bar tidak lagi "nempel" ke tepi atas panel pada halaman yang kontennya panjang.
 
