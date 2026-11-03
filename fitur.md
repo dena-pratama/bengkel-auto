@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.11.5**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.11.6**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -20,6 +20,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.11.5**
 | Tema moodboard default: bingkai gelap membulat, rail ikon, kartu putih membulat, warna merah & biru logo | ✅ | 0.11.2 |
 | Kolom isian, tombol, dan pop-up form seragam & selaras tema | ✅ | 0.11.3 |
 | Notifikasi (toast) di tengah layar, biru/merah logo, singkat | ✅ | 0.11.4 |
+| Bingkai, sidebar, dan top bar diam saat scroll (hanya panel konten yang bergulir) | ✅ | 0.11.6 |
 | Dark mode + toggle; menu profil (profil, pengaturan, keluar) di top bar | ✅ | 0.4.0 |
 | Skala huruf lebih besar (min. 12px) + angka metrik menonjol | ✅ | 0.4.1 |
 | Logo AutoMobi transparan (sidebar, login, favicon; varian mode gelap) | ✅ | 0.4.5 |

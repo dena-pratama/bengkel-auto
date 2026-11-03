@@ -4,6 +4,23 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.11.6] 2026-11-03
+**Ringkasan:** Bingkai, sidebar, dan top bar diam di tempat saat halaman di-scroll; hanya isi panel yang bergulir.
+
+### Changed
+- Tablet ke atas: kerangka setinggi layar (`h-dvh`), bingkai gelap dan sidebar tidak ikut bergeser, panel konten bergulir sendiri (scrollbar tipis) dengan top bar menempel di atas panel. Sebelumnya seluruh halaman ikut ter-scroll sehingga bingkai terlihat ikut turun.
+- HP tetap seperti sebelumnya (halaman bergulir normal, menu geser, header menempel).
+- Cetak (invoice, laporan shift) tetap memuat seluruh isi karena tinggi dan overflow dilepas saat mencetak.
+
+### Verifikasi
+- Di browser: panel di-scroll 600px, posisi sidebar dan header tidak berubah, `window` tidak ter-scroll. Lebar HP: halaman bergulir normal tanpa geser samping.
+- `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos.
+
+### File terdampak
+`src/components/app-nav.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.11.5] 2026-11-03
 **Ringkasan:** Ikon yang tampil seperti tanda pisah panjang diganti.
 

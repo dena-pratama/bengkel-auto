@@ -138,8 +138,8 @@ export function SidebarFrame({
 
   return (
     <SidebarContext value={{ mobileOpen, toggle, closeMobile }}>
-      <div className="flex min-h-full flex-1 flex-col md:p-4 lg:p-5">
-        <div className="relative flex flex-1 md:rounded-[40px] md:bg-brand-rail md:p-3 md:shadow-2xl md:shadow-brand-blue-deep/30 md:ring-1 md:ring-white/10">
+      <div className="flex min-h-full flex-1 flex-col md:h-dvh md:flex-none md:overflow-hidden md:p-4 lg:p-5 print:h-auto! print:overflow-visible!">
+        <div className="relative flex flex-1 md:min-h-0 md:rounded-[40px] md:bg-brand-rail md:p-3 md:shadow-2xl md:shadow-brand-blue-deep/30 md:ring-1 md:ring-white/10">
         {/* Latar gelap (tablet & HP) */}
         <div
           aria-hidden
@@ -157,7 +157,7 @@ export function SidebarFrame({
           className={cn(
             "group/sb z-40 flex flex-col text-white",
             "max-md:fixed max-md:top-3 max-md:bottom-3 max-md:left-3 max-md:rounded-[36px] max-md:bg-brand-rail max-md:shadow-2xl max-md:shadow-brand-blue-ink/30",
-            "md:sticky md:top-7 md:h-[calc(100dvh-3.5rem)] md:shrink-0 md:self-start lg:top-8 lg:h-[calc(100dvh-4rem)]",
+            "md:h-full md:shrink-0",
             ready && "transition-[width,translate,opacity] duration-300 ease-out",
             mobileOpen ? "max-md:w-[264px]" : "max-md:w-[72px] max-md:pointer-events-none max-md:-translate-x-[calc(100%+1.5rem)] max-md:opacity-0",
             open ? "md:w-[264px]" : "md:w-[72px]",
@@ -166,7 +166,7 @@ export function SidebarFrame({
           {sidebar}
         </aside>
 
-        <div className="flex min-w-0 flex-1 flex-col bg-background md:rounded-[30px] print:rounded-none">
+        <div className="flex min-w-0 flex-1 flex-col bg-background md:min-h-0 md:overflow-y-auto md:overscroll-contain md:rounded-[30px] md:[scrollbar-color:var(--border)_transparent] md:[scrollbar-width:thin] print:overflow-visible! print:rounded-none">
           <header className="sticky top-0 z-20 flex h-16 items-center gap-2 bg-background/85 px-3 backdrop-blur md:rounded-t-[30px] sm:px-6">
             {topbar}
           </header>
