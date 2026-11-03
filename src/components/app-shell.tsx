@@ -1,13 +1,12 @@
 import { Bell, LogOut, Search, Settings, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { IconNav, MobileNav } from "@/components/app-nav";
+import { SideNav, SidebarClose, SidebarFrame, SidebarToggle } from "@/components/app-nav";
 import { can, type UserContext } from "@/lib/auth";
 import { NAV_ITEMS } from "@/lib/navigation";
 import { logoutAction } from "@/app/(auth)/actions";
 
 /**
- * Kerangka halaman: pita biru dengan navigasi ikon (md ke atas) + top bar.
- * HP: pita disembunyikan, menu lewat sheet.
+ * Kerangka halaman: sidebar melayang (bisa tampil/sembunyi) + top bar.
  */
 export function AppShell({
   rail,
@@ -19,17 +18,9 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-full flex-1 bg-background">
-      <aside className="sticky top-0 hidden h-svh w-[88px] shrink-0 flex-col items-center gap-6 rounded-r-[36px] bg-brand-blue-ink py-5 md:flex">
-        {rail}
-      </aside>
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b border-border/70 bg-background/85 px-3 backdrop-blur sm:px-6">
-          {topbar}
-        </header>
-        <main className="min-w-0 flex-1 px-3 pt-4 pb-8 sm:px-6">{children}</main>
-      </div>
-    </div>
+    <SidebarFrame sidebar={rail} topbar={topbar}>
+      {children}
+    </SidebarFrame>
   );
 }
 
@@ -48,40 +39,58 @@ export function initials(name: string) {
 export function RailView({ ctx }: { ctx: UserContext }) {
   return (
     <>
-      <span className="flex size-11 items-center justify-center rounded-xl bg-brand-red text-white shadow-lg shadow-black/15" title="Bengkel Mobil App">
-        <Wrench className="size-5" />
-      </span>
-      {/* Tanpa overflow agar tooltip label tidak terpotong */}
-      <div className="flex-1">
-        <IconNav items={visibleNavItems(ctx)} />
+      <div className="flex items-center gap-3 px-4 pt-4 pb-3">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-red text-white shadow-lg shadow-black/15">
+          <Wrench className="size-5" />
+        </span>
+        <div className="min-w-0 flex-1 leading-tight">
+          <p className="truncate text-sm font-semibold">Bengkel Mobil</p>
+          <p className="truncate text-[11px] text-white/65">{ctx.branch.name}</p>
+        </div>
+        <SidebarClose />
       </div>
-      <form action={logoutAction}>
-        <button
-          type="submit"
-          className="flex size-11 items-center justify-center rounded-xl text-white/80 hover:bg-white/12 hover:text-white"
-          aria-label="Keluar"
-          title="Keluar"
-        >
-          <LogOut className="size-5" />
-        </button>
-      </form>
+
+      <p className="px-5 pt-2 pb-2 text-[10px] font-semibold tracking-[0.14em] text-white/50 uppercase">Menu</p>
+      <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3 [scrollbar-width:thin] [scrollbar-color:rgb(255_255_255/0.2)_transparent]">
+        <SideNav items={visibleNavItems(ctx)} />
+      </div>
+
+      <div className="m-3 flex items-center gap-2.5 rounded-2xl bg-white/10 p-2.5">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white text-xs font-semibold text-brand-blue-ink">
+          {initials(ctx.employee.full_name)}
+        </span>
+        <div className="min-w-0 flex-1 leading-tight">
+          <p className="truncate text-sm font-medium">{ctx.employee.full_name}</p>
+          <p className="truncate text-[11px] text-white/65">{ctx.roles.map((r) => r.name).join(", ")}</p>
+        </div>
+        <form action={logoutAction}>
+          <button
+            type="submit"
+            className="flex size-9 items-center justify-center rounded-xl text-white/80 hover:bg-brand-red hover:text-white"
+            aria-label="Keluar"
+            title="Keluar"
+          >
+            <LogOut className="size-[18px]" />
+          </button>
+        </form>
+      </div>
     </>
   );
 }
 
 export function RailSkeleton() {
-  return <div className="h-80 w-11 animate-pulse rounded-xl bg-white/10" />;
+  return <div className="m-4 h-80 animate-pulse rounded-2xl bg-white/10" />;
 }
 
 export function TopbarView({ ctx }: { ctx: UserContext }) {
   return (
     <>
-      <MobileNav items={visibleNavItems(ctx)} />
-      <div className="min-w-0 md:hidden">
+      <SidebarToggle />
+      <div className="min-w-0 sm:hidden">
         <p className="truncate text-sm font-semibold">{ctx.branch.name}</p>
       </div>
 
-      <label className="ml-auto hidden h-10 w-full max-w-sm items-center gap-2 rounded-xl border border-border bg-card px-3 sm:flex md:ml-0">
+      <label className="hidden h-10 w-full max-w-sm items-center gap-2 rounded-xl border border-border bg-card px-3 sm:flex">
         <Search className="size-4 shrink-0 text-muted-foreground" />
         <input
           type="search"
@@ -107,11 +116,6 @@ export function TopbarView({ ctx }: { ctx: UserContext }) {
             <p className="text-[11px] text-muted-foreground">{ctx.roles.map((r) => r.name).join(", ")}</p>
           </div>
         </div>
-        <form action={logoutAction} className="md:hidden">
-          <Button type="submit" variant="ghost" size="icon" aria-label="Keluar">
-            <LogOut className="size-5" />
-          </Button>
-        </form>
       </div>
     </>
   );

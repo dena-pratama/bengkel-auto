@@ -4,6 +4,28 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.3.4] — 2026-11-03
+**Ringkasan:** Sidebar diganti menjadi panel melayang (floating) berlabel yang bisa ditampilkan/disembunyikan manual.
+
+### Changed
+- Sidebar: panel biru melayang (sudut membulat, bayangan, jarak dari tepi layar) berisi logo + cabang, daftar menu berlabel (ikon dalam kotak, menu aktif putih dengan ikon merah, chip "Segera"), kartu profil + tombol keluar.
+- Show/hide manual: tombol di top bar, tombol tutup di dalam panel, pintasan **Ctrl/⌘ + B**.
+- Desktop (≥1024px): default tampil, konten bergeser halus; pilihan tampil/sembunyi disimpan di browser (`localStorage`).
+- Tablet & HP: default tersembunyi, panel muncul di atas konten dengan latar gelap; tutup lewat klik latar, Esc, atau pindah halaman.
+- Top bar: menu sheet HP dan tombol keluar di HP dihapus (sudah ada di sidebar).
+
+### Removed
+- Komponen `IconNav` dan `MobileNav` (diganti `SidebarFrame`, `SidebarToggle`, `SidebarClose`, `SideNav`).
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Browser (`/dev/preview`): desktop 1440px (dorong konten, pilihan bertahan setelah reload), tablet 768px & HP 375px (overlay; tombol, klik latar, Esc, Ctrl+B, tombol tutup) — tidak ada halaman yang melebar.
+
+### File terdampak
+`src/components/app-nav.tsx`, `src/components/app-shell.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.3.3] — 2026-11-03
 **Ringkasan:** Redesign dashboard mengikuti referensi baru, dominan biru & merah, responsif HP–tablet–desktop.
 
