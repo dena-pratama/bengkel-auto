@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { CancelButton } from "@/components/cancel-button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FormError, FormField } from "@/components/form-field";
 import { inputClass, panel } from "@/components/page-kit";
@@ -21,6 +21,8 @@ export function ServiceForm({
   canSetPrice,
   readOnly,
   isActive,
+  onDone,
+  onCancel,
 }: {
   id: string | null;
   defaults: ServiceInput;
@@ -28,6 +30,9 @@ export function ServiceForm({
   canSetPrice: boolean;
   readOnly: boolean;
   isActive: boolean;
+  /** Dipanggil setelah berhasil membuat data (mode pop-up); tanpa ini pindah ke halaman detail */
+  onDone?: (id: string) => void;
+  onCancel?: () => void;
 }) {
   const router = useRouter();
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
@@ -44,7 +49,7 @@ export function ServiceForm({
     startTransition(async () => {
       const result = await saveServiceAction(id, values);
       if (!result.ok) return setMessage({ ok: false, text: result.error });
-      if (!id) return router.push(`/inventory/jasa/${result.data.id}`);
+      if (!id) return onDone ? onDone(result.data.id) : router.push(`/inventory/jasa/${result.data.id}`);
       reset(values);
       setMessage({ ok: true, text: "Jasa tersimpan." });
       router.refresh();
@@ -129,9 +134,9 @@ export function ServiceForm({
           <Button type="submit" disabled={pending}>
             {pending ? "Menyimpan..." : id ? "Simpan perubahan" : "Simpan jasa"}
           </Button>
-          <Button variant="outline" nativeButton={false} render={<Link href="/inventory/jasa" />}>
+          <CancelButton href="/inventory/jasa" onCancel={onCancel}>
             Kembali
-          </Button>
+          </CancelButton>
           {id && (
             <Button type="button" variant="outline" disabled={pending} onClick={toggleActive} className="sm:ml-auto">
               {isActive ? "Nonaktifkan jasa" : "Aktifkan jasa"}

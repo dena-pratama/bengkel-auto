@@ -1,13 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ChevronRight, PackageCheck, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ChevronRight, PackageCheck } from "lucide-react";
 import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
 import { formatDate, formatRupiah } from "@/lib/format";
 import { listReceipts } from "@/lib/purchasing";
 import { cn } from "@/lib/utils";
+import { NewReceiptDialog } from "../_components/dialogs";
 import { PurchasingNav } from "../_components/ui";
+import { receiptFormData } from "../receipt-data";
 
 export default function ReceiptsPage() {
   return (
@@ -22,7 +23,8 @@ export default function ReceiptsPage() {
 async function Content() {
   const ctx = await requireUser();
   if (!can(ctx, "purchasing", "view", false) && !can(ctx, "payables", "view", false)) return <NoAccess />;
-  const receipts = await listReceipts();
+  const canCreate = can(ctx, "purchasing", "create", false);
+  const [receipts, form] = await Promise.all([listReceipts(), canCreate ? receiptFormData(null) : Promise.resolve(null)]);
 
   return (
     <>
@@ -31,11 +33,7 @@ async function Content() {
         title="Penerimaan barang"
         description="Barang hanya bertambah lewat penerimaan yang tercatat."
         actions={
-          can(ctx, "purchasing", "create", false) && (
-            <Button nativeButton={false} render={<Link href="/pembelian/penerimaan/baru" />}>
-              <Plus className="size-4" /> Terima barang
-            </Button>
-          )
+          form && <NewReceiptDialog data={form} canPay={can(ctx, "payables", "create", false)} label="Terima barang" />
         }
       />
       <section className={cn(panel, "p-4 sm:p-5")}>

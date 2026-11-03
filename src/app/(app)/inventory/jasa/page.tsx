@@ -1,11 +1,9 @@
 import { Suspense } from "react";
-import Link from "next/link";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { NoAccess, PageHeader, Skeleton } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
 import { formatRupiah } from "@/lib/format";
 import { listServiceCategories, listServices } from "@/lib/inventory";
+import { NewServiceDialog } from "../_components/dialogs";
 import { InventoryNav } from "../_components/nav";
 import { SimpleList } from "../_components/simple-list";
 
@@ -33,9 +31,7 @@ async function Content() {
         description={`${services.filter((s) => s.is_active).length} jasa aktif`}
         actions={
           can(ctx, "master_data", "create", false) && (
-            <Button nativeButton={false} render={<Link href="/inventory/jasa/baru" />}>
-              <Plus className="size-4" /> Tambah jasa
-            </Button>
+            <NewServiceDialog categories={categories} canSetPrice={can(ctx, "price_change", "create", false)} />
           )
         }
       />

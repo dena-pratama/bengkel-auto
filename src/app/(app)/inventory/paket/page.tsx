@@ -1,12 +1,11 @@
 import { Suspense } from "react";
-import Link from "next/link";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { NoAccess, PageHeader, Skeleton } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
 import { formatRupiah } from "@/lib/format";
 import { listPackages } from "@/lib/inventory";
+import { NewPackageDialog } from "../_components/dialogs";
 import { InventoryNav } from "../_components/nav";
+import { componentOptions } from "./options";
 import { SimpleList } from "../_components/simple-list";
 
 export default function PackagesPage() {
@@ -23,7 +22,8 @@ export default function PackagesPage() {
 async function Content() {
   const ctx = await requireUser();
   if (!can(ctx, "master_data", "view")) return <NoAccess />;
-  const packages = await listPackages();
+  const canCreate = can(ctx, "master_data", "create", false);
+  const [packages, options] = await Promise.all([listPackages(), canCreate ? componentOptions() : Promise.resolve([])]);
 
   return (
     <>
@@ -31,11 +31,7 @@ async function Content() {
         title="Paket servis"
         description="Gabungan jasa & barang dengan satu harga jual."
         actions={
-          can(ctx, "master_data", "create", false) && (
-            <Button nativeButton={false} render={<Link href="/inventory/paket/baru" />}>
-              <Plus className="size-4" /> Tambah paket
-            </Button>
-          )
+          canCreate && <NewPackageDialog options={options} canSetPrice={can(ctx, "price_change", "create", false)} />
         }
       />
       <SimpleList

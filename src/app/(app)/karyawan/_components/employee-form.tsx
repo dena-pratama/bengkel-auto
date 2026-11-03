@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch, type UseFormRegister, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { CancelButton } from "@/components/cancel-button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FormError, FormField } from "@/components/form-field";
 import {
@@ -53,7 +54,7 @@ function EmployeeFields({
 }
 
 /** Form tambah karyawan: data diri + role + (opsional) akun login. */
-export function CreateEmployeeForm({ roles, canAssignOwner }: { roles: RoleOption[]; canAssignOwner: boolean }) {
+export function CreateEmployeeForm({ roles, canAssignOwner, onDone, onCancel }: { roles: RoleOption[]; canAssignOwner: boolean; onDone?: (id: string) => void; onCancel?: () => void }) {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [warning, setWarning] = useState<{ id: string; text: string } | null>(null);
@@ -71,6 +72,7 @@ export function CreateEmployeeForm({ roles, canAssignOwner }: { roles: RoleOptio
       const result = await createEmployeeAction(values);
       if (!result.ok) return setServerError(result.error);
       if (result.data.warning) return setWarning({ id: result.data.id, text: result.data.warning });
+      if (onDone) return onDone(result.data.id);
       router.push(`/karyawan/${result.data.id}`);
     });
   });
@@ -140,9 +142,9 @@ export function CreateEmployeeForm({ roles, canAssignOwner }: { roles: RoleOptio
           <Button type="submit" disabled={pending} className="flex-1 sm:flex-none">
             {pending ? "Menyimpan..." : "Simpan karyawan"}
           </Button>
-          <Button variant="outline" nativeButton={false} render={<Link href="/karyawan" />}>
+          <CancelButton href="/karyawan" onCancel={onCancel}>
             Batal
-          </Button>
+          </CancelButton>
         </div>
       </div>
     </form>

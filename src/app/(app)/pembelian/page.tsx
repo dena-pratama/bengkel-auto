@@ -1,13 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ChevronRight, ClipboardList, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ChevronRight, ClipboardList } from "lucide-react";
 import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
-import { formatDate, formatRupiah } from "@/lib/format";
+import { formatDate, formatRupiah, todayWib } from "@/lib/format";
 import { listPurchaseOrders } from "@/lib/purchasing";
 import { cn } from "@/lib/utils";
+import { NewPoDialog, NewReceiptDialog } from "./_components/dialogs";
 import { PoStatusBadge, PurchasingNav } from "./_components/ui";
+import { receiptFormData } from "./receipt-data";
 
 export default function PurchaseOrdersPage() {
   return (
@@ -33,7 +34,8 @@ async function Content() {
       <NoAccess />
     );
   }
-  const pos = await listPurchaseOrders();
+  const canCreate = can(ctx, "purchasing", "create", false);
+  const [pos, receipt] = await Promise.all([listPurchaseOrders(), canCreate ? receiptFormData(null) : Promise.resolve(null)]);
   const open = pos.filter((p) => p.status === "sent" || p.status === "partial").length;
 
   return (
@@ -43,14 +45,10 @@ async function Content() {
         title="Purchase order"
         description={`${open} PO menunggu barang datang`}
         actions={
-          can(ctx, "purchasing", "create", false) && (
+          receipt && (
             <>
-              <Button variant="outline" nativeButton={false} render={<Link href="/pembelian/penerimaan/baru" />}>
-                Terima tanpa PO
-              </Button>
-              <Button nativeButton={false} render={<Link href="/pembelian/po/baru" />}>
-                <Plus className="size-4" /> Buat PO
-              </Button>
+              <NewReceiptDialog data={receipt} canPay={can(ctx, "payables", "create", false)} label="Terima tanpa PO" variant="outline" />
+              <NewPoDialog suppliers={receipt.suppliers} items={receipt.items} today={todayWib()} />
             </>
           )
         }

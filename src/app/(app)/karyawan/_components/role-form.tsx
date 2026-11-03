@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CancelButton } from "@/components/cancel-button";
 import { FormError, FormField } from "@/components/form-field";
 import type { Permission } from "@/lib/employees";
 import {
@@ -74,10 +74,15 @@ export function RoleForm({
   role,
   permissions,
   readOnly = false,
+  onDone,
+  onCancel,
 }: {
   role: { id: string; name: string; description: string | null; is_system: boolean; is_superuser: boolean; is_active: boolean; grants: Grants } | null;
   permissions: Permission[];
   readOnly?: boolean;
+  /** Dipanggil setelah berhasil membuat data (mode pop-up); tanpa ini pindah ke halaman detail */
+  onDone?: (id: string) => void;
+  onCancel?: () => void;
 }) {
   const router = useRouter();
   const modules = useMemo(() => groupModules(permissions), [permissions]);
@@ -119,7 +124,7 @@ export function RoleForm({
         permissions: Object.entries(grants).map(([permission_id, scope]) => ({ permission_id, scope })),
       });
       if (!result.ok) return setMessage({ ok: false, text: result.error });
-      if (!role) return router.push(`/karyawan/role/${result.data.id}`);
+      if (!role) return onDone ? onDone(result.data.id) : router.push(`/karyawan/role/${result.data.id}`);
       setMessage({ ok: true, text: "Role tersimpan." });
       router.refresh();
     });
@@ -230,9 +235,9 @@ export function RoleForm({
           <Button type="submit" disabled={pending}>
             {pending ? "Menyimpan..." : role ? "Simpan role" : "Buat role"}
           </Button>
-          <Button variant="outline" nativeButton={false} render={<Link href="/karyawan/role" />}>
+          <CancelButton href="/karyawan/role" onCancel={onCancel}>
             Kembali
-          </Button>
+          </CancelButton>
           {role && !role.is_system && (
             <Button type="button" variant="outline" disabled={pending} onClick={toggleActive} className="sm:ml-auto">
               {role.is_active ? "Nonaktifkan role" : "Aktifkan role"}

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CancelButton } from "@/components/cancel-button";
 import { FormError, FormField } from "@/components/form-field";
 import { inputClass, panel } from "@/components/page-kit";
 import type { PackageComponent } from "@/lib/inventory";
@@ -27,6 +27,8 @@ export function PackageForm({
   canSetPrice,
   readOnly,
   isActive,
+  onDone,
+  onCancel,
 }: {
   id: string | null;
   defaults: PackageInput;
@@ -35,6 +37,9 @@ export function PackageForm({
   canSetPrice: boolean;
   readOnly: boolean;
   isActive: boolean;
+  /** Dipanggil setelah berhasil membuat data (mode pop-up); tanpa ini pindah ke halaman detail */
+  onDone?: (id: string) => void;
+  onCancel?: () => void;
 }) {
   const router = useRouter();
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
@@ -65,7 +70,7 @@ export function PackageForm({
     startTransition(async () => {
       const result = await savePackageAction(id, values);
       if (!result.ok) return setMessage({ ok: false, text: result.error });
-      if (!id) return router.push(`/inventory/paket/${result.data.id}`);
+      if (!id) return onDone ? onDone(result.data.id) : router.push(`/inventory/paket/${result.data.id}`);
       reset(values);
       setMessage({ ok: true, text: "Paket tersimpan." });
       router.refresh();
@@ -201,9 +206,9 @@ export function PackageForm({
             <Button type="submit" disabled={pending}>
               {pending ? "Menyimpan..." : id ? "Simpan perubahan" : "Simpan paket"}
             </Button>
-            <Button variant="outline" nativeButton={false} render={<Link href="/inventory/paket" />}>
+            <CancelButton href="/inventory/paket" onCancel={onCancel}>
               Kembali
-            </Button>
+            </CancelButton>
             {id && (
               <Button type="button" variant="outline" disabled={pending} onClick={toggleActive} className="sm:ml-auto">
                 {isActive ? "Nonaktifkan paket" : "Aktifkan paket"}

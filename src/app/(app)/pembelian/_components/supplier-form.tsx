@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { CancelButton } from "@/components/cancel-button";
 import { FormError, FormField } from "@/components/form-field";
 import { inputClass, panel } from "@/components/page-kit";
 import { supplierSchema, TERMS_OPTIONS, type SupplierInput } from "@/lib/validation/purchasing";
@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { saveSupplierAction, setSupplierActiveAction } from "../actions";
 import { SelectField } from "./ui";
 
-export function SupplierForm({ id, defaults, readOnly, isActive }: { id: string | null; defaults: SupplierInput; readOnly: boolean; isActive: boolean }) {
+export function SupplierForm({ id, defaults, readOnly, isActive, onDone, onCancel }: { id: string | null; defaults: SupplierInput; readOnly: boolean; isActive: boolean; onDone?: (id: string) => void; onCancel?: () => void }) {
   const router = useRouter();
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [pending, startTransition] = useTransition();
@@ -27,7 +27,7 @@ export function SupplierForm({ id, defaults, readOnly, isActive }: { id: string 
     startTransition(async () => {
       const result = await saveSupplierAction(id, values);
       if (!result.ok) return setMessage({ ok: false, text: result.error });
-      if (!id) return router.push(`/pembelian/supplier/${result.data.id}`);
+      if (!id) return onDone ? onDone(result.data.id) : router.push(`/pembelian/supplier/${result.data.id}`);
       reset(values);
       setMessage({ ok: true, text: "Supplier tersimpan." });
       router.refresh();
@@ -81,9 +81,9 @@ export function SupplierForm({ id, defaults, readOnly, isActive }: { id: string 
           <Button type="submit" disabled={pending}>
             {pending ? "Menyimpan..." : id ? "Simpan perubahan" : "Simpan supplier"}
           </Button>
-          <Button variant="outline" nativeButton={false} render={<Link href="/pembelian/supplier" />}>
+          <CancelButton href="/pembelian/supplier" onCancel={onCancel}>
             Kembali
-          </Button>
+          </CancelButton>
           {id && (
             <Button type="button" variant="outline" disabled={pending} onClick={toggle} className="sm:ml-auto">
               {isActive ? "Nonaktifkan supplier" : "Aktifkan supplier"}

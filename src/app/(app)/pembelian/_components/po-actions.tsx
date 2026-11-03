@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { PackageCheck, Send, XCircle } from "lucide-react";
+import { Send, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-field";
 import { inputClass } from "@/components/page-kit";
@@ -11,7 +10,7 @@ import type { PoStatus } from "@/lib/purchasing";
 import { setPurchaseOrderStatusAction } from "../actions";
 
 /** Tombol aksi PO sesuai status: kirim, terima barang, tutup, batalkan (dengan alasan). */
-export function PoActions({ id, status, canUpdate, canReceive }: { id: string; status: PoStatus; canUpdate: boolean; canReceive: boolean }) {
+export function PoActions({ id, status, canUpdate, receive }: { id: string; status: PoStatus; canUpdate: boolean; receive?: React.ReactNode }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
@@ -35,11 +34,7 @@ export function PoActions({ id, status, canUpdate, canReceive }: { id: string; s
             <Send className="size-4" /> Tandai sudah dikirim ke supplier
           </Button>
         )}
-        {canReceive && (status === "sent" || status === "partial") && (
-          <Button nativeButton={false} render={<Link href={`/pembelian/penerimaan/baru?po=${id}`} />}>
-            <PackageCheck className="size-4" /> Terima barang
-          </Button>
-        )}
+        {(status === "sent" || status === "partial") && receive}
         {canUpdate && (status === "sent" || status === "partial") && (
           <Button variant="outline" onClick={() => run("close")} disabled={pending}>
             Tutup PO

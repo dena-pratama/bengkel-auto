@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ChevronRight, Crown, Plus, ShieldCheck, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ChevronRight, Crown, ShieldCheck, Users } from "lucide-react";
 import { can, requireUser } from "@/lib/auth";
-import { listRoles } from "@/lib/employees";
+import { listPermissions, listRoles } from "@/lib/employees";
+import { NewRoleDialog } from "../_components/dialogs";
 import { cn } from "@/lib/utils";
 import { NoAccess, PageHeader, SectionTabs, panel } from "../_components/ui";
 
@@ -21,8 +21,8 @@ export default function RolesPage() {
 async function Content() {
   const ctx = await requireUser();
   if (!can(ctx, "employees", "view", false)) return <NoAccess />;
-  const roles = await listRoles();
   const canEdit = can(ctx, "employees", "update", false);
+  const [roles, permissions] = await Promise.all([listRoles(), canEdit ? listPermissions() : Promise.resolve([])]);
 
   return (
     <>
@@ -30,11 +30,7 @@ async function Content() {
         title="Role & hak akses"
         description="Satu karyawan boleh punya lebih dari satu role; izinnya digabung."
         actions={
-          canEdit && (
-            <Button nativeButton={false} render={<Link href="/karyawan/role/baru" />}>
-              <Plus className="size-4" /> Tambah role
-            </Button>
-          )
+          canEdit && <NewRoleDialog permissions={permissions} />
         }
       />
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">

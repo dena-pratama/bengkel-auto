@@ -5,7 +5,9 @@ import { can, requireUser } from "@/lib/auth";
 import { formatDate, formatQty, formatRupiah } from "@/lib/format";
 import { getPurchaseOrder, listItemOptions, listSuppliers } from "@/lib/purchasing";
 import { cn } from "@/lib/utils";
+import { NewReceiptDialog } from "../../_components/dialogs";
 import { PoActions } from "../../_components/po-actions";
+import { receiptFormData } from "../../receipt-data";
 import { PoForm } from "../../_components/po-form";
 import { PoStatusBadge, UUID } from "../../_components/ui";
 
@@ -39,7 +41,16 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
           {po.expected_date && <span className="text-sm text-muted-foreground">Perkiraan datang {formatDate(po.expected_date)}</span>}
           {po.cancel_reason && <span className="text-sm text-brand-red">Alasan batal: {po.cancel_reason}</span>}
         </div>
-        <PoActions id={po.id} status={po.status} canUpdate={canUpdate} canReceive={can(ctx, "purchasing", "create", false)} />
+        <PoActions
+          id={po.id}
+          status={po.status}
+          canUpdate={canUpdate}
+          receive={
+            can(ctx, "purchasing", "create", false) && (po.status === "sent" || po.status === "partial") ? (
+              <NewReceiptDialog data={await receiptFormData(po.id)} canPay={can(ctx, "payables", "create", false)} label="Terima barang" />
+            ) : null
+          }
+        />
       </section>
 
       {editable ? (

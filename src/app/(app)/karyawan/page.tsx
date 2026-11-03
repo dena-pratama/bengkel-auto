@@ -1,9 +1,7 @@
 import { Suspense } from "react";
-import Link from "next/link";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { can, requireUser } from "@/lib/auth";
-import { listEmployees } from "@/lib/employees";
+import { listEmployees, listRoles } from "@/lib/employees";
+import { NewEmployeeDialog } from "./_components/dialogs";
 import { EmployeesTable } from "./_components/employees-table";
 import { NoAccess, PageHeader, SectionTabs, panel } from "./_components/ui";
 
@@ -21,7 +19,8 @@ export default function EmployeesPage() {
 async function Content() {
   const ctx = await requireUser();
   if (!can(ctx, "employees", "view", false)) return <NoAccess />;
-  const employees = await listEmployees();
+  const canCreate = can(ctx, "employees", "create", false);
+  const [employees, roles] = await Promise.all([listEmployees(), canCreate ? listRoles() : Promise.resolve([])]);
   const active = employees.filter((e) => e.status === "active").length;
 
   return (
@@ -30,11 +29,7 @@ async function Content() {
         title="Karyawan"
         description={`${employees.length} karyawan · ${active} aktif`}
         actions={
-          can(ctx, "employees", "create", false) && (
-            <Button nativeButton={false} render={<Link href="/karyawan/baru" />}>
-              <Plus className="size-4" /> Tambah karyawan
-            </Button>
-          )
+          canCreate && <NewEmployeeDialog roles={roles.filter((r) => r.is_active)} canAssignOwner={ctx.is_superuser} />
         }
       />
       <EmployeesTable employees={employees} />

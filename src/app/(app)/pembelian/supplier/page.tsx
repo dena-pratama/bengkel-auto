@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ChevronRight, Plus, Truck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ChevronRight, Truck } from "lucide-react";
 import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
 import { formatRupiah } from "@/lib/format";
 import { listApReceipts, listSuppliers } from "@/lib/purchasing";
 import { cn } from "@/lib/utils";
+import { NewSupplierDialog } from "../_components/dialogs";
 import { PurchasingNav } from "../_components/ui";
 
 export default function SuppliersPage() {
@@ -34,11 +34,7 @@ async function Content() {
         title="Supplier"
         description={`${suppliers.filter((s) => s.is_active).length} supplier aktif`}
         actions={
-          can(ctx, "purchasing", "create", false) && (
-            <Button nativeButton={false} render={<Link href="/pembelian/supplier/baru" />}>
-              <Plus className="size-4" /> Tambah supplier
-            </Button>
-          )
+          can(ctx, "purchasing", "create", false) && <NewSupplierDialog />
         }
       />
       <section className={cn(panel, "p-4 sm:p-5")}>

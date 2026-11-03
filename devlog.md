@@ -4,6 +4,36 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.8.0] 2026-11-03
+**Ringkasan:** Semua form tambah data dibuka sebagai pop-up (tanpa pindah halaman) dan animasi halus memakai Motion (Framer Motion).
+
+### Added
+- `FormDialog` (`src/components/form-dialog.tsx`): pop-up form besar berbasis Dialog Base UI. HP: panel naik dari bawah; tablet ke atas: di tengah. Animasi masuk dengan Motion (pegas), mengikuti setting "kurangi gerakan" perangkat. Tutup lewat tombol X, Batal, klik luar, atau Esc.
+- `useCreateDialog`: setelah simpan, pop-up tertutup, toast "berhasil" dengan tombol **Buka** ke detail, dan daftar di halaman yang sama diperbarui.
+- Pop-up tambah untuk: karyawan, role, barang, jasa, paket servis, supplier, PO, dan penerimaan barang (tanpa PO dari daftar PO/penerimaan; dari PO lewat tombol **Terima barang** di detail PO, terisi sisa pesanan).
+- Toast (`sonner`) yang mengikuti tema terang/gelap (`AppToaster`).
+- Animasi perpindahan halaman (`src/app/(app)/template.tsx`, Motion). Muatan pertama tidak dianimasikan agar konten server langsung tampil.
+- `CancelButton`: di pop-up menjadi tombol "Batal", di halaman biasa link kembali.
+- `receipt-data.ts`: data form penerimaan (termasuk isi otomatis dari sisa PO) dipakai bersama pop-up & halaman.
+- Pratinjau development `/dev/preview/form-dialog` (404 di production).
+- Dependensi: `motion` 14, `sonner` 2.
+
+### Changed
+- Form tambah menerima `onDone`/`onCancel`; tanpa itu (halaman `/baru` lama) tetap pindah ke halaman detail. Halaman detail/ubah tetap halaman karena memuat stok, riwayat, dan aksi lain.
+
+### Fixed
+- Pesan error bawaan PostgreSQL berbahasa Inggris (mis. "permission denied for function") kini diganti pesan Indonesia sesuai kodenya.
+
+### Verifikasi
+- Browser `/dev/preview/form-dialog`: desktop 1280px (di tengah), HP 375px (panel dari bawah, tidak melebar), validasi tampil di pop-up, Esc menutup, error server tampil dalam bahasa Indonesia.
+- `tsc`, `eslint`, `npm run check:dashes` (155 file), `next build` lolos.
+- Pop-up di halaman yang butuh login belum dicoba langsung dengan login.
+
+### File terdampak
+`src/components/form-dialog.tsx`, `src/components/app-toaster.tsx`, `src/components/cancel-button.tsx`, `src/components/topbar-controls.tsx`, `src/lib/action-result.ts`, `src/app/(app)/template.tsx`, `src/app/(app)/layout.tsx`, `src/app/(app)/{karyawan,inventory,pembelian}/**`, `src/app/dev/preview/form-dialog/page.tsx`, `package.json`, `package-lock.json`, `devlog.md`, `fitur.md`, `VERSION`
+
+---
+
 ## [0.7.3] 2026-11-03
 **Ringkasan:** Perbaiki halaman HP yang bisa digeser ke samping.
 

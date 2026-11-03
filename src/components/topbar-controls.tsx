@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 const THEME_EVENT = "bk-theme-change";
 
 // Tema = class `dark` di <html> (dipasang skrip di root layout sebelum render, agar tidak berkedip)
-function subscribeTheme(onChange: () => void) {
+export function subscribeTheme(onChange: () => void) {
   window.addEventListener(THEME_EVENT, onChange);
   window.addEventListener("storage", onChange);
   return () => {
@@ -24,7 +24,7 @@ function subscribeTheme(onChange: () => void) {
     window.removeEventListener("storage", onChange);
   };
 }
-const readIsDark = () => document.documentElement.classList.contains("dark");
+export const readIsDark = () => document.documentElement.classList.contains("dark");
 
 function setTheme(dark: boolean) {
   const root = document.documentElement;

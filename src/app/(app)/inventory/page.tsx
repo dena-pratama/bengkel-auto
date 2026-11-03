@@ -1,10 +1,8 @@
 import { Suspense } from "react";
-import Link from "next/link";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { NoAccess, PageHeader, Skeleton } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
-import { listItems } from "@/lib/inventory";
+import { listBrands, listCategories, listItems, listLocations, listUnits } from "@/lib/inventory";
+import { NewItemDialog } from "./_components/dialogs";
 import { InventoryNav } from "./_components/nav";
 import { ItemsTable } from "./_components/items-table";
 
@@ -22,7 +20,13 @@ export default function ItemsPage() {
 async function Content() {
   const ctx = await requireUser();
   if (!can(ctx, "master_data", "view")) return <NoAccess />;
-  const items = await listItems();
+  const canCreate = can(ctx, "master_data", "create", false);
+  const [items, lookups] = await Promise.all([
+    listItems(),
+    canCreate
+      ? Promise.all([listCategories(), listBrands(), listUnits(), listLocations()]).then(([categories, brands, units, locations]) => ({ categories, brands, units, locations }))
+      : Promise.resolve(null),
+  ]);
   const low = items.filter((i) => i.is_active && i.min_stock > 0 && i.qty <= i.min_stock).length;
 
   return (
@@ -31,11 +35,7 @@ async function Content() {
         title="Barang"
         description={`${items.filter((i) => i.is_active).length} barang aktif${low ? ` · ${low} stok menipis` : ""}`}
         actions={
-          can(ctx, "master_data", "create", false) && (
-            <Button nativeButton={false} render={<Link href="/inventory/barang/baru" />}>
-              <Plus className="size-4" /> Tambah barang
-            </Button>
-          )
+          lookups && <NewItemDialog lookups={lookups} canSetPrice={can(ctx, "price_change", "create", false)} />
         }
       />
       <ItemsTable items={items} />

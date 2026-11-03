@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Sparkles, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CancelButton } from "@/components/cancel-button";
 import { FormError, FormField } from "@/components/form-field";
 import { ItemPicker } from "@/components/item-picker";
 import { inputClass, panel } from "@/components/page-kit";
@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { savePurchaseOrderAction } from "../actions";
 import { SelectField } from "./ui";
 
-export function PoForm({ id, defaults, suppliers, items }: { id: string | null; defaults: PoInput; suppliers: Supplier[]; items: ItemOption[] }) {
+export function PoForm({ id, defaults, suppliers, items, onDone, onCancel }: { id: string | null; defaults: PoInput; suppliers: Supplier[]; items: ItemOption[]; onDone?: (id: string) => void; onCancel?: () => void }) {
   const router = useRouter();
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [pending, startTransition] = useTransition();
@@ -44,7 +44,7 @@ export function PoForm({ id, defaults, suppliers, items }: { id: string | null; 
     startTransition(async () => {
       const result = await savePurchaseOrderAction(id, values);
       if (!result.ok) return setMessage({ ok: false, text: result.error });
-      if (!id) return router.push(`/pembelian/po/${result.data.id}`);
+      if (!id) return onDone ? onDone(result.data.id) : router.push(`/pembelian/po/${result.data.id}`);
       setMessage({ ok: true, text: "PO tersimpan." });
       router.refresh();
     });
@@ -141,9 +141,9 @@ export function PoForm({ id, defaults, suppliers, items }: { id: string | null; 
         <Button type="submit" disabled={pending}>
           {pending ? "Menyimpan..." : id ? "Simpan draft" : "Simpan sebagai draft"}
         </Button>
-        <Button variant="outline" nativeButton={false} render={<Link href="/pembelian" />}>
+        <CancelButton href="/pembelian" onCancel={onCancel}>
           Kembali
-        </Button>
+        </CancelButton>
       </div>
     </form>
   );

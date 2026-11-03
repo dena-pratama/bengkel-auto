@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CancelButton } from "@/components/cancel-button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FormError, FormField } from "@/components/form-field";
 import { ItemPicker } from "@/components/item-picker";
@@ -35,6 +35,8 @@ export function ReceiptForm({
   ppnEnabled,
   canPay,
   poLabel,
+  onDone,
+  onCancel,
 }: {
   defaults: ReceiptInput;
   suppliers: Supplier[];
@@ -44,6 +46,9 @@ export function ReceiptForm({
   ppnEnabled: boolean;
   canPay: boolean;
   poLabel: string | null;
+  /** Dipanggil setelah berhasil membuat data (mode pop-up); tanpa ini pindah ke halaman detail */
+  onDone?: (id: string) => void;
+  onCancel?: () => void;
 }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -83,6 +88,7 @@ export function ReceiptForm({
     startTransition(async () => {
       const r = await postGoodsReceiptAction(values);
       if (!r.ok) return setError(r.error);
+      if (onDone) return onDone(r.data.id);
       router.push(`/pembelian/penerimaan/${r.data.id}`);
     });
   });
@@ -243,9 +249,9 @@ export function ReceiptForm({
         <Button type="submit" disabled={pending}>
           {pending ? "Menyimpan..." : "Simpan penerimaan"}
         </Button>
-        <Button variant="outline" nativeButton={false} render={<Link href="/pembelian/penerimaan" />}>
+        <CancelButton href="/pembelian/penerimaan" onCancel={onCancel}>
           Batal
-        </Button>
+        </CancelButton>
       </div>
     </form>
   );
