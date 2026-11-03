@@ -20,3 +20,18 @@ export const formatDateTime = (v: string) => `${dateTimeFmt.format(new Date(v))}
 
 /** Tanggal hari ini di WIB, format YYYY-MM-DD (untuk nilai default input date) */
 export const todayWib = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta" }).format(new Date());
+
+/** Lama waktu dalam menit -> "45 mnt", "2 j 15 mnt", "3 hr 4 j" */
+export const formatDuration = (minutes: number) => {
+  const m = Math.max(0, Math.round(minutes));
+  if (m < 60) return `${m} mnt`;
+  if (m < 1440) return `${Math.floor(m / 60)} j${m % 60 ? ` ${m % 60} mnt` : ""}`;
+  return `${Math.floor(m / 1440)} hr${Math.floor((m % 1440) / 60) ? ` ${Math.floor((m % 1440) / 60)} j` : ""}`;
+};
+
+/** Tanggal YYYY-MM-DD ditambah n hari (tetap YYYY-MM-DD) */
+export const addDays = (date: string, n: number) => {
+  const d = new Date(`${date}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+};

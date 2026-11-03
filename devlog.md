@@ -4,6 +4,44 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.10.0] 2026-11-03
+**Ringkasan:** Modul Servis (PRD §7): estimasi berversi dengan persetujuan pelanggan, work order, papan status kanban, pengeluaran part dari gudang, riwayat servis kendaraan, dan klaim garansi.
+
+### Added
+- Migration `20261103000013_service_orders.sql`:
+  - Tabel `estimates`/`estimate_items` (EST-YYMM-####; revisi = baris baru dengan nomor sama dan versi + 1, versi lama berstatus `revised`; status draft, sent, approved, rejected, revised, converted, void + `void_reason`; cara persetujuan langsung/telepon/chat; masa berlaku), `work_orders`/`work_order_items` (WO-YYMM-####; plat & label kendaraan disimpan sebagai snapshot), `work_order_mechanics` (mekanik per jasa + porsi %), `part_issues` (append-only), `work_order_status_logs`.
+  - Baris jasa/part memakai harga master; paket dipecah lewat `package_components()` (alokasi harga PRD §17.3).
+  - Fungsi: `save_estimate`, `mark_estimate_sent`, `approve_estimate` (opsional langsung jadi WO), `convert_estimate_to_work_order`, `reject_estimate`, `void_estimate`, `update_work_order`, `add_work_order_work` (pekerjaan tambahan = estimasi tambahan; WO "Menunggu Persetujuan" sampai pelanggan memutuskan), `cancel_work_order_item`, `set_work_order_mechanics` (porsi kosong = bagi rata), `set_work_order_status` (transisi berurutan; QC/siap/diambil hanya jika semua part sudah keluar), `void_work_order`, `request_work_order_part`, `issue_work_order_part`, `return_work_order_part`, `create_warranty_work_order`, `list_mechanics`.
+  - Stok berkurang saat part dikeluarkan (`service_usage`) dengan jurnal Dr Persediaan dalam Pengerjaan / Cr Persediaan Sparepart. Part tidak terpakai kembali ke stok (`service_return`, tipe mutasi baru) dengan nilai saat keluar; jumlah & nilai tagihan baris ikut berkurang. WO garansi: biaya part ke Beban Garansi.
+  - Kilometer kendaraan diperbarui otomatis dari WO (tidak pernah mundur).
+  - View `v_work_orders` (total, jasa, part, mekanik, lama di status, `is_overdue`, part belum keluar/diminta, garansi s/d, estimasi tambahan yang menunggu) dan `v_estimates` (penanda versi terbaru).
+  - RLS: estimasi untuk izin `service_orders` lingkup penuh; WO & turunannya untuk izin penuh `service_orders`/`service_board`, mekanik (lingkup `own`) hanya WO yang ia kerjakan. Mekanik bisa mengubah status WO miliknya (kecuali menyerahkan kendaraan) dan meminta part; keluarkan/kembalikan part butuh `part_issue:update` (Admin, Gudang).
+- Tes DB `supabase/tests/service_orders_test.sql` (75 tes).
+- Halaman `/servis`: papan kanban 6 kolom (Antri sampai Siap Diambil) dengan plat, mekanik, lama di status, tanda merah lewat estimasi durasi, mode layar penuh untuk TV, segar otomatis tiap 30 detik, dan daftar selesai/batal 14 hari terakhir.
+- `/servis/estimasi` dan `/servis/estimasi/[id]`: daftar & detail estimasi, kirim lewat WhatsApp (klik-ke-chat berisi ringkasan), catat persetujuan/penolakan, jadikan WO, revisi (versi), batalkan.
+- `/servis/[id]`: detail WO (ubah status, atur mekanik, minta/keluarkan/kembalikan part per rak, batalkan baris, pekerjaan tambahan, estimasi tambahan yang menunggu, data WO, riwayat status, keluar-masuk part, klaim garansi).
+- Pop-up estimasi baru: pilih kendaraan lewat nomor polisi (menampilkan servis terakhir), cari jasa/paket/part, diskon baris & total, catat persetujuan dan langsung buat WO.
+- Riwayat servis di `/pelanggan/kendaraan/[id]` + tombol estimasi untuk kendaraan tersebut.
+- Helper `formatDuration` dan `addDays` (`src/lib/format.ts`).
+
+### Changed
+- `app.post_stock_movement` menerima tipe `service_return` (masuk dengan nilai yang dibawa).
+- Menu sidebar **Servis & Work Order** aktif.
+
+### Catatan
+- Invoice, pembayaran, DP, dan komisi final menyusul di modul Kasir. Sampai saat itu WO bisa diserahkan tanpa invoice; masa garansi dihitung dari tanggal diserahkan.
+- PPN di estimasi menyusul bersama modul Pajak. Scan QR saat mengeluarkan part menunggu fitur QR label. Papan memakai segar otomatis 30 detik, belum Supabase Realtime. Laporan klaim garansi per mekanik/barang/supplier belum ada.
+
+### Verifikasi
+- `npm run test:db`: 75 tes servis + semua tes lama lulus (248 tes).
+- `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos. Bentuk query PostgREST halaman servis dicek terhadap DB lokal (service role, baca saja).
+- **Belum diverifikasi di browser dengan login.**
+
+### File terdampak
+`supabase/migrations/20261103000013_service_orders.sql`, `supabase/tests/service_orders_test.sql`, `src/app/(app)/servis/**`, `src/app/(app)/pelanggan/kendaraan/[id]/page.tsx`, `src/lib/service.ts`, `src/lib/validation/service.ts`, `src/lib/format.ts`, `src/lib/navigation.ts`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.9.0] 2026-11-03
 **Ringkasan:** Modul Pelanggan & Kendaraan (PRD §6.1-6.2): pelanggan perorangan/perusahaan, kendaraan per nomor polisi, dan riwayat pergantian pemilik.
 

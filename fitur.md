@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.9.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.10.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -35,11 +35,15 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.9.0**
 | | Cetak / kirim PO sebagai PDF lewat WhatsApp, foto faktur | ⬜ | - |
 | | Retur ke supplier, hutang usaha (aging, jatuh tempo H-3) & pembayaran (sebagian / banyak faktur, batal) | ✅ | 0.7.0 |
 | Pelanggan | Pelanggan & kendaraan relasional, riwayat kepemilikan | ✅ | 0.9.0 |
-| | Riwayat servis, reminder servis (klik-ke-WA) | ⬜ | menunggu modul Servis |
-| Servis | Estimasi (versi, persetujuan) | ⬜ | - |
-| | Work order, pengambilan part via scan | ⬜ | - |
-| | Papan status kanban (realtime, mode TV) | ⬜ | - |
-| | Garansi & klaim | ⬜ | - |
+| | Riwayat servis per kendaraan (tanggal, km, jasa, part, mekanik, biaya, garansi) | ✅ | 0.10.0 |
+| | Reminder servis berkala (klik-ke-WA) | ⬜ | - |
+| Servis | Estimasi (versi/revisi, kirim WA klik-ke-chat, persetujuan langsung/telepon/chat, masa berlaku, paket dipecah) | ✅ | 0.10.0 |
+| | Work order dari estimasi (satu klik), pekerjaan tambahan wajib persetujuan, mekanik per jasa (porsi %), minta/keluar/kembali part + jurnal | ✅ | 0.10.0 |
+| | Pengambilan part dengan scan QR | ⬜ | menunggu QR label |
+| | Papan status kanban (lama di status, tanda merah lewat durasi, layar penuh TV, segar tiap 30 detik) | ✅ | 0.10.0 |
+| | Papan realtime (Supabase Realtime) | ⬜ | - |
+| | Garansi & klaim (WO garansi Rp0, biaya part ke Beban Garansi) | 🟨 | 0.10.0 (masa garansi dari tanggal diserahkan; dari invoice & laporan klaim menyusul) |
+| | WO ditutup jadi invoice, komisi mekanik | ⬜ | menunggu modul Kasir |
 | Penjualan & Kas | POS, diskon per role | ⬜ | - |
 | | Pembayaran fleksibel (split, DP, tempo) | ⬜ | - |
 | | Nota/invoice (thermal, A4, PDF, WA) | ⬜ | - |

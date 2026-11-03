@@ -13,7 +13,7 @@ export type NavItem = {
  *  Pengaturan & profil ada di top bar (menu profil), bukan di sidebar. */
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Beranda", icon: "home", ready: true },
-  { href: "/servis", label: "Servis & Work Order", icon: "wrench", module: "service_orders", ready: false },
+  { href: "/servis", label: "Servis & Work Order", icon: "wrench", module: "service_orders", ready: true },
   { href: "/kasir", label: "Kasir", icon: "cart", module: "sales", ready: false },
   { href: "/inventory", label: "Barang & Jasa", icon: "package", module: "master_data", ready: true },
   { href: "/pembelian", label: "Pembelian", icon: "truck", module: "purchasing", ready: true },
