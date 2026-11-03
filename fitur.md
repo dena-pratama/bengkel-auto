@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.12.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.14.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -60,9 +60,11 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.12.0**
 | Karyawan | Data karyawan, role ganda, status + riwayat, akun login, PIN, role dinamis & matriks izin, RLS | ✅ | 0.5.0 |
 | | Komisi mekanik (aturan per jasa, porsi, diakui saat invoice lunas) | 🟨 | 0.11.0 (layar ringkasan komisi & pembayaran lewat penggajian menyusul) |
 | | Penggajian sederhana & kasbon, slip gaji | ⬜ | - |
-| Finance | Kas/bank, pemasukan/pengeluaran, biaya rutin | ⬜ | - |
-| | Chart of accounts, jurnal otomatis, jurnal manual, tutup buku | 🟨 | 0.7.0 (DB: bagan akun, jurnal otomatis pembelian) |
-| | Laba rugi, neraca, arus kas, buku besar, ekspor Excel/PDF | ⬜ | - |
+| Finance | Kas/bank (banyak akun), pemasukan lain, pengeluaran, transfer, setoran modal & prive, biaya rutin bulanan | ✅ | 0.14.0 |
+| | Foto bukti transaksi | ⬜ | - |
+| | Chart of accounts (tambah akun), jurnal otomatis semua modul, jurnal manual + pembalik, tutup buku bulanan | ✅ | 0.14.0 |
+| | Laba rugi (banding periode lalu), neraca, arus kas, buku besar, margin per jasa/barang/WO, ekspor Excel | ✅ | 0.14.0 |
+| | Ekspor PDF laporan (saat ini cetak lewat browser) | ⬜ | - |
 | Pajak | Profil pajak, PPN (DPP 11/12), PPh Final UMKM, estimasi PPh umum | ⬜ | - |
 | AI | MCP server read-only (11 tools), skor kesehatan, ringkasan mingguan | ⬜ | - |
 | Audit | Audit log | 🟨 | 0.2.0 (DB) |

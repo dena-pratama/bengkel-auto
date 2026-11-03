@@ -4,6 +4,40 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.14.0] 2026-11-04
+**Ringkasan:** Modul Finance (PRD §11): kas & bank, pemasukan dan pengeluaran, transfer, modal dan prive, biaya rutin, jurnal manual, bagan akun, tutup buku, dan laporan keuangan (laba rugi, neraca, arus kas, buku besar, margin) dengan ekspor Excel.
+
+### Added
+- Migration `20261103000017_finance.sql`:
+  - Tabel `cash_transactions` (pemasukan lain KM, pengeluaran KK, transfer TF, setoran modal SM, prive PV; status posted/void + alasan), `recurring_expenses` (template biaya rutin), `fiscal_periods` (tutup buku bulanan).
+  - Fungsi: `post_cash_transaction`, `void_cash_transaction`, `save_recurring_expense`, `set_recurring_expense_active`, `confirm_recurring_expense` (sekali per bulan, jumlah boleh diubah), `post_manual_journal`, `reverse_manual_journal` (hanya jurnal manual; jurnal otomatis dibalik lewat dokumen sumbernya), `save_account` (awalan kode harus sesuai jenis), `set_account_active` (akun sistem dan akun bersaldo tidak bisa dinonaktifkan), `save_cash_bank_account` (akun buku besar dibuat otomatis), `close_fiscal_period` (hanya bulan yang sudah lewat, berurutan), `reopen_fiscal_period` (Owner, wajib alasan).
+  - Penguncian periode: `app.post_journal` menolak jurnal bertanggal di bulan yang ditutup, sehingga semua modul (penjualan, pembelian, kas, opname) ikut terkunci.
+  - Laporan (fungsi dengan pemeriksaan izin): `report_profit_loss`, `report_balance_sheet` (laba berjalan kumulatif sebagai baris modal), `report_cash_flow` (metode langsung, dikelompokkan operasi/investasi/pendanaan, transfer antar kas tidak dihitung), `report_cash_bank_balances`, `report_account_balances`, `report_ledger` (saldo berjalan), `report_margin` (per jasa, barang, work order).
+  - View `v_cash_transactions`, `v_recurring_expenses`, `v_journal_entries`.
+  - Izin: pengeluaran, pemasukan, transfer, dan biaya rutin lewat `expenses` (Admin, Kasir); modal, prive, jurnal manual, akun, dan tutup buku lewat `journal` (Owner); laporan lewat `finance_reports` (Owner).
+- Tes DB `supabase/tests/finance_test.sql` (data bertanggal 2020 agar laporan tepat dan tidak tercampur data nyata).
+- Halaman `/keuangan` (saldo kas dan bank, transaksi terakhir, biaya rutin), `/keuangan/laporan` (laba rugi dengan pembanding periode sebelumnya, neraca, arus kas, margin; filter periode dan pintasan Bulan ini, Bulan lalu, Tahun ini), `/keuangan/jurnal` (jurnal umum dengan filter sumber, detail baris, dan buku besar per akun), `/keuangan/akun` (bagan akun dan tutup buku).
+- Ekspor Excel `GET /api/v1/keuangan/export` (laba rugi, neraca, arus kas, margin) dengan `exceljs`.
+
+### Changed
+- Menu **Keuangan** aktif (terlihat untuk pemegang izin `expenses`, jadi Admin dan Kasir bisa mencatat pengeluaran; tab laporan dan akun hanya muncul sesuai izin).
+
+### Catatan
+- Belum ada: foto bukti transaksi (butuh Storage), ekspor PDF (gunakan cetak browser), jurnal penutup akhir tahun, anggaran. Laporan umur hutang dan piutang tetap di halaman Pembelian dan Kasir.
+- Margin memakai HPP part saja; komisi mekanik belum dihitung sebagai biaya.
+- Pembatalan transaksi kas membuat jurnal pembalik bertanggal hari pembatalan (bukan tanggal asli), sama seperti modul lain.
+- `sale_items.cost_total` dan `sales.cogs_total` (HPP) masih terbaca pemegang izin penjualan lewat API; menyembunyikannya dari non-Owner (PRD §10.2) belum dikerjakan.
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus, termasuk finance.
+- `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos. Bentuk query PostgREST halaman keuangan dicek terhadap DB lokal.
+- **Halaman keuangan dan ekspor Excel belum dilihat di browser dengan login.**
+
+### File terdampak
+`supabase/migrations/20261103000017_finance.sql`, `supabase/tests/finance_test.sql`, `src/app/(app)/keuangan/**`, `src/app/api/v1/keuangan/export/route.ts`, `src/lib/finance.ts`, `src/lib/validation/finance.ts`, `src/lib/navigation.ts`, `package.json`, `package-lock.json`, `devlog.md`, `fitur.md`, `VERSION`
+
+---
+
 ## [0.13.1] 2026-11-03
 **Ringkasan:** Pembaruan logo 3D AutoMobi dengan transparansi penuh untuk mode terang, mode gelap, halaman login/setup, sidebar aplikasi, dan favicon tab browser.
 
