@@ -4,6 +4,26 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.11.4] 2026-11-03
+**Ringkasan:** Notifikasi (toast) dirapikan: di tengah layar, warna biru dan merah logo, durasi singkat.
+
+### Changed
+- Posisi di tengah layar (horizontal dan vertikal), bukan di atas.
+- Bentuk pil bersih: sukses dan info = biru tua logo, gagal = merah logo, peringatan = pasir logo. Ikon outline, tombol aksi (mis. "Buka") berupa chip tipis. Tombol tutup (x) dihapus karena toast hilang sendiri; satu toast tampil pada satu waktu.
+- Durasi lewat konstanta `TOAST_MS` (`src/components/app-toaster.tsx`): konfirmasi biasa 1,2 detik, ada tombol aksi 3 detik, peringatan 5 detik.
+
+### Catatan
+- Durasi 0,5 detik sempat dicoba lalu dinaikkan: animasi masuk sonner sekitar 0,4 detik, sehingga di 0,45 detik toast sudah transparan dan tidak terbaca. Nilai bisa diubah di `TOAST_MS`.
+- Halaman pratinjau `/dev/preview/form-dialog` punya tombol uji notifikasi (toast bertahan sampai ditutup agar bisa diperiksa).
+
+### Verifikasi
+- `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos. Posisi tengah, warna, dan tampilan diperiksa di browser.
+
+### File terdampak
+`src/components/app-toaster.tsx`, `src/components/form-dialog.tsx`, `src/app/(app)/servis/_components/dialogs.tsx`, `src/app/dev/preview/form-dialog/**`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.11.3] 2026-11-03
 **Ringkasan:** Kolom isian dan pop-up dirapikan agar seragam dan selaras dengan tema moodboard.
 

@@ -6,6 +6,7 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { toast } from "sonner";
 import { motion, useReducedMotion } from "motion/react";
 import { XIcon } from "lucide-react";
+import { TOAST_MS } from "@/components/app-toaster";
 import { cn } from "@/lib/utils";
 
 const SIZE = { md: "sm:max-w-2xl", lg: "sm:max-w-4xl", xl: "sm:max-w-6xl" } as const;
@@ -75,7 +76,7 @@ export function useCreateDialog({ message, detailHref }: { message: string; deta
   const [open, setOpen] = useState(false);
   const onDone = (id: string) => {
     setOpen(false);
-    toast.success(message, detailHref ? { action: { label: "Buka", onClick: () => router.push(detailHref(id)) } } : undefined);
+    toast.success(message, detailHref ? { action: { label: "Buka", onClick: () => router.push(detailHref(id)) }, duration: TOAST_MS.action } : undefined);
     router.refresh();
   };
   return { open, setOpen, onDone, onCancel: () => setOpen(false) };

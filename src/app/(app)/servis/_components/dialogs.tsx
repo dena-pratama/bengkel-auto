@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { TOAST_MS } from "@/components/app-toaster";
 import { FilePen, Plus, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FormDialog } from "@/components/form-dialog";
@@ -21,7 +22,7 @@ function useFormDialog() {
   const [open, setOpen] = useState(false);
   const onDone = (r: EstimateFormResult) => {
     setOpen(false);
-    if (r.warning) toast.warning(r.warning);
+    if (r.warning) toast.warning(r.warning, { duration: TOAST_MS.warning });
     else toast.success(r.message);
     if (r.href) router.push(r.href);
     else router.refresh();
