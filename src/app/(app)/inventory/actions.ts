@@ -82,7 +82,7 @@ const masterSchemas = {
   category: z.object({ name: name("Nama kategori").min(2, "Minimal 2 karakter"), parent_id: optionalUuid }),
   brand: z.object({ name: name("Nama merek") }),
   unit: z.object({
-    code: z.string().trim().toLowerCase().regex(/^[a-z0-9]{1,10}$/, "Kode 1–10 huruf kecil/angka, contoh pcs"),
+    code: z.string().trim().toLowerCase().regex(/^[a-z0-9]{1,10}$/, "Kode 1-10 huruf kecil/angka, contoh pcs"),
     name: name("Nama satuan", 40),
   }),
   location: z.object({

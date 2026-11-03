@@ -29,7 +29,7 @@ function LocationSelect({ id, label, locations, error, ...props }: React.Compone
         {label}
       </label>
       <select id={id} className={inputClass} aria-invalid={Boolean(error)} {...props}>
-        <option value="">— Pilih lokasi —</option>
+        <option value="">Pilih lokasi</option>
         {locations.map((l) => (
           <option key={l.id} value={l.id}>
             {l.path} · {l.name}

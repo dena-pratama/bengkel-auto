@@ -1,4 +1,4 @@
-# Bengkel Mobil App — image produksi Next.js standalone (dipakai Coolify)
+# Bengkel Mobil App: image produksi Next.js standalone (dipakai Coolify)
 
 FROM node:24-alpine AS deps
 WORKDIR /app

@@ -42,7 +42,7 @@ async function Content() {
         .map((c) => ({ id: c.id, label: c.name, depth: 1, is_active: c.is_active, values: { name: c.name, parent_id: p.id } })),
     ]);
   const parentOptions = [
-    { value: "", label: "— Kategori utama —" },
+    { value: "", label: "Kategori utama" },
     ...categories.filter((c) => !c.parent_id && c.is_active).map((c) => ({ value: c.id, label: `Sub dari ${c.name}` })),
   ];
 
@@ -55,7 +55,7 @@ async function Content() {
     values: { parent_id: l.parent_id ?? "", type: l.type, code: l.code, name: l.name },
   }));
   const locationParents = [
-    { value: "", label: "— Tanpa induk (Area) —" },
+    { value: "", label: "Tanpa induk (Area)" },
     ...locations.filter((l) => l.type !== "bin" && l.is_active).map((l) => ({ value: l.id, label: `Di dalam ${l.path}` })),
   ];
 

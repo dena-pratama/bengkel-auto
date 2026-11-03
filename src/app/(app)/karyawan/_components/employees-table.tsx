@@ -59,7 +59,7 @@ const columns = col.columns([
       </div>
     ),
   }),
-  col.accessor((e) => e.position ?? "", { id: "position", header: "Jabatan", sortFn: "alphanumeric", cell: (c) => c.getValue() || "—" }),
+  col.accessor((e) => e.position ?? "", { id: "position", header: "Jabatan", sortFn: "alphanumeric", cell: (c) => c.getValue() || "-" }),
   col.display({ id: "roles", header: "Role", cell: ({ row }) => <RoleChips roles={row.original.roles} /> }),
   col.accessor((e) => e.email ?? "", {
     id: "email",

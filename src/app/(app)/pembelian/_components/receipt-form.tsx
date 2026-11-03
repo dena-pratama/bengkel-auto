@@ -98,7 +98,7 @@ export function ReceiptForm({
           </div>
         ) : (
           <SelectField id="supplier_id" label="Supplier *" error={errors.supplier_id?.message} {...register("supplier_id")}>
-            <option value="">— Pilih supplier —</option>
+            <option value="">Pilih supplier</option>
             {suppliers
               .filter((s) => s.is_active)
               .map((s) => (
@@ -167,7 +167,7 @@ export function ReceiptForm({
                 <FormField id={`items.${idx}.unit_price`} label="Harga / satuan" inputMode="numeric" error={errors.items?.[idx]?.unit_price?.message} {...register(`items.${idx}.unit_price`)} />
                 <FormField id={`items.${idx}.discount_amount`} label="Diskon (Rp)" inputMode="numeric" {...register(`items.${idx}.discount_amount`)} />
                 <SelectField id={`items.${idx}.location_id`} label="Lokasi rak" error={errors.items?.[idx]?.location_id?.message} {...register(`items.${idx}.location_id`)}>
-                  <option value="">— Pilih —</option>
+                  <option value="">Pilih</option>
                   {bins.map((l) => (
                     <option key={l.id} value={l.id}>
                       {l.path}
@@ -206,7 +206,7 @@ export function ReceiptForm({
               {payNow && (
                 <div className="grid gap-3 sm:grid-cols-2">
                   <SelectField id="cash_bank_account_id" label="Dari akun" error={errors.cash_bank_account_id?.message} {...register("cash_bank_account_id")}>
-                    <option value="">— Pilih —</option>
+                    <option value="">Pilih</option>
                     {cashAccounts
                       .filter((a) => a.is_active)
                       .map((a) => (

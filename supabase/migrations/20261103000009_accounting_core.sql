@@ -1,5 +1,5 @@
 -- =============================================================================
--- Inti akuntansi (PRD §11.2–11.3): bagan akun, jurnal double-entry, akun kas/bank.
+-- Inti akuntansi (PRD §11.2-11.3): bagan akun, jurnal double-entry, akun kas/bank.
 -- Jurnal hanya ditulis lewat app.post_journal() dari fungsi modul (penerimaan barang,
 -- pembayaran, dll.) di transaksi yang sama dengan dokumen & stoknya (aturan #1, #9).
 -- Jurnal tidak bisa diedit; koreksi lewat pembatalan dokumen / jurnal pembalik.

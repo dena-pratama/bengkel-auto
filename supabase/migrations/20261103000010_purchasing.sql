@@ -300,7 +300,7 @@ begin
   if length(btrim(coalesce(p_data ->> 'name', ''))) < 2 then
     raise exception 'Nama supplier minimal 2 karakter' using errcode = '22023';
   end if;
-  if v_terms < 0 or v_terms > 365 then raise exception 'Termin 0–365 hari' using errcode = '22023'; end if;
+  if v_terms < 0 or v_terms > 365 then raise exception 'Termin 0-365 hari' using errcode = '22023'; end if;
 
   if p_id is null then
     insert into public.suppliers (branch_id, code, name, contact_name, phone, email, address, npwp, payment_terms_days,

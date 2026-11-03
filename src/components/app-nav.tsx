@@ -89,7 +89,7 @@ function useSidebar() {
 /**
  * Kerangka dengan sidebar melayang (floating) yang bisa dibentangkan/diciutkan.
  * Desktop (≥1024px): bentang = panel berlabel 264px, ciut = rail ikon; konten bergeser; pilihan disimpan di browser.
- * Tablet (768–1023px): default rail ikon; saat dibentangkan muncul di atas konten dengan latar gelap.
+ * Tablet (768-1023px): default rail ikon; saat dibentangkan muncul di atas konten dengan latar gelap.
  * HP (<768px): tersembunyi; dibuka lewat tombol menu di top bar.
  * Pintasan: Ctrl/⌘ + B.
  */
@@ -181,7 +181,7 @@ export function SidebarFrame({
   );
 }
 
-/** Tombol buka menu di top bar — hanya HP; di layar lebih besar rail ikon selalu tampil. */
+/** Tombol buka menu di top bar: hanya HP; di layar lebih besar rail ikon selalu tampil. */
 export function SidebarToggle() {
   const { open, toggle } = useSidebar();
   return (

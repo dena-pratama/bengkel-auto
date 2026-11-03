@@ -1,4 +1,4 @@
-# CLAUDE.md — Agent Default Proyek Bengkel Mobil App
+# CLAUDE.md (Agent Default Proyek Bengkel Mobil App)
 
 ## Peran
 Kamu adalah **Programmer Fullstack Developer senior** yang teliti dan berpengalaman (Next.js, TypeScript, PostgreSQL/Supabase).
@@ -50,7 +50,8 @@ Karena dev sudah self-host, migrasi ke production cukup pindah ke VPS dengan sta
 ## Cara Kerja
 1. Pahami instruksi + bagian PRD terkait sebelum menulis kode.
 2. Kerjakan dengan kode yang rapi, konsisten dengan kode sekitar, dan tervalidasi (lint/typecheck/test bila ada).
-3. Laporkan hasil apa adanya — jika test gagal atau ada yang belum diverifikasi, sebutkan.
+3. Laporkan hasil apa adanya: jika test gagal atau ada yang belum diverifikasi, sebutkan.
+4. **Jangan pakai tanda pisah panjang** (em dash U+2014 dan en dash U+2013) di mana pun: teks UI, pesan error, kode, komentar, SQL, dan dokumen. Pakai titik dua, koma, atau tanda minus biasa (`-`), misalnya `Pilih supplier`, `5-20 digit`, `0-30 hari`.
 
 ## Wajib Setelah Setiap Perubahan Kode
 1. **Naikkan versi** (SemVer, mulai `0.0.1`):
@@ -58,7 +59,7 @@ Karena dev sudah self-host, migrasi ke production cukup pindah ke VPS dengan sta
    - minor `0.x.0` → fitur/modul baru
    - major `x.0.0` → rilis besar / go-live
    Simpan versi di `VERSION` (dan `package.json` bila sudah ada).
-2. **Update `devlog.md`** — entri baru paling atas: versi, tanggal (YYYY-MM-DD), ringkasan, daftar perubahan (Added/Changed/Fixed/Removed), file terdampak.
-3. **Update `fitur.md`** — ubah status fitur (⬜ Belum · 🟨 Proses · ✅ Selesai) dan tambahkan fitur baru bila ada.
+2. **Update `devlog.md`**, entri baru paling atas: versi, tanggal (YYYY-MM-DD), ringkasan, daftar perubahan (Added/Changed/Fixed/Removed), file terdampak.
+3. **Update `fitur.md`**, ubah status fitur (⬜ Belum · 🟨 Proses · ✅ Selesai) dan tambahkan fitur baru bila ada.
 4. **Commit ke git** dengan pesan: `Update ver X.Y.Z: <ringkasan singkat>` lalu buat tag `vX.Y.Z`.
    Push ke remote hanya jika remote sudah dikonfigurasi dan user mengizinkan.

@@ -1,5 +1,5 @@
 -- =============================================================================
--- Pengelolaan karyawan & role (PRD §2, §10.1–10.2, §16)
+-- Pengelolaan karyawan & role (PRD §2, §10.1-10.2, §16)
 -- Semua perubahan lewat fungsi atomik di database: izin dicek di sini (bukan di halaman),
 -- aturan keamanan (tidak ada eskalasi hak, minimal satu Owner aktif) ditegakkan di sini.
 -- Perubahan baris tetap tercatat oleh trigger audit pada tiap tabel.
@@ -123,7 +123,7 @@ begin
     raise exception 'Nomor HP tidak valid (contoh 0812xxxxxxx)' using errcode = '22023';
   end if;
   if v_acct is not null and v_acct !~ '^[0-9]{5,20}$' then
-    raise exception 'Nomor rekening hanya angka (5–20 digit)' using errcode = '22023';
+    raise exception 'Nomor rekening hanya angka (5-20 digit)' using errcode = '22023';
   end if;
   return query select
     v_name, v_nik, v_phone,
@@ -392,7 +392,7 @@ begin
 
   -- Tanpa eskalasi: non-Owner hanya boleh memberi izin yang ia miliki sendiri
   if not app.is_superuser() then
-    select p.module_label || ' — ' || p.action into v_bad
+    select p.module_label || ': ' || p.action into v_bad
     from unnest(v_ids, v_scopes) t(id, scope) join public.permissions p on p.id = t.id
     where not app.has_permission(p.module, p.action, t.scope)
     limit 1;

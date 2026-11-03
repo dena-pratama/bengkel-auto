@@ -30,7 +30,7 @@ end;
 $$;
 
 -- -----------------------------------------------------------------------------
--- branches — disiapkan untuk multi-cabang (MVP: satu cabang)
+-- branches: disiapkan untuk multi-cabang (MVP: satu cabang)
 -- -----------------------------------------------------------------------------
 create table public.branches (
   id          uuid primary key default gen_random_uuid(),
@@ -50,7 +50,7 @@ create trigger trg_branches_updated_at before update on public.branches
   for each row execute function app.set_updated_at();
 
 -- -----------------------------------------------------------------------------
--- settings — key/value per cabang
+-- settings: key/value per cabang
 -- -----------------------------------------------------------------------------
 create table public.settings (
   id          uuid primary key default gen_random_uuid(),
@@ -68,7 +68,7 @@ create trigger trg_settings_updated_at before update on public.settings
   for each row execute function app.set_updated_at();
 
 -- -----------------------------------------------------------------------------
--- number_sequences — nomor dokumen otomatis, contoh INV-2611-0001 (PRD §8.3)
+-- number_sequences: nomor dokumen otomatis, contoh INV-2611-0001 (PRD §8.3)
 -- Hanya diakses lewat app.next_document_number().
 -- -----------------------------------------------------------------------------
 create table public.number_sequences (
@@ -84,7 +84,7 @@ create table public.number_sequences (
 );
 
 -- -----------------------------------------------------------------------------
--- audit_logs — append-only, tidak bisa diubah/dihapus (PRD §18)
+-- audit_logs: append-only, tidak bisa diubah/dihapus (PRD §18)
 -- -----------------------------------------------------------------------------
 create table public.audit_logs (
   id          uuid primary key default gen_random_uuid(),

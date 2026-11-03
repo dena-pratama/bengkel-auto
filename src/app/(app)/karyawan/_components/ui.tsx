@@ -45,7 +45,7 @@ export function StatusBadge({ status }: { status: EmployeeStatus }) {
 }
 
 export function RoleChips({ roles }: { roles: RoleRef[] }) {
-  if (roles.length === 0) return <span className="text-xs text-muted-foreground">—</span>;
+  if (roles.length === 0) return <span className="text-xs text-muted-foreground">-</span>;
   return (
     <span className="flex flex-wrap gap-1">
       {roles.map((r) => (

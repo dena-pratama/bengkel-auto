@@ -15,7 +15,7 @@ const dateTimeFmt = new Intl.DateTimeFormat("id-ID", {
 /** Angka dari database (numeric dikirim sebagai string/number) → Rupiah tanpa desimal */
 export const formatRupiah = (v: number | string | null | undefined) => rupiah.format(Number(v ?? 0));
 export const formatQty = (v: number | string | null | undefined) => qtyFmt.format(Number(v ?? 0));
-export const formatDate = (v: string | null) => (v ? dateFmt.format(new Date(v)) : "—");
+export const formatDate = (v: string | null) => (v ? dateFmt.format(new Date(v)) : "-");
 export const formatDateTime = (v: string) => `${dateTimeFmt.format(new Date(v))} WIB`;
 
 /** Tanggal hari ini di WIB, format YYYY-MM-DD (untuk nilai default input date) */

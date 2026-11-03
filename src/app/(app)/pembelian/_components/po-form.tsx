@@ -54,7 +54,7 @@ export function PoForm({ id, defaults, suppliers, items }: { id: string | null; 
     <form onSubmit={onSubmit} noValidate className="grid gap-4">
       <section className={cn(panel, "grid gap-4 sm:grid-cols-3")}>
         <SelectField id="supplier_id" label="Supplier *" error={errors.supplier_id?.message} {...register("supplier_id")}>
-          <option value="">— Pilih supplier —</option>
+          <option value="">Pilih supplier</option>
           {suppliers
             .filter((s) => s.is_active || s.id === defaults.supplier_id)
             .map((s) => (

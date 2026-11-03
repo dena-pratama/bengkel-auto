@@ -127,7 +127,7 @@ export function PackageForm({
         {!readOnly && (
           <div className="flex gap-2">
             <select value={pick} onChange={(e) => setPick(e.target.value)} className={inputClass} aria-label="Pilih komponen">
-              <option value="">— Pilih barang atau jasa —</option>
+              <option value="">Pilih barang atau jasa</option>
               <optgroup label="Jasa">
                 {services.map((o) => (
                   <option key={o.id} value={`service:${o.id}`} disabled={taken.has(`service:${o.id}`)}>

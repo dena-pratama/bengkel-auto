@@ -1,13 +1,14 @@
 {
   "name": "bengkel-app",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:db": "node scripts/test-db.mjs"
+    "test:db": "node scripts/test-db.mjs",
+    "check:dashes": "node scripts/check-dashes.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

@@ -1,8 +1,8 @@
 // Ubah logo berlatar hitam (design/automobi-logo-source.jpg) menjadi PNG transparan:
-//   public/brand/automobi-logo.png       — logo lengkap untuk latar terang
-//   public/brand/automobi-logo-dark.png  — logo lengkap untuk latar gelap (navy/biru dicerahkan)
-//   public/brand/automobi-mark.png       — ikon mobil + kunci saja (persegi)
-//   src/app/icon.png                     — favicon (dari ikon)
+//   public/brand/automobi-logo.png      : logo lengkap untuk latar terang
+//   public/brand/automobi-logo-dark.png : logo lengkap untuk latar gelap (navy/biru dicerahkan)
+//   public/brand/automobi-mark.png      : ikon mobil + kunci saja (persegi)
+//   src/app/icon.png                    : favicon (dari ikon)
 // Cara: tiap piksel digolongkan ke salah satu warna logo (merah mobil, navy kunci, biru tulisan);
 // warnanya dibuat solid dan alpha = kecerahan piksel / kecerahan warna solid, sehingga tepi
 // anti-alias di atas hitam menjadi transparan tanpa garis gelap.

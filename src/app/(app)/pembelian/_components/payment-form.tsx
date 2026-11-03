@@ -71,7 +71,7 @@ export function PaymentForm({ open, cashAccounts, today }: { open: ApRow[]; cash
             }}
             className={inputClass}
           >
-            <option value="">— Pilih supplier —</option>
+            <option value="">Pilih supplier</option>
             {suppliers.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name} · {formatRupiah(s.total)}

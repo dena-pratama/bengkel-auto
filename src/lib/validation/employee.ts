@@ -24,7 +24,7 @@ export const employeeSchema = z.object({
   bank_name: optional(50),
   bank_account_number: optional(30).refine(
     (v) => v === "" || /^[0-9]{5,20}$/.test(digitsOnly(v)),
-    "Nomor rekening hanya angka (5–20 digit)",
+    "Nomor rekening hanya angka (5-20 digit)",
   ),
   bank_account_name: optional(),
 });

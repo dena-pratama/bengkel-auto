@@ -2,7 +2,7 @@ import { connection } from "next/server";
 import { serverEnv } from "@/lib/env";
 import { version } from "../../../../../package.json";
 
-/** GET /api/v1/health — cek aplikasi dan koneksi ke Supabase (Auth via Kong). */
+/** GET /api/v1/health: cek aplikasi dan koneksi ke Supabase (Auth via Kong). */
 export async function GET() {
   await connection();
   const env = serverEnv();

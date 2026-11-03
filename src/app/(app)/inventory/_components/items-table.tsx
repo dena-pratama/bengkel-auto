@@ -68,8 +68,8 @@ const columns = col.columns([
       </div>
     ),
   }),
-  col.accessor((i) => i.category ?? "", { id: "category", header: "Kategori", sortFn: "alphanumeric", cell: (c) => c.getValue() || "—" }),
-  col.accessor((i) => i.brand ?? "", { id: "brand", header: "Merek", sortFn: "alphanumeric", cell: (c) => c.getValue() || "—" }),
+  col.accessor((i) => i.category ?? "", { id: "category", header: "Kategori", sortFn: "alphanumeric", cell: (c) => c.getValue() || "-" }),
+  col.accessor((i) => i.brand ?? "", { id: "brand", header: "Merek", sortFn: "alphanumeric", cell: (c) => c.getValue() || "-" }),
   col.accessor("qty", { header: "Stok", sortFn: "basic", cell: ({ row }) => <StockCell item={row.original} /> }),
   col.accessor("sell_price", { header: "Harga jual", sortFn: "basic", cell: (c) => <span className="tabular-nums">{formatRupiah(c.getValue())}</span> }),
 ]);

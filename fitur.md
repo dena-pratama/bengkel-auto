@@ -1,6 +1,6 @@
-# Daftar Fitur — Bengkel Mobil App
+# Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.7.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.7.1**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -25,34 +25,34 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.7.0**
 | Master Data & Inventory | Barang (SKU otomatis, kategori 2 tingkat, merek, part number OEM/alternatif, garansi, PPN) | ✅ | 0.6.0 |
 | | Kompatibilitas kendaraan | 🟨 | 0.6.0 (DB) |
 | | Lokasi Area > Rak > Bin, stok per lokasi, pindah lokasi | ✅ | 0.6.0 |
-| | QR label (cetak thermal/A4) & scan kamera/USB | ⬜ | – |
+| | QR label (cetak thermal/A4) & scan kamera/USB | ⬜ | - |
 | | Konversi satuan | ✅ | 0.6.0 |
-| | Foto barang | ⬜ | – |
+| | Foto barang | ⬜ | - |
 | | Master jasa & paket servis (alokasi harga proporsional) | ✅ | 0.6.0 |
 | | Mutasi stok (ledger) + HPP rata-rata tertimbang + saldo awal + peringatan stok minimum | ✅ | 0.6.0 |
 | Pembelian | Supplier, PO (saran dari stok menipis), penerimaan barang (dari PO / tanpa PO), HPP rata-rata, PPN masuk HPP / PPN Masukan | ✅ | 0.7.0 |
-| | Cetak / kirim PO sebagai PDF lewat WhatsApp, foto faktur | ⬜ | – |
+| | Cetak / kirim PO sebagai PDF lewat WhatsApp, foto faktur | ⬜ | - |
 | | Retur ke supplier, hutang usaha (aging, jatuh tempo H-3) & pembayaran (sebagian / banyak faktur, batal) | ✅ | 0.7.0 |
-| Pelanggan | Pelanggan & kendaraan relasional, riwayat kepemilikan | ⬜ | – |
-| | Riwayat servis, reminder servis (klik-ke-WA) | ⬜ | – |
-| Servis | Estimasi (versi, persetujuan) | ⬜ | – |
-| | Work order, pengambilan part via scan | ⬜ | – |
-| | Papan status kanban (realtime, mode TV) | ⬜ | – |
-| | Garansi & klaim | ⬜ | – |
-| Penjualan & Kas | POS, diskon per role | ⬜ | – |
-| | Pembayaran fleksibel (split, DP, tempo) | ⬜ | – |
-| | Nota/invoice (thermal, A4, PDF, WA) | ⬜ | – |
-| | Buka-tutup kas shift | ⬜ | – |
-| | Retur penjualan, piutang | ⬜ | – |
-| Stok Opname | Menyeluruh, parsial, cycle count, blind count, posting | ⬜ | – |
+| Pelanggan | Pelanggan & kendaraan relasional, riwayat kepemilikan | ⬜ | - |
+| | Riwayat servis, reminder servis (klik-ke-WA) | ⬜ | - |
+| Servis | Estimasi (versi, persetujuan) | ⬜ | - |
+| | Work order, pengambilan part via scan | ⬜ | - |
+| | Papan status kanban (realtime, mode TV) | ⬜ | - |
+| | Garansi & klaim | ⬜ | - |
+| Penjualan & Kas | POS, diskon per role | ⬜ | - |
+| | Pembayaran fleksibel (split, DP, tempo) | ⬜ | - |
+| | Nota/invoice (thermal, A4, PDF, WA) | ⬜ | - |
+| | Buka-tutup kas shift | ⬜ | - |
+| | Retur penjualan, piutang | ⬜ | - |
+| Stok Opname | Menyeluruh, parsial, cycle count, blind count, posting | ⬜ | - |
 | Karyawan | Data karyawan, role ganda, status + riwayat, akun login, PIN, role dinamis & matriks izin, RLS | ✅ | 0.5.0 |
-| | Komisi mekanik | ⬜ | – |
-| | Penggajian sederhana & kasbon, slip gaji | ⬜ | – |
-| Finance | Kas/bank, pemasukan/pengeluaran, biaya rutin | ⬜ | – |
+| | Komisi mekanik | ⬜ | - |
+| | Penggajian sederhana & kasbon, slip gaji | ⬜ | - |
+| Finance | Kas/bank, pemasukan/pengeluaran, biaya rutin | ⬜ | - |
 | | Chart of accounts, jurnal otomatis, jurnal manual, tutup buku | 🟨 | 0.7.0 (DB: bagan akun, jurnal otomatis pembelian) |
-| | Laba rugi, neraca, arus kas, buku besar, ekspor Excel/PDF | ⬜ | – |
-| Pajak | Profil pajak, PPN (DPP 11/12), PPh Final UMKM, estimasi PPh umum | ⬜ | – |
-| AI | MCP server read-only (11 tools), skor kesehatan, ringkasan mingguan | ⬜ | – |
+| | Laba rugi, neraca, arus kas, buku besar, ekspor Excel/PDF | ⬜ | - |
+| Pajak | Profil pajak, PPN (DPP 11/12), PPh Final UMKM, estimasi PPh umum | ⬜ | - |
+| AI | MCP server read-only (11 tools), skor kesehatan, ringkasan mingguan | ⬜ | - |
 | Audit | Audit log | 🟨 | 0.2.0 (DB) |
 
 ## Fase 2

@@ -87,7 +87,7 @@ export function ReturnForm({ receiptId, items, cashAccounts, today }: { receiptI
         <FormField id="return_date" label="Tanggal retur" type="date" {...register("return_date")} />
         {settlement === "refund" && (
           <SelectField id="ret_cash" label="Uang masuk ke" error={errors.cash_bank_account_id?.message} {...register("cash_bank_account_id")}>
-            <option value="">— Pilih —</option>
+            <option value="">Pilih</option>
             {cashAccounts
               .filter((a) => a.is_active)
               .map((a) => (

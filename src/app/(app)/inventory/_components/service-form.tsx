@@ -71,7 +71,7 @@ export function ServiceForm({
             Kategori jasa
           </label>
           <select id="category_id" className={inputClass} {...register("category_id")}>
-            <option value="">— Tanpa kategori —</option>
+            <option value="">Tanpa kategori</option>
             {categories
               .filter((c) => c.is_active || c.id === defaults.category_id)
               .map((c) => (

@@ -35,7 +35,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
       <PageHeader title={gr.gr_no} description={`${gr.supplier} · diterima ${formatDate(gr.receipt_date)}`} back={{ href: "/pembelian/penerimaan", label: "Penerimaan barang" }} />
 
       <section className={cn(panel, "grid gap-4 sm:grid-cols-2 lg:grid-cols-4")}>
-        <Info label="No. faktur supplier" value={gr.invoice_no ?? "—"} />
+        <Info label="No. faktur supplier" value={gr.invoice_no ?? "-"} />
         <Info label="Tanggal faktur" value={formatDate(gr.invoice_date)} />
         <Info label="Jatuh tempo" value={formatDate(gr.due_date)} />
         <Info

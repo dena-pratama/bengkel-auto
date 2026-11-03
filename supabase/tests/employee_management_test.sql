@@ -59,7 +59,7 @@ begin
 exception when others then
   if sqlerrm like 'GAGAL%' then raise; end if;
   if position(p_expect in sqlerrm) = 0 then
-    raise exception 'GAGAL: % — pesan tak terduga: %', p_name, sqlerrm;
+    raise exception 'GAGAL: %: pesan tak terduga: %', p_name, sqlerrm;
   end if;
   raise notice 'OK   %', p_name;
 end $$;

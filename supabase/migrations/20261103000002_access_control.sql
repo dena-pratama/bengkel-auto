@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Akses: karyawan, profil login, role dinamis, izin per modul/aksi, RLS
--- PRD §2 (role), §10.1–10.2 (karyawan & RLS), §16 (matriks hak akses), §19.3
+-- PRD §2 (role), §10.1-10.2 (karyawan & RLS), §16 (matriks hak akses), §19.3
 -- =============================================================================
 
 create type public.employee_status as enum ('active', 'on_leave', 'inactive');
@@ -38,7 +38,7 @@ alter table public.audit_logs
   add constraint audit_logs_actor_employee_fk foreign key (actor_employee_id) references public.employees(id);
 
 -- -----------------------------------------------------------------------------
--- profiles — 1–1 dengan akun login (auth.users), terhubung ke karyawan
+-- profiles: 1-1 dengan akun login (auth.users), terhubung ke karyawan
 -- -----------------------------------------------------------------------------
 create table public.profiles (
   id           uuid primary key references auth.users(id) on delete restrict,
@@ -54,7 +54,7 @@ create trigger trg_profiles_updated_at before update on public.profiles
   for each row execute function app.set_updated_at();
 
 -- -----------------------------------------------------------------------------
--- employee_status_history — diisi trigger setiap status berubah
+-- employee_status_history: diisi trigger setiap status berubah
 -- -----------------------------------------------------------------------------
 create table public.employee_status_history (
   id           uuid primary key default gen_random_uuid(),
@@ -399,7 +399,7 @@ $$;
 grant execute on function app.set_my_pin(text), app.verify_approval_pin(text, text) to authenticated;
 
 -- =============================================================================
--- Row Level Security — aktif di semua tabel, anon tidak punya akses
+-- Row Level Security: aktif di semua tabel, anon tidak punya akses
 -- =============================================================================
 alter table public.branches                enable row level security;
 alter table public.settings                enable row level security;

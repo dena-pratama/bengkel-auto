@@ -425,7 +425,7 @@ declare
 begin
   perform app.assert_permission('master_data', case when p_id is null then 'create' else 'update' end::public.permission_action);
   if v_code !~ '^[a-z0-9]{1,10}$' then
-    raise exception 'Kode satuan 1–10 huruf kecil/angka, contoh pcs, liter' using errcode = '22023';
+    raise exception 'Kode satuan 1-10 huruf kecil/angka, contoh pcs, liter' using errcode = '22023';
   end if;
   if p_id is null then
     insert into public.units (branch_id, code, name) values (app.current_branch_id(), v_code, btrim(p_name)) returning id into v_id;
@@ -552,7 +552,7 @@ begin
   perform app.assert_ref('brands', nullif(p_data ->> 'brand_id', '')::uuid, 'Merek');
   perform app.assert_ref('locations', nullif(p_data ->> 'default_location_id', '')::uuid, 'Lokasi default');
   if v_sku is not null and v_sku !~ '^[A-Z0-9][A-Z0-9-]{1,29}$' then
-    raise exception 'SKU hanya huruf, angka, dan tanda minus (2–30)' using errcode = '22023';
+    raise exception 'SKU hanya huruf, angka, dan tanda minus (2-30)' using errcode = '22023';
   end if;
 
   if p_id is not null then

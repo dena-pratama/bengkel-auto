@@ -31,8 +31,8 @@ export const mechanicJob = {
 };
 
 export const agenda = [
-  { slot: "09.00–10.00", title: "Booking servis Honda Jazz", meta: "09.00 – 10.00 · B 2210 SNA", icon: "car" as const },
-  { slot: "13.30–14.30", title: "Terima barang dari supplier", meta: "13.30 – 14.30 · PO-2611-0007", icon: "truck" as const, urgent: true },
+  { slot: "09.00-10.00", title: "Booking servis Honda Jazz", meta: "09.00 - 10.00 · B 2210 SNA", icon: "car" as const },
+  { slot: "13.30-14.30", title: "Terima barang dari supplier", meta: "13.30 - 14.30 · PO-2611-0007", icon: "truck" as const, urgent: true },
 ];
 
 export const todayWorkOrders = [

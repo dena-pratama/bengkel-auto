@@ -1,15 +1,39 @@
-# Devlog — Bengkel Mobil App
+# Devlog Bengkel Mobil App
 
 Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.7.0] — 2026-11-03
+## [0.7.1] 2026-11-03
+**Ringkasan:** Hapus semua tanda pisah panjang (em dash dan en dash) dari UI, kode, SQL, dan dokumen.
+
+### Changed
+- Placeholder pilihan seperti "Pilih supplier" tanpa tanda pisah; nilai kosong ditampilkan sebagai "-"; rentang angka memakai tanda minus biasa ("5-20 digit", "0-30 hari").
+- Komentar kode, file migration, tes, `CLAUDE.md`, `devlog.md`, `fitur.md`, `Dockerfile` ikut dibersihkan. Judul versi devlog kini `## [x.y.z] YYYY-MM-DD`.
+- `CLAUDE.md` Cara Kerja #4: larangan memakai tanda pisah panjang di mana pun.
+
+### Added
+- Migration `20261103000011_remove_long_dashes.sql`: menulis ulang fungsi database yang pesan errornya masih memakai tanda pisah (5 fungsi: `employee_fields`, `save_role`, `save_item`, `save_unit`, `save_supplier`); hak akses fungsi tetap.
+- `npm run check:dashes` (`scripts/check-dashes.mjs`): pengecek otomatis seluruh file yang di-track git.
+
+### Catatan
+- `AGENTS.md` (dibuat ulang otomatis oleh `next dev`) dan `supabase/config.toml` (bawaan Supabase CLI) tidak diubah.
+
+### Verifikasi
+- `npm run check:dashes`: 145 file bersih. Di database: 0 fungsi tersisa yang memuat tanda pisah, izin eksekusi tetap.
+- `npm run test:db` semua lulus, `tsc`, `eslint`, `next build` lolos.
+
+### File terdampak
+34 file sumber & dokumen, `supabase/migrations/20261103000011_remove_long_dashes.sql`, `scripts/check-dashes.mjs`, `package.json`, `CLAUDE.md`, `devlog.md`, `fitur.md`, `VERSION`
+
+---
+
+## [0.7.0] 2026-11-03
 **Ringkasan:** Modul Pembelian, Supplier & Hutang (PRD §5) beserta inti akuntansi: setiap penerimaan, retur, dan pembayaran membuat stok + HPP + hutang + jurnal dalam satu transaksi.
 
 ### Added
 - Migration `20261103000009_accounting_core.sql`: `accounts` (bagan akun default PRD §11.2, 32 akun dengan `system_key`), `cash_bank_accounts` (Kas Laci, Bank), `journal_entries` + `journal_lines` (append-only, nomor JU-YYMM-####). `app.post_journal()` menolak jurnal tidak seimbang; `app.reverse_journals()` untuk pembatalan dokumen. Jurnal hanya terbaca dengan izin jurnal/laporan keuangan. Setting `ppn_enabled` (default OFF).
-- Migration `20261103000010_purchasing.sql`: `suppliers` (SUP-001, termin), `purchase_orders`/`purchase_order_items` (Draft → Dikirim → Diterima Sebagian/Penuh → Ditutup/Dibatalkan), `goods_receipts`/`goods_receipt_items` (GR-YYMM), `purchase_returns`/`purchase_return_items` (RB-YYMM), `supplier_payments`/`supplier_payment_allocations` (BS-YYMM), view `v_ap_receipts` (sisa hutang, hari lewat jatuh tempo, umur 0–30/31–60/>60).
+- Migration `20261103000010_purchasing.sql`: `suppliers` (SUP-001, termin), `purchase_orders`/`purchase_order_items` (Draft → Dikirim → Diterima Sebagian/Penuh → Ditutup/Dibatalkan), `goods_receipts`/`goods_receipt_items` (GR-YYMM), `purchase_returns`/`purchase_return_items` (RB-YYMM), `supplier_payments`/`supplier_payment_allocations` (BS-YYMM), view `v_ap_receipts` (sisa hutang, hari lewat jatuh tempo, umur 0-30/31-60/>60).
   - `post_goods_receipt`: satuan beli → satuan dasar, diskon per baris, tolak melebihi sisa PO, jatuh tempo otomatis dari termin, PPN **masuk HPP** (tidak PKP, dialokasikan proporsional) atau **PPN Masukan** (PKP), update status PO, jurnal *Persediaan (+PPN Masukan) / Hutang Usaha*, opsi bayar langsung.
   - `post_purchase_return`: dinilai harga faktur, stok keluar pada HPP rata-rata, selisih ke *Selisih Persediaan*, PPN Masukan dibalik proporsional, potong hutang (tidak boleh melebihi sisa) atau uang kembali.
   - `post_supplier_payment` (sebagian / banyak faktur, kunci baris faktur), `void_supplier_payment` (jurnal pembalik).
@@ -35,7 +59,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.6.0] — 2026-11-03
+## [0.6.0] 2026-11-03
 **Ringkasan:** Modul Master Data & Inventory (PRD §4): barang, jasa, paket servis, kategori/merek/satuan/lokasi, dan ledger stok dengan HPP rata-rata tertimbang.
 
 ### Added
@@ -65,7 +89,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.5.1] — 2026-11-03
+## [0.5.1] 2026-11-03
 **Ringkasan:** Perbaiki peringatan Base UI pada tombol yang dirender sebagai link.
 
 ### Fixed
@@ -79,11 +103,11 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.5.0] — 2026-11-03
-**Ringkasan:** Modul Karyawan & Role (PRD §2, §10.1–10.2, §16): kelola karyawan, role ganda, status, akun login, PIN, role dinamis dengan matriks hak akses.
+## [0.5.0] 2026-11-03
+**Ringkasan:** Modul Karyawan & Role (PRD §2, §10.1-10.2, §16): kelola karyawan, role ganda, status, akun login, PIN, role dinamis dengan matriks hak akses.
 
 ### Added
-- Migration `20261103000005_employee_management.sql` — semua perubahan lewat fungsi atomik di database (izin dicek di DB, tercatat audit log):
+- Migration `20261103000005_employee_management.sql`: semua perubahan lewat fungsi atomik di database (izin dicek di DB, tercatat audit log):
   - `create_employee`, `update_employee` (validasi & normalisasi NIK 16 digit, HP, rekening; kode `EMP-YYMM-####` otomatis).
   - `set_employee_roles` (role ganda), `set_employee_status` (alasan wajib saat Nonaktif; tersimpan di `employee_status_history.reason`).
   - `link_employee_account` (hanya akun Auth baru ≤10 menit & belum terhubung), `employee_account_for_reset` (atur ulang password, diaudit).
@@ -102,7 +126,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 - `FormError` & catatan login memakai token tema (ikut mode gelap).
 
 ### Catatan
-- Komisi mekanik & penggajian (PRD §10.3–10.4) menunggu modul Servis & Finance.
+- Komisi mekanik & penggajian (PRD §10.3-10.4) menunggu modul Servis & Finance.
 - Endpoint REST `/api/v1` khusus karyawan belum dibuat; fungsi DB di atas bisa dipanggil klien mana pun lewat Supabase RPC dengan aturan yang sama.
 
 ### Verifikasi
@@ -116,7 +140,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.4.5] — 2026-11-03
+## [0.4.5] 2026-11-03
 **Ringkasan:** Logo baru AutoMobi (latar transparan) di sidebar, login/setup, dan favicon.
 
 ### Added
@@ -140,7 +164,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.4.4] — 2026-11-03
+## [0.4.4] 2026-11-03
 **Ringkasan:** Radius sudut kartu dashboard diperkecil.
 
 ### Changed
@@ -155,7 +179,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.4.3] — 2026-11-03
+## [0.4.3] 2026-11-03
 **Ringkasan:** Peringatan "Encountered a script tag while rendering React component" benar-benar dihilangkan.
 
 ### Fixed
@@ -170,7 +194,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.4.2] — 2026-11-03
+## [0.4.2] 2026-11-03
 **Ringkasan:** Perbaiki error hydration mismatch tombol sidebar dan peringatan "script tag" skrip tema.
 
 ### Fixed
@@ -186,25 +210,25 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.4.1] — 2026-11-03
+## [0.4.1] 2026-11-03
 **Ringkasan:** Ukuran huruf dinaikkan secara proporsional dan angka metrik diperbesar agar mudah dibaca owner.
 
 ### Changed
-- Skala teks di tema (`@theme`): `xs` 12→13px, `sm` 14→15px, `base` 16→17px, `lg` 18→19px; ukuran baru `2xs` 12px. Semua teks 10–11px diganti `text-2xs`, jadi minimum 12px.
+- Skala teks di tema (`@theme`): `xs` 12→13px, `sm` 14→15px, `base` 16→17px, `lg` 18→19px; ukuran baru `2xs` 12px. Semua teks 10-11px diganti `text-2xs`, jadi minimum 12px.
 - Metrik dashboard: persen cincin target 72px dengan angka tebal, progres & durasi work order `text-sm` tebal `tabular-nums` (bar progres lebih tebal), angka stok menipis `text-4xl`.
 - Kartu target disusun ulang (judul di atas, cincin + keterangan di bawah) agar label tidak meluber.
 - Sidebar bentang 248→264px (konten 280px) agar label menu tidak terlalu terpotong.
 
 ### Verifikasi
 - `tsc`, `eslint`, `next build` lolos.
-- Browser (`/dev/preview`): desktop 1440px, tablet 768px, HP 375px — lebar halaman = layar, tidak ada teks meluber.
+- Browser (`/dev/preview`): desktop 1440px, tablet 768px, HP 375px: lebar halaman = layar, tidak ada teks meluber.
 
 ### File terdampak
 `src/app/globals.css`, `src/app/(app)/dashboard/widgets.tsx`, `src/app/(app)/dashboard/view.tsx`, `src/components/app-nav.tsx`, `src/components/app-shell.tsx`, `src/components/topbar-controls.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
 
 ---
 
-## [0.4.0] — 2026-11-03
+## [0.4.0] 2026-11-03
 **Ringkasan:** Dark mode + toggle di top bar; profil, pengaturan, dan keluar dipindah ke top bar.
 
 ### Added
@@ -226,14 +250,14 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.3.5] — 2026-11-03
+## [0.3.5] 2026-11-03
 **Ringkasan:** Saat disembunyikan, sidebar menciut menjadi rail ikon (tidak hilang total); tombol panel di top bar dihapus.
 
 ### Changed
 - Sidebar dua mode: **bentang** (panel berlabel 248px) dan **ciut** (rail ikon 72px: logo, tombol bentang, ikon menu, avatar, keluar). Label muncul sebagai tooltip saat ikon di-hover/fokus.
 - Tombol bentang/ciutkan pindah ke dalam sidebar (di bawah logo saat ciut). Pintasan Ctrl/⌘ + B tetap.
 - Desktop (≥1024px): konten bergeser 264px ↔ 88px; pilihan disimpan di browser.
-- Tablet (768–1023px): default rail ikon (konten bergeser 88px); saat dibentangkan panel melayang di atas konten dengan latar gelap.
+- Tablet (768-1023px): default rail ikon (konten bergeser 88px); saat dibentangkan panel melayang di atas konten dengan latar gelap.
 - HP (<768px): sidebar tersembunyi; tombol ☰ di top bar hanya tampil di HP untuk membukanya.
 
 ### Removed
@@ -241,14 +265,14 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ### Verifikasi
 - `tsc`, `eslint`, `next build` lolos.
-- Browser (`/dev/preview`): desktop 1440px (ciut → rail 72px, konten 88px), tablet 768px (rail default, tooltip, bentang overlay, tutup lewat latar), HP 375px (☰ membuka panel penuh) — tidak ada halaman yang melebar.
+- Browser (`/dev/preview`): desktop 1440px (ciut → rail 72px, konten 88px), tablet 768px (rail default, tooltip, bentang overlay, tutup lewat latar), HP 375px (☰ membuka panel penuh): tidak ada halaman yang melebar.
 
 ### File terdampak
 `src/components/app-nav.tsx`, `src/components/app-shell.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
 
 ---
 
-## [0.3.4] — 2026-11-03
+## [0.3.4] 2026-11-03
 **Ringkasan:** Sidebar diganti menjadi panel melayang (floating) berlabel yang bisa ditampilkan/disembunyikan manual.
 
 ### Changed
@@ -263,15 +287,15 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ### Verifikasi
 - `tsc`, `eslint`, `next build` lolos.
-- Browser (`/dev/preview`): desktop 1440px (dorong konten, pilihan bertahan setelah reload), tablet 768px & HP 375px (overlay; tombol, klik latar, Esc, Ctrl+B, tombol tutup) — tidak ada halaman yang melebar.
+- Browser (`/dev/preview`): desktop 1440px (dorong konten, pilihan bertahan setelah reload), tablet 768px & HP 375px (overlay; tombol, klik latar, Esc, Ctrl+B, tombol tutup): tidak ada halaman yang melebar.
 
 ### File terdampak
 `src/components/app-nav.tsx`, `src/components/app-shell.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
 
 ---
 
-## [0.3.3] — 2026-11-03
-**Ringkasan:** Redesign dashboard mengikuti referensi baru, dominan biru & merah, responsif HP–tablet–desktop.
+## [0.3.3] 2026-11-03
+**Ringkasan:** Redesign dashboard mengikuti referensi baru, dominan biru & merah, responsif HP-tablet-desktop.
 
 ### Changed
 - Tema: primary biru `#3B6A8C` (turunan gelap `#7DAACB`, kontras teks putih ≥ 4.5:1), aksen biru `#7DAACB`, merah `#CE2626` untuk prioritas/peringatan/sorotan. Latar biru keabuan `#EEF3F7`. Pasir & krem hanya aksen kecil. Token baru `brand-blue-deep`.
@@ -284,14 +308,14 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ### Verifikasi
 - `tsc`, `eslint`, `next build` lolos.
-- Browser (`/dev/preview`): desktop 1440px, tablet 768px, HP 375px — lebar halaman = lebar layar, tidak ada kartu yang meluber.
+- Browser (`/dev/preview`): desktop 1440px, tablet 768px, HP 375px: lebar halaman = lebar layar, tidak ada kartu yang meluber.
 
 ### File terdampak
 `src/app/globals.css`, `src/components/app-shell.tsx`, `src/components/app-nav.tsx`, `src/app/(app)/layout.tsx`, `src/app/(app)/dashboard/*`, `src/app/dev/preview/page.tsx`, `src/lib/demo/dashboard.ts`, `next.config.ts`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
 
 ---
 
-## [0.3.2] — 2026-11-03
+## [0.3.2] 2026-11-03
 **Ringkasan:** Tema warna moodboard + redesign layout & dashboard ala referensi, dengan konteks bengkel.
 
 ### Changed
@@ -301,8 +325,8 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 - Komponen dipisah: `src/components/app-shell.tsx` (kerangka + sidebar), `dashboard/view.tsx`, `dashboard/widgets.tsx`.
 
 ### Added
-- `src/lib/demo/dashboard.ts` — data contoh dashboard (berlabel "Data contoh"), diganti view database saat modul jadi.
-- `/dev/preview` — pratinjau UI tanpa login, hanya di development (404 di production, tidak dibuka di proxy production).
+- `src/lib/demo/dashboard.ts`: data contoh dashboard (berlabel "Data contoh"), diganti view database saat modul jadi.
+- `/dev/preview`: pratinjau UI tanpa login, hanya di development (404 di production, tidak dibuka di proxy production).
 
 ### Fixed
 - Warna tidak tampil di dev: dev server masih memakai CSS lama; perlu restart setelah menambah token `@theme`.
@@ -317,7 +341,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.3.1] — 2026-11-03
+## [0.3.1] 2026-11-03
 **Ringkasan:** Perbaikan error dashboard & keamanan log dev.
 
 ### Fixed
@@ -336,16 +360,16 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.3.0] — 2026-11-03
+## [0.3.0] 2026-11-03
 **Ringkasan:** Halaman login, setup Owner pertama, dan layout aplikasi (light mode).
 
 ### Added
 - Migration `20261103000004_auth_bootstrap.sql`: `public.needs_setup()`, `public.bootstrap_owner()` (hanya service_role, sekali saja, terkunci dari race), `public.my_context()` (karyawan, cabang, role, izin).
 - `src/proxy.ts` (Next 16, pengganti middleware): refresh sesi Supabase, redirect ke `/login` jika belum masuk, logout otomatis setelah 12 jam tidak aktif.
-- `/setup` — buat akun Owner pertama (muncul hanya jika belum ada karyawan).
-- `/login` — email + password; pesan error Bahasa Indonesia (salah password, akun dinonaktifkan, akun tanpa karyawan).
+- `/setup`: buat akun Owner pertama (muncul hanya jika belum ada karyawan).
+- `/login`: email + password; pesan error Bahasa Indonesia (salah password, akun dinonaktifkan, akun tanpa karyawan).
 - Layout aplikasi: sidebar (desktop) + menu sheet (HP), header dengan nama, role, cabang, dan tombol keluar. Menu difilter sesuai izin; modul yang belum dibangun bertanda "Segera".
-- `/dashboard` — sapaan, tanggal WIB, kartu ringkasan (placeholder sampai modul terkait jadi).
+- `/dashboard`: sapaan, tanggal WIB, kartu ringkasan (placeholder sampai modul terkait jadi).
 - `src/lib/auth.ts` (`getUserContext`, `requireUser`, `can`), `src/lib/supabase/admin.ts`, `src/lib/validation/auth.ts` (Zod dipakai di client & server), `src/components/form-field.tsx`.
 - shadcn: input, label, badge, separator, sheet.
 
@@ -363,7 +387,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.2.0] — 2026-11-03
+## [0.2.0] 2026-11-03
 **Ringkasan:** Skema database fondasi: sistem, akses, role & RLS.
 
 ### Added
@@ -371,7 +395,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
   - schema `app`, `app.today_wib()`, `app.set_updated_at()`.
   - Tabel `branches`, `settings`, `number_sequences`, `audit_logs` (append-only, tidak bisa update/delete/truncate).
 - Migration `20261103000002_access_control.sql`:
-  - Tabel `employees`, `profiles` (1–1 `auth.users`), `employee_status_history`, `roles`, `permissions`, `role_permissions` (scope `all`/`own`), `employee_roles`.
+  - Tabel `employees`, `profiles` (1-1 `auth.users`), `employee_status_history`, `roles`, `permissions`, `role_permissions` (scope `all`/`own`), `employee_roles`.
   - Helper RLS: `app.current_employee_id()`, `app.current_branch_id()`, `app.is_superuser()`, `app.has_permission(module, action, scope)`.
   - Audit trigger generik `app.audit_row_change()` (tanpa `pin_hash`).
   - Status karyawan: riwayat otomatis + akun Nonaktif diblokir login (`auth.users.banned_until`).
@@ -396,7 +420,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.1.1] — 2026-11-03
+## [0.1.1] 2026-11-03
 **Ringkasan:** `npm run dev` di host Windows terhubung ke Supabase.
 
 ### Fixed
@@ -410,16 +434,16 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.1.0] — 2026-11-03
+## [0.1.0] 2026-11-03
 **Ringkasan:** Setup proyek Next.js + Supabase + Docker.
 
 ### Added
 - Next.js 16.4 (App Router, TypeScript, Tailwind v4, ESLint, `src/`), `lang="id"`.
 - shadcn/ui (button, card), Zod, React Hook Form, `@supabase/supabase-js`, `@supabase/ssr`, `server-only`.
 - Supabase CLI (devDependency) + folder `supabase/` (`config.toml`, `migrations/`).
-- `src/lib/env.ts` — validasi env dengan Zod.
-- `src/lib/supabase/client.ts` & `server.ts` — Supabase client browser/server (cookie session).
-- `GET /api/v1/health` — status app, versi, dan koneksi Supabase Auth.
+- `src/lib/env.ts`: validasi env dengan Zod.
+- `src/lib/supabase/client.ts` & `server.ts`: Supabase client browser/server (cookie session).
+- `GET /api/v1/health`: status app, versi, dan koneksi Supabase Auth.
 - `Dockerfile` (Node 24 alpine, standalone, user non-root, TZ Asia/Jakarta, healthcheck) + `.dockerignore`.
 - `next.config.ts` → `output: "standalone"`.
 - `.env.example` → `SUPABASE_INTERNAL_URL`.
@@ -436,7 +460,7 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.0.4] — 2026-11-03
+## [0.0.4] 2026-11-03
 **Ringkasan:** Port Postgres di-publish untuk migration.
 
 ### Added
@@ -451,13 +475,13 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.0.3] — 2026-11-03
+## [0.0.3] 2026-11-03
 **Ringkasan:** Supabase self-host berjalan di Coolify lokal.
 
 ### Added
 - Supabase (12 container) dideploy di Coolify lokal, API via Kong di `http://supabase.localhost`.
-- `.env.example` — template variabel env (Supabase URL, anon key, service role key, DATABASE_URL, TZ).
-- `.env.local` (tidak di-commit) — diisi kunci asli dari Coolify.
+- `.env.example`: template variabel env (Supabase URL, anon key, service role key, DATABASE_URL, TZ).
+- `.env.local` (tidak di-commit): diisi kunci asli dari Coolify.
 
 ### Fixed
 - 503 di `supabase.localhost`: domain Kong masih sslip.io bawaan Coolify. Domain diganti ke `supabase.localhost` port 8000 lalu restart servis.
@@ -471,24 +495,24 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
-## [0.0.2] — 2026-11-03
+## [0.0.2] 2026-11-03
 **Ringkasan:** Environment development pindah ke Docker + Coolify lokal.
 
 ### Changed
-- `CLAUDE.md` — development memakai Docker + Coolify lokal dengan Supabase self-host (bukan Netlify + Supabase Cloud). Ditambah tabel environment dan konsekuensinya (Dockerfile standalone, `.env.example`, Supabase CLI).
+- `CLAUDE.md`: development memakai Docker + Coolify lokal dengan Supabase self-host (bukan Netlify + Supabase Cloud). Ditambah tabel environment dan konsekuensinya (Dockerfile standalone, `.env.example`, Supabase CLI).
 
 ### File terdampak
 `CLAUDE.md`, `devlog.md`, `fitur.md`, `VERSION`
 
 ---
 
-## [0.0.1] — 2026-11-03
+## [0.0.1] 2026-11-03
 **Ringkasan:** Inisialisasi proyek & dokumentasi kerja.
 
 ### Added
-- `CLAUDE.md` — agent default (Fullstack Developer) beserta aturan teknis dari PRD dan alur versioning.
-- `devlog.md` — log perubahan.
-- `fitur.md` — daftar fitur & status berdasarkan PRD.
+- `CLAUDE.md`: agent default (Fullstack Developer) beserta aturan teknis dari PRD dan alur versioning.
+- `devlog.md`: log perubahan.
+- `fitur.md`: daftar fitur & status berdasarkan PRD.
 - `VERSION`, `.gitignore`.
 - Inisialisasi repository git.
 

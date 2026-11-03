@@ -13,7 +13,7 @@ export const itemSchema = z.object({
     .string()
     .trim()
     .toUpperCase()
-    .refine((v) => v === "" || /^[A-Z0-9][A-Z0-9-]{1,29}$/.test(v), "SKU hanya huruf, angka, dan tanda minus (2–30)"),
+    .refine((v) => v === "" || /^[A-Z0-9][A-Z0-9-]{1,29}$/.test(v), "SKU hanya huruf, angka, dan tanda minus (2-30)"),
   name: z.string().trim().min(2, "Nama minimal 2 karakter").max(120, "Maksimal 120 karakter"),
   category_id: optionalId,
   brand_id: optionalId,

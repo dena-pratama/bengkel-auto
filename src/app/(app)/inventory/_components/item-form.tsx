@@ -96,7 +96,7 @@ export function ItemForm({
           </div>
           <FormField id="sku" label="SKU" placeholder="Kosongkan = otomatis (BRG-00001)" className="uppercase" error={errors.sku?.message} {...register("sku")} />
           <Select id="brand_id" label="Merek" error={errors.brand_id?.message} {...register("brand_id")}>
-            <option value="">— Tanpa merek —</option>
+            <option value="">Tanpa merek</option>
             {activeOr(lookups.brands, defaults.brand_id).map((b) => (
               <option key={b.id} value={b.id}>
                 {b.name}
@@ -104,7 +104,7 @@ export function ItemForm({
             ))}
           </Select>
           <Select id="category_id" label="Kategori" error={errors.category_id?.message} {...register("category_id")}>
-            <option value="">— Tanpa kategori —</option>
+            <option value="">Tanpa kategori</option>
             {parents.map((p) => [
               <option key={p.id} value={p.id}>
                 {p.name}
@@ -118,7 +118,7 @@ export function ItemForm({
             ])}
           </Select>
           <Select id="default_location_id" label="Lokasi default" error={errors.default_location_id?.message} {...register("default_location_id")}>
-            <option value="">— Belum ditentukan —</option>
+            <option value="">Belum ditentukan</option>
             {activeOr(lookups.locations, defaults.default_location_id).map((l) => (
               <option key={l.id} value={l.id}>
                 {l.path} · {l.name}
@@ -151,7 +151,7 @@ export function ItemForm({
             {!canSetPrice && <p className="text-xs text-muted-foreground">Butuh izin ubah harga jual.</p>}
           </div>
           <Select id="base_unit_id" label="Satuan dasar *" disabled={baseUnitLocked} error={errors.base_unit_id?.message} {...register("base_unit_id")}>
-            <option value="">— Pilih —</option>
+            <option value="">Pilih</option>
             {activeOr(lookups.units, defaults.base_unit_id).map((u) => (
               <option key={u.id} value={u.id}>
                 {u.code} · {u.name}
@@ -188,7 +188,7 @@ export function ItemForm({
             {units.fields.map((f, i) => (
               <div key={f.id} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-end gap-2 rounded-sm border border-border p-3">
                 <Select id={`units.${i}.unit_id`} label="1 satuan" error={errors.units?.[i]?.unit_id?.message} {...register(`units.${i}.unit_id`)}>
-                  <option value="">— Pilih —</option>
+                  <option value="">Pilih</option>
                   {lookups.units
                     .filter((u) => u.id !== baseUnitId && (u.is_active || u.id === f.unit_id))
                     .map((u) => (
