@@ -167,7 +167,7 @@ export function SidebarFrame({
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col bg-background md:min-h-0 md:overflow-y-auto md:overscroll-contain md:rounded-[30px] md:[scrollbar-color:var(--border)_transparent] md:[scrollbar-width:thin] print:overflow-visible! print:rounded-none">
-          <header className="sticky top-0 z-20 flex h-16 items-center gap-2 bg-background/85 px-3 backdrop-blur md:rounded-t-[30px] sm:px-6">
+          <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-2 bg-background/85 px-3 backdrop-blur md:rounded-t-[30px] sm:px-6">
             {topbar}
           </header>
           <main className="min-w-0 flex-1 px-3 pt-2 pb-8 sm:px-6">{children}</main>

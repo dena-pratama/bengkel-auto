@@ -4,6 +4,20 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.11.7] 2026-11-03
+**Ringkasan:** Top bar tidak lagi "nempel" ke tepi atas panel pada halaman yang kontennya panjang.
+
+### Fixed
+- Sejak 0.11.6 panel konten menjadi kontainer scroll setinggi layar, sehingga header (`h-16`) ikut tertekan flexbox menjadi 48px saat konten lebih panjang dari layar (kolom cari hanya 4px dari tepi atas, jarak ke baris tab menyempit). Header diberi `shrink-0`: tinggi tetap 64px, kolom cari 12px dari tepi atas. Halaman berkonten pendek (servis, pelanggan) tidak terdampak, itu sebabnya terlihat berbeda.
+
+### Verifikasi
+- Diukur di browser pada lebar 1906px: tinggi header 64px (sebelumnya 48px), jarak kolom cari ke tepi atas panel 12px (sebelumnya 4px), tetap 64px setelah panel di-scroll. `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos.
+
+### File terdampak
+`src/components/app-nav.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.11.6] 2026-11-03
 **Ringkasan:** Bingkai, sidebar, dan top bar diam di tempat saat halaman di-scroll; hanya isi panel yang bergulir.
 
