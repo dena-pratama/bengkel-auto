@@ -4,6 +4,37 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.7.0] — 2026-11-03
+**Ringkasan:** Modul Pembelian, Supplier & Hutang (PRD §5) beserta inti akuntansi: setiap penerimaan, retur, dan pembayaran membuat stok + HPP + hutang + jurnal dalam satu transaksi.
+
+### Added
+- Migration `20261103000009_accounting_core.sql`: `accounts` (bagan akun default PRD §11.2, 32 akun dengan `system_key`), `cash_bank_accounts` (Kas Laci, Bank), `journal_entries` + `journal_lines` (append-only, nomor JU-YYMM-####). `app.post_journal()` menolak jurnal tidak seimbang; `app.reverse_journals()` untuk pembatalan dokumen. Jurnal hanya terbaca dengan izin jurnal/laporan keuangan. Setting `ppn_enabled` (default OFF).
+- Migration `20261103000010_purchasing.sql`: `suppliers` (SUP-001, termin), `purchase_orders`/`purchase_order_items` (Draft → Dikirim → Diterima Sebagian/Penuh → Ditutup/Dibatalkan), `goods_receipts`/`goods_receipt_items` (GR-YYMM), `purchase_returns`/`purchase_return_items` (RB-YYMM), `supplier_payments`/`supplier_payment_allocations` (BS-YYMM), view `v_ap_receipts` (sisa hutang, hari lewat jatuh tempo, umur 0–30/31–60/>60).
+  - `post_goods_receipt`: satuan beli → satuan dasar, diskon per baris, tolak melebihi sisa PO, jatuh tempo otomatis dari termin, PPN **masuk HPP** (tidak PKP, dialokasikan proporsional) atau **PPN Masukan** (PKP), update status PO, jurnal *Persediaan (+PPN Masukan) / Hutang Usaha*, opsi bayar langsung.
+  - `post_purchase_return`: dinilai harga faktur, stok keluar pada HPP rata-rata, selisih ke *Selisih Persediaan*, PPN Masukan dibalik proporsional, potong hutang (tidak boleh melebihi sisa) atau uang kembali.
+  - `post_supplier_payment` (sebagian / banyak faktur, kunci baris faktur), `void_supplier_payment` (jurnal pembalik).
+  - Izin: pembelian `purchasing`; bayar/batal hutang `payables` (default hanya Owner).
+- Tes DB `supabase/tests/purchasing_test.sql` (42 tes: alur PO → terima sebagian → terima + PPN → PKP, HPP, jurnal seimbang & saldo akun, bayar/batal, retur potong hutang & uang kembali, akses).
+- Halaman `/pembelian` (PO), `/pembelian/po/baru` & `/[id]` (form PO + saran dari stok menipis, aksi kirim/terima/tutup/batal), `/pembelian/penerimaan` (+ `baru?po=` terisi otomatis dari sisa PO, `/[id]` detail + retur), `/pembelian/hutang` (ringkasan, umur hutang, jatuh tempo ≤ 3 hari, bayar beberapa faktur sekaligus, riwayat + batal), `/pembelian/supplier` (+ baru/[id] dengan riwayat PO, penerimaan, sisa hutang).
+- Komponen `ItemPicker` (cari barang nama/SKU, dipakai ulang untuk kasir/servis), helper `todayWib()`, `src/lib/validation/common.ts` (`toNumber` bersama).
+
+### Changed
+- Menu sidebar **Pembelian** aktif.
+
+### Catatan
+- Pembatalan penerimaan barang belum ada; koreksi lewat retur ke supplier.
+- Menyusul: cetak/kirim PO (PDF/WhatsApp), foto faktur, UI Finance (kas/bank, jurnal, laporan), pengingat hutang H-3 di dashboard.
+
+### Verifikasi
+- `npm run test:db`: 42 tes pembelian + 44 inventory + 37 karyawan + 33 fondasi lulus. `tsc`, `eslint`, `next build` lolos.
+- Bentuk query PostgREST semua halaman pembelian dicek terhadap DB lokal.
+- **Belum diverifikasi di browser dengan login.**
+
+### File terdampak
+`supabase/migrations/20261103000009_accounting_core.sql`, `supabase/migrations/20261103000010_purchasing.sql`, `supabase/tests/purchasing_test.sql`, `src/app/(app)/pembelian/**`, `src/lib/purchasing.ts`, `src/lib/validation/purchasing.ts`, `src/lib/validation/common.ts`, `src/lib/validation/inventory.ts`, `src/lib/format.ts`, `src/components/item-picker.tsx`, `src/lib/navigation.ts`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.6.0] — 2026-11-03
 **Ringkasan:** Modul Master Data & Inventory (PRD §4): barang, jasa, paket servis, kategori/merek/satuan/lokasi, dan ledger stok dengan HPP rata-rata tertimbang.
 

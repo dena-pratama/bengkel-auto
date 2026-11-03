@@ -16,7 +16,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/servis", label: "Servis & Work Order", icon: "wrench", module: "service_orders", ready: false },
   { href: "/kasir", label: "Kasir", icon: "cart", module: "sales", ready: false },
   { href: "/inventory", label: "Barang & Jasa", icon: "package", module: "master_data", ready: true },
-  { href: "/pembelian", label: "Pembelian", icon: "truck", module: "purchasing", ready: false },
+  { href: "/pembelian", label: "Pembelian", icon: "truck", module: "purchasing", ready: true },
   { href: "/pelanggan", label: "Pelanggan", icon: "users", module: "customers", ready: false },
   { href: "/stok-opname", label: "Stok Opname", icon: "clipboard", module: "stock_opname_count", ready: false },
   { href: "/karyawan", label: "Karyawan", icon: "userCog", module: "employees", ready: true },

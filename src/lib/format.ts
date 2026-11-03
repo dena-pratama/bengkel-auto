@@ -17,3 +17,6 @@ export const formatRupiah = (v: number | string | null | undefined) => rupiah.fo
 export const formatQty = (v: number | string | null | undefined) => qtyFmt.format(Number(v ?? 0));
 export const formatDate = (v: string | null) => (v ? dateFmt.format(new Date(v)) : "—");
 export const formatDateTime = (v: string) => `${dateTimeFmt.format(new Date(v))} WIB`;
+
+/** Tanggal hari ini di WIB, format YYYY-MM-DD (untuk nilai default input date) */
+export const todayWib = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta" }).format(new Date());

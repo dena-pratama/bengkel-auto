@@ -1,6 +1,6 @@
 # Daftar Fitur — Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.6.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.7.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -30,8 +30,9 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.6.0**
 | | Foto barang | ⬜ | – |
 | | Master jasa & paket servis (alokasi harga proporsional) | ✅ | 0.6.0 |
 | | Mutasi stok (ledger) + HPP rata-rata tertimbang + saldo awal + peringatan stok minimum | ✅ | 0.6.0 |
-| Pembelian | Supplier, PO, penerimaan barang, HPP rata-rata | ⬜ | – |
-| | Retur ke supplier, hutang usaha & pembayaran | ⬜ | – |
+| Pembelian | Supplier, PO (saran dari stok menipis), penerimaan barang (dari PO / tanpa PO), HPP rata-rata, PPN masuk HPP / PPN Masukan | ✅ | 0.7.0 |
+| | Cetak / kirim PO sebagai PDF lewat WhatsApp, foto faktur | ⬜ | – |
+| | Retur ke supplier, hutang usaha (aging, jatuh tempo H-3) & pembayaran (sebagian / banyak faktur, batal) | ✅ | 0.7.0 |
 | Pelanggan | Pelanggan & kendaraan relasional, riwayat kepemilikan | ⬜ | – |
 | | Riwayat servis, reminder servis (klik-ke-WA) | ⬜ | – |
 | Servis | Estimasi (versi, persetujuan) | ⬜ | – |
@@ -48,7 +49,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.6.0**
 | | Komisi mekanik | ⬜ | – |
 | | Penggajian sederhana & kasbon, slip gaji | ⬜ | – |
 | Finance | Kas/bank, pemasukan/pengeluaran, biaya rutin | ⬜ | – |
-| | Chart of accounts, jurnal otomatis, jurnal manual, tutup buku | ⬜ | – |
+| | Chart of accounts, jurnal otomatis, jurnal manual, tutup buku | 🟨 | 0.7.0 (DB: bagan akun, jurnal otomatis pembelian) |
 | | Laba rugi, neraca, arus kas, buku besar, ekspor Excel/PDF | ⬜ | – |
 | Pajak | Profil pajak, PPN (DPP 11/12), PPh Final UMKM, estimasi PPh umum | ⬜ | – |
 | AI | MCP server read-only (11 tools), skor kesehatan, ringkasan mingguan | ⬜ | – |

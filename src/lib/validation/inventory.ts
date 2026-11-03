@@ -1,13 +1,6 @@
 import { z } from "zod";
+import { toNumber } from "./common";
 
-// Angka dari input teks: "45.000" / "45000" / "1,5" → number. Kosong → 0.
-const toNumber = (v: unknown) => {
-  if (typeof v === "number") return v;
-  const s = String(v ?? "").trim().replace(/\s/g, "");
-  if (s === "") return 0;
-  // Format Indonesia: titik ribuan, koma desimal
-  return Number(s.replace(/\./g, "").replace(",", "."));
-};
 const money = (label: string) =>
   z.preprocess(toNumber, z.number({ error: `${label} harus angka` }).min(0, `${label} tidak boleh minus`).max(9_999_999_999_999, `${label} terlalu besar`));
 const quantity = (label: string, min = 0) =>
