@@ -10,7 +10,7 @@ const NOTICES: Record<string, string> = {
 
 export default function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
-    <Card>
+    <Card className="rounded-md shadow-[0_1px_2px_rgb(23_36_51/0.04),0_8px_24px_-12px_rgb(23_36_51/0.08)] ring-foreground/5">
       <CardHeader>
         <CardTitle>Masuk</CardTitle>
         <CardDescription>Gunakan email dan password akun karyawan Anda.</CardDescription>

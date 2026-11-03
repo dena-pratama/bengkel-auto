@@ -41,15 +41,18 @@ export function initials(name: string) {
 export function RailView({ ctx }: { ctx: UserContext }) {
   return (
     <>
-      <div className="flex items-center gap-3 px-4 pt-4 pb-3 group-data-[collapsed=true]/sb:flex-col group-data-[collapsed=true]/sb:gap-2 group-data-[collapsed=true]/sb:px-0">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-white p-1 shadow-lg shadow-black/15">
+      <div className="grid gap-2 px-3 pt-3 pb-2 group-data-[collapsed=true]/sb:justify-items-center">
+        {/* Bentang: logo lengkap AutoMobi; ciut: ikon saja (tidak cukup ruang untuk tulisan) */}
+        <span className="flex h-16 items-center justify-center rounded-[24px] bg-white px-4 shadow-sm group-data-[collapsed=true]/sb:hidden">
+          <Image src="/brand/automobi-logo.png" alt="AutoMobi" width={1062} height={559} className="h-12 w-auto" priority />
+        </span>
+        <span className="hidden size-12 items-center justify-center rounded-full bg-white p-1.5 shadow-sm group-data-[collapsed=true]/sb:flex">
           <Image src="/brand/automobi-mark.png" alt="AutoMobi" width={64} height={64} className="size-full object-contain" priority />
         </span>
-        <div className="min-w-0 flex-1 leading-tight group-data-[collapsed=true]/sb:hidden">
-          <p className="truncate text-base font-bold tracking-tight">AutoMobi</p>
-          <p className="truncate text-2xs text-white/65">{ctx.branch.name}</p>
+        <div className="flex items-center gap-2 pl-2 group-data-[collapsed=true]/sb:pl-0">
+          <p className="min-w-0 flex-1 truncate text-xs text-white/70 group-data-[collapsed=true]/sb:hidden">{ctx.branch.name}</p>
+          <SidebarRailToggle />
         </div>
-        <SidebarRailToggle />
       </div>
 
       <p className="px-5 pt-2 pb-2 group-data-[collapsed=true]/sb:hidden text-2xs font-semibold tracking-[0.14em] text-white/50 uppercase">Menu</p>

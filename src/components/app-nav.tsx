@@ -153,7 +153,7 @@ export function SidebarFrame({
           aria-label="Sidebar"
           data-collapsed={!open}
           className={cn(
-            "group/sb fixed top-3 bottom-3 left-3 z-40 flex flex-col rounded-[28px] bg-brand-rail text-white shadow-2xl shadow-brand-blue-ink/30 dark:shadow-black/40 dark:ring-1 dark:ring-white/5",
+            "group/sb fixed top-3 bottom-3 left-3 z-40 flex flex-col rounded-[36px] bg-brand-rail text-white shadow-2xl shadow-brand-blue-ink/30 dark:shadow-black/40 dark:ring-1 dark:ring-white/5",
             ready && "transition-[width,translate,opacity] duration-300 ease-out",
             mobileOpen
               ? "max-lg:w-[264px]"

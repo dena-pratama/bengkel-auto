@@ -4,6 +4,23 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.7.2] 2026-11-03
+**Ringkasan:** Sidebar berujung bulat penuh dengan logo AutoMobi bertulisan; kartu login/setup bersudut kecil dengan bayangan tipis.
+
+### Changed
+- Sidebar: radius 28px menjadi 36px (maksimal untuk rail 72px, jadi kapsul penuh saat ciut).
+- Logo sidebar: saat bentang memakai logo lengkap "AutoMobi" di kotak putih, nama cabang di bawahnya; saat ciut memakai ikon di lingkaran putih.
+- Kartu login & setup: radius 12,8px (sama dengan kartu dashboard) dan bayangan tipis yang sama.
+
+### Verifikasi
+- `tsc`, `eslint`, `npm run check:dashes` lolos. Browser: sidebar ciut (tablet) & bentang (desktop 1440px), halaman login (radius 12,8px, bayangan tampil).
+- `next build` tidak dijalankan ulang (hanya perubahan kelas CSS).
+
+### File terdampak
+`src/components/app-shell.tsx`, `src/components/app-nav.tsx`, `src/app/(auth)/login/page.tsx`, `src/app/(auth)/setup/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.7.1] 2026-11-03
 **Ringkasan:** Hapus semua tanda pisah panjang (em dash dan en dash) dari UI, kode, SQL, dan dokumen.
 
