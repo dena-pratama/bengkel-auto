@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.8.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.9.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -34,8 +34,8 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.8.0**
 | Pembelian | Supplier, PO (saran dari stok menipis), penerimaan barang (dari PO / tanpa PO), HPP rata-rata, PPN masuk HPP / PPN Masukan | ✅ | 0.7.0 |
 | | Cetak / kirim PO sebagai PDF lewat WhatsApp, foto faktur | ⬜ | - |
 | | Retur ke supplier, hutang usaha (aging, jatuh tempo H-3) & pembayaran (sebagian / banyak faktur, batal) | ✅ | 0.7.0 |
-| Pelanggan | Pelanggan & kendaraan relasional, riwayat kepemilikan | ⬜ | - |
-| | Riwayat servis, reminder servis (klik-ke-WA) | ⬜ | - |
+| Pelanggan | Pelanggan & kendaraan relasional, riwayat kepemilikan | ✅ | 0.9.0 |
+| | Riwayat servis, reminder servis (klik-ke-WA) | ⬜ | menunggu modul Servis |
 | Servis | Estimasi (versi, persetujuan) | ⬜ | - |
 | | Work order, pengambilan part via scan | ⬜ | - |
 | | Papan status kanban (realtime, mode TV) | ⬜ | - |

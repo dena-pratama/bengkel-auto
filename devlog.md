@@ -4,6 +4,33 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.9.0] 2026-11-03
+**Ringkasan:** Modul Pelanggan & Kendaraan (PRD §6.1-6.2): pelanggan perorangan/perusahaan, kendaraan per nomor polisi, dan riwayat pergantian pemilik.
+
+### Added
+- Migration `20261103000012_customers_vehicles.sql`: `customers` (CUS-00001, perorangan/perusahaan, batas kredit & termin khusus perusahaan), `vehicles` (plat unik tanpa memedulikan spasi, merek/model ke master `vehicle_models`, transmisi, bahan bakar, nomor rangka/mesin, kilometer), `vehicle_ownerships` (satu pemilik aktif per kendaraan, riwayat tersimpan), view `v_vehicles` (kendaraan + pemilik saat ini).
+  - Fungsi `save_customer`, `set_customer_active`, `save_vehicle` (merek/model dari teks dibuat otomatis bila belum ada; kilometer tidak bisa mundur), `transfer_vehicle` (pindah pemilik), `set_vehicle_active`.
+  - Normalisasi di database: nomor HP disimpan seragam `08xxxxxxxx`; plat nomor `B 1234 KJT`.
+  - Izin: modul `customers` (Admin penuh, Kasir lihat+buat, Mekanik lihat).
+- Tes DB `supabase/tests/customers_test.sql` (17 tes).
+- Halaman `/pelanggan` (cari nama, HP, kode, atau **nomor polisi**; filter perorangan/perusahaan), `/pelanggan/[id]` (profil, ringkasan, kendaraan dimiliki & pernah dimiliki, tambah kendaraan untuk pelanggan ini), `/pelanggan/kendaraan` (cari plat/pemilik/model), `/pelanggan/kendaraan/[id]` (data kendaraan, pemilik & riwayatnya, pindah pemilik). Tambah pelanggan & kendaraan lewat pop-up.
+
+### Changed
+- Menu sidebar **Pelanggan** aktif.
+
+### Catatan
+- Total belanja, piutang, transaksi terakhir, riwayat servis, dan reminder servis berkala (PRD §6.3-6.4) terisi setelah modul Servis & Kasir.
+
+### Verifikasi
+- `npm run test:db`: 17 tes pelanggan + semua tes lama lulus (175 tes). `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos.
+- Bentuk query PostgREST halaman pelanggan dicek terhadap DB lokal.
+- **Belum diverifikasi di browser dengan login.**
+
+### File terdampak
+`supabase/migrations/20261103000012_customers_vehicles.sql`, `supabase/tests/customers_test.sql`, `src/app/(app)/pelanggan/**`, `src/lib/customers.ts`, `src/lib/validation/customer.ts`, `src/lib/navigation.ts`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.8.0] 2026-11-03
 **Ringkasan:** Semua form tambah data dibuka sebagai pop-up (tanpa pindah halaman) dan animasi halus memakai Motion (Framer Motion).
 
