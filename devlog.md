@@ -4,6 +4,21 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.4.3] — 2026-11-03
+**Ringkasan:** Peringatan "Encountered a script tag while rendering React component" benar-benar dihilangkan.
+
+### Fixed
+- `next/script` (`beforeInteractive`) ternyata tetap menghasilkan elemen `<script>` yang dibuat React di browser saat root layout dirender ulang (Fast Refresh/pemulihan render), sehingga peringatan masih muncul. Skrip tema kini disisipkan lewat `useServerInsertedHTML` (komponen `ThemeScript`): hanya ada di HTML dari server (di `<head>`, satu kali), tidak pernah dirender React di browser.
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos; skrip ada tepat 1× di `<head>` HTML dev (`/login`, `/dev/preview`) dan di hasil prerender production (`.next/server/app/*.html`).
+- Browser tab baru: mode gelap aktif sebelum hydrate (latar langsung navy), console bersih termasuk setelah `layout.tsx` diubah.
+
+### File terdampak
+`src/components/theme-script.tsx`, `src/app/layout.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.4.2] — 2026-11-03
 **Ringkasan:** Perbaiki error hydration mismatch tombol sidebar dan peringatan "script tag" skrip tema.
 
