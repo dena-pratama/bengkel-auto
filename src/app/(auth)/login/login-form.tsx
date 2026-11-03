@@ -27,7 +27,7 @@ export function LoginForm({ notice }: { notice?: string }) {
   return (
     <form onSubmit={onSubmit} className="grid gap-4" noValidate>
       {notice && (
-        <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">{notice}</p>
+        <p className="rounded-md border border-brand-sand bg-brand-sand-soft px-3 py-2 text-sm text-foreground">{notice}</p>
       )}
       <FormError message={serverError} />
       <FormField

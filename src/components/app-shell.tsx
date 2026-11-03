@@ -91,6 +91,7 @@ export function TopbarView({ ctx }: { ctx: UserContext }) {
           <Settings className="size-5" />
         </Button>
         <ProfileMenu
+          employeeId={ctx.employee.id}
           name={ctx.employee.full_name}
           role={ctx.roles.map((r) => r.name).join(", ")}
           branch={ctx.branch.name}

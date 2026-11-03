@@ -19,7 +19,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/pembelian", label: "Pembelian", icon: "truck", module: "purchasing", ready: false },
   { href: "/pelanggan", label: "Pelanggan", icon: "users", module: "customers", ready: false },
   { href: "/stok-opname", label: "Stok Opname", icon: "clipboard", module: "stock_opname_count", ready: false },
-  { href: "/karyawan", label: "Karyawan", icon: "userCog", module: "employees", ready: false },
+  { href: "/karyawan", label: "Karyawan", icon: "userCog", module: "employees", ready: true },
   { href: "/keuangan", label: "Keuangan", icon: "wallet", module: "finance_reports", ready: false },
   { href: "/pajak", label: "Pajak", icon: "receipt", module: "tax_settings", ready: false },
   { href: "/ai", label: "AI Analyst", icon: "bot", module: "ai_analyst", ready: false },

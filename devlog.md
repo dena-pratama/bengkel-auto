@@ -4,6 +4,43 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.5.0] — 2026-11-03
+**Ringkasan:** Modul Karyawan & Role (PRD §2, §10.1–10.2, §16): kelola karyawan, role ganda, status, akun login, PIN, role dinamis dengan matriks hak akses.
+
+### Added
+- Migration `20261103000005_employee_management.sql` — semua perubahan lewat fungsi atomik di database (izin dicek di DB, tercatat audit log):
+  - `create_employee`, `update_employee` (validasi & normalisasi NIK 16 digit, HP, rekening; kode `EMP-YYMM-####` otomatis).
+  - `set_employee_roles` (role ganda), `set_employee_status` (alasan wajib saat Nonaktif; tersimpan di `employee_status_history.reason`).
+  - `link_employee_account` (hanya akun Auth baru ≤10 menit & belum terhubung), `employee_account_for_reset` (atur ulang password, diaudit).
+  - `set_my_pin`, `employee_has_pin`; `save_role` (role baru/ubah + matriks izin sekaligus), `set_role_active`.
+  - Pengaman: non-Owner tidak bisa memberi/mengubah role atau data Owner; **tanpa eskalasi hak** (non-Owner hanya bisa memberi izin yang ia miliki); minimal satu Owner aktif; tidak bisa mengubah status diri sendiri; role Owner terkunci; role bawaan tidak bisa dinonaktifkan; role nonaktif tidak bisa diberikan.
+  - Kolom `permissions.sort_order` (urutan modul untuk matriks).
+- Tes DB `supabase/tests/employee_management_test.sql` (37 tes: validasi, role ganda, status & blokir login, akun, batas Owner, admin/HR tanpa eskalasi, role, PIN).
+- Halaman `/karyawan`: daftar dengan pencarian & filter status (TanStack Table v9; kartu di HP), `/karyawan/baru` (data + role + akun login opsional), `/karyawan/[id]` (ubah data, role, akun login/atur ulang password, PIN sendiri, status + riwayat).
+- Halaman `/karyawan/role`, `/karyawan/role/baru`, `/karyawan/role/[id]`: daftar role (jumlah anggota & izin) dan matriks izin modul × aksi (Lihat/Buat/Ubah/Batal/Setujui/Ekspor; lingkup "semua" atau "hanya data sendiri").
+- Validasi Zod bersama (`src/lib/validation/employee.ts`), data fetcher (`src/lib/employees.ts`), server actions (`src/app/(app)/karyawan/actions.ts`). Akun login dibuat lewat Auth Admin API lalu ditautkan oleh DB; dihapus lagi bila penautan gagal.
+- Dependensi: `@tanstack/react-table` 9; komponen shadcn checkbox, select, textarea, dialog, table, tabs.
+
+### Changed
+- Menu sidebar **Karyawan** aktif; "Profil saya" di menu profil membuka detail karyawan sendiri.
+- Sidebar HP ditutup saat link menu diklik (sebelumnya lewat `usePathname` di kerangka, yang memblokir build route dinamis di luar Suspense).
+- `FormError` & catatan login memakai token tema (ikut mode gelap).
+
+### Catatan
+- Komisi mekanik & penggajian (PRD §10.3–10.4) menunggu modul Servis & Finance.
+- Endpoint REST `/api/v1` khusus karyawan belum dibuat; fungsi DB di atas bisa dipanggil klien mana pun lewat Supabase RPC dengan aturan yang sama.
+
+### Verifikasi
+- `npm run test:db`: 37 tes baru + 33 tes fondasi lulus. `tsc`, `eslint`, `next build` lolos.
+- Bentuk query PostgREST (relasi profil & role, hitungan anggota/izin) dicek terhadap DB lokal.
+- Browser: menu Karyawan aktif, `/karyawan` tanpa login dialihkan ke `/login`, dashboard tetap normal.
+- **Belum diverifikasi di browser dengan login** (halaman karyawan butuh sesi asli).
+
+### File terdampak
+`supabase/migrations/20261103000005_employee_management.sql`, `supabase/tests/employee_management_test.sql`, `src/app/(app)/karyawan/**`, `src/lib/employees.ts`, `src/lib/validation/employee.ts`, `src/lib/navigation.ts`, `src/components/app-nav.tsx`, `src/components/app-shell.tsx`, `src/components/topbar-controls.tsx`, `src/components/form-field.tsx`, `src/components/ui/*`, `src/app/(auth)/login/login-form.tsx`, `package.json`, `package-lock.json`, `devlog.md`, `fitur.md`, `VERSION`
+
+---
+
 ## [0.4.5] — 2026-11-03
 **Ringkasan:** Logo baru AutoMobi (latar transparan) di sidebar, login/setup, dan favicon.
 

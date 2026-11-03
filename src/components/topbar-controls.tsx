@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore, useTransition } from "react";
+import Link from "next/link";
 import { ChevronDown, LogOut, Moon, Settings, Sun, UserRound } from "lucide-react";
 import {
   DropdownMenu,
@@ -62,12 +63,14 @@ export function ThemeToggle() {
 
 /** Chip profil dengan menu: profil, pengaturan, keluar. */
 export function ProfileMenu({
+  employeeId,
   name,
   role,
   branch,
   initials,
   logout,
 }: {
+  employeeId: string;
   name: string;
   role: string;
   branch: string;
@@ -105,9 +108,8 @@ export function ProfileMenu({
           </div>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled className="rounded-lg px-2 py-2">
+        <DropdownMenuItem className="rounded-lg px-2 py-2" render={<Link href={`/karyawan/${employeeId}`} />}>
           <UserRound /> Profil saya
-          <span className="ml-auto text-2xs text-muted-foreground">Segera</span>
         </DropdownMenuItem>
         <DropdownMenuItem disabled className="rounded-lg px-2 py-2">
           <Settings /> Pengaturan

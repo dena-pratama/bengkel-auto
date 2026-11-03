@@ -73,7 +73,7 @@ function writeDesktopPref(open: boolean) {
   window.dispatchEvent(new Event(STORAGE_EVENT));
 }
 
-type SidebarState = { mobileOpen: boolean; toggle: () => void };
+type SidebarState = { mobileOpen: boolean; toggle: () => void; closeMobile: () => void };
 const SidebarContext = createContext<SidebarState | null>(null);
 
 function useSidebar() {
@@ -83,7 +83,7 @@ function useSidebar() {
   // belakangan tetap memakai snapshot server saat hydrate → tidak ada hydration mismatch.
   const desktopOpen = useSyncExternalStore(subscribeDesktopPref, readDesktopPref, () => true);
   const isDesktopView = useSyncExternalStore(subscribeViewport, readIsDesktop, () => true);
-  return { open: isDesktopView ? desktopOpen : ctx.mobileOpen, toggle: ctx.toggle };
+  return { open: isDesktopView ? desktopOpen : ctx.mobileOpen, toggle: ctx.toggle, closeMobile: ctx.closeMobile };
 }
 
 /**
@@ -104,11 +104,10 @@ export function SidebarFrame({
 }) {
   const desktopOpen = useSyncExternalStore(subscribeDesktopPref, readDesktopPref, () => true);
   const isDesktopView = useSyncExternalStore(subscribeViewport, readIsDesktop, () => true);
-  // Tablet/HP: panel terbuka untuk path tertentu saja → pindah halaman otomatis menutupnya
-  const pathname = usePathname();
-  const [mobileOpenAt, setMobileOpenAt] = useState<string | null>(null);
-  const mobileOpen = mobileOpenAt === pathname;
-  const setMobileOpen = useCallback((open: boolean) => setMobileOpenAt(open ? pathname : null), [pathname]);
+  // Tablet/HP: panel overlay; ditutup saat link menu diklik (SideNav), klik latar, atau Esc.
+  // Sengaja tanpa usePathname di sini: kerangka ada di luar Suspense (wajib untuk route dinamis).
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
   // Animasi baru aktif setelah preferensi terbaca, agar tidak "melompat" saat halaman dimuat
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -118,8 +117,8 @@ export function SidebarFrame({
 
   const toggle = useCallback(() => {
     if (readIsDesktop()) writeDesktopPref(!readDesktopPref());
-    else setMobileOpenAt((at) => (at === pathname ? null : pathname));
-  }, [pathname]);
+    else setMobileOpen((v) => !v);
+  }, []);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -132,12 +131,12 @@ export function SidebarFrame({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [toggle, mobileOpen, setMobileOpen]);
+  }, [toggle, mobileOpen]);
 
   const open = isDesktopView ? desktopOpen : mobileOpen;
 
   return (
-    <SidebarContext value={{ mobileOpen, toggle }}>
+    <SidebarContext value={{ mobileOpen, toggle, closeMobile }}>
       <div className="relative flex min-h-full flex-1 bg-background">
         {/* Latar gelap (tablet & HP) */}
         <div
@@ -233,6 +232,7 @@ const RAIL_TOOLTIP = [
 /** Daftar menu di sidebar. Saat diciutkan hanya ikon; label muncul sebagai tooltip. */
 export function SideNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
+  const { closeMobile } = useSidebar();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   return (
@@ -266,7 +266,14 @@ export function SideNav({ items }: { items: NavItem[] }) {
           </span>
         );
         return item.ready ? (
-          <Link key={item.href} href={item.href} className={row} aria-label={item.label} aria-current={active ? "page" : undefined}>
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={closeMobile}
+            className={row}
+            aria-label={item.label}
+            aria-current={active ? "page" : undefined}
+          >
             {icon}
             {label}
           </Link>

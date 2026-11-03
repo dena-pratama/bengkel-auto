@@ -1,6 +1,6 @@
 # Daftar Fitur — Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.4.5**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.5.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -42,7 +42,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.4.5**
 | | Buka-tutup kas shift | ⬜ | – |
 | | Retur penjualan, piutang | ⬜ | – |
 | Stok Opname | Menyeluruh, parsial, cycle count, blind count, posting | ⬜ | – |
-| Karyawan | Data karyawan, role dinamis, matriks izin, RLS | 🟨 | 0.2.0 (DB) |
+| Karyawan | Data karyawan, role ganda, status + riwayat, akun login, PIN, role dinamis & matriks izin, RLS | ✅ | 0.5.0 |
 | | Komisi mekanik | ⬜ | – |
 | | Penggajian sederhana & kasbon, slip gaji | ⬜ | – |
 | Finance | Kas/bank, pemasukan/pengeluaran, biaya rutin | ⬜ | – |
