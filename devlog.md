@@ -4,6 +4,50 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.11.0] 2026-11-03
+**Ringkasan:** Modul Kasir (PRD §8): shift kas, penjualan part langsung (POS), invoice work order, pembayaran split, DP, bayar tempo & piutang, PPN dari tarif bertanggal, batas diskon dengan PIN, dan pengakuan komisi mekanik. Menutup alur servis: WO Siap Diambil, invoice, bayar, serahkan.
+
+### Added
+- Migration `20261103000014_cashier.sql`:
+  - Tabel `cash_shifts` (SH-YYMM-####, satu shift terbuka per kasir), `cash_movements` (kas keluar kecil dengan akun beban), `sales`/`sale_items` (INV-YYMM-####; sumber `pos` atau `work_order`; status draft/posted/void + `void_reason`), `payments` (append-only; metode tunai, transfer, QRIS, kartu, DP; jenis `sale` atau `deposit`), `commissions`, `tax_rates` (tarif PPN bertanggal: 12%, DPP 11/12, berlaku sejak 2025-01-01).
+  - Alur jurnal: semua tagihan masuk Piutang Usaha lebih dulu, tiap pembayaran/DP yang dipakai melunasinya, jadi saldo Piutang selalu sama dengan tagihan belum lunas. Invoice: Dr Piutang, Dr HPP; Cr Pendapatan Jasa, Penjualan Sparepart, PPN Keluaran, Persediaan (POS) atau Persediaan dalam Pengerjaan (WO). Bayar: Dr Kas/Bank, Cr Piutang. DP: Dr Kas/Bank, Cr Uang Muka Pelanggan; DP dipakai: Dr Uang Muka, Cr Piutang.
+  - Fungsi: `open_shift`, `add_cash_out`, `close_shift` (uang fisik per pecahan, selisih wajib dicatat), `approve_shift` (selisih dijurnal ke Selisih Kas; kasir tidak bisa menyetujui shift sendiri), `save_sale` (draft = transaksi ditahan), `post_sale`, `post_work_order_invoice`, `preview_work_order_invoice` (total persis termasuk PPN tanpa menyimpan), `pay_sale`, `record_deposit`, `void_payment` (hanya selama shift pembayaran terbuka), `void_sale` (pembayaran harus dibatalkan dulu; invoice butuh izin approve atau PIN; stok POS dikembalikan, jurnal dibalik).
+  - Uang hanya diterima di shift terbuka; non-tunai direkap terpisah per shift.
+  - Batas diskon per peran dari setting (`discount_limit_cashier` 5%, `discount_limit_admin` 10%, Owner bebas); di atasnya wajib PIN Owner/Admin.
+  - Tempo: sisa tagihan butuh pelanggan terdaftar dan batas kredit cukup, atau PIN Owner (`receivables`). Jatuh tempo dari termin pelanggan.
+  - PPN: saklar `ppn_enabled` tetap di setting; tarif dari `tax_rates` menurut tanggal transaksi; mendukung harga belum/sudah termasuk PPN (`prices_include_ppn`); dihitung per dokumen dari baris kena pajak setelah diskon, dibulatkan ke rupiah.
+  - Komisi mekanik: dicatat saat invoice (harga jasa setelah diskon, tanpa PPN x persen/nominal x porsi mekanik), diakui saat invoice lunas, kembali tertunda jika pembayaran dibatalkan, batal jika invoice dibatalkan.
+  - View `v_sales`, `v_cash_shifts`, `v_ar_customers` (umur piutang 0-30, 31-60, > 60 hari).
+  - RLS: penjualan/pembayaran untuk izin `sales`/`receivables`; shift untuk `cash_shift`; komisi penuh atau milik sendiri (mekanik).
+- Tes DB `supabase/tests/cashier_test.sql` (62 tes).
+- Halaman `/kasir` (status shift, kas masuk/keluar, siap ditagih, transaksi ditahan, terakhir), `/kasir/penjualan` dan detail invoice (rincian, pembayaran, batal, cetak, kirim WhatsApp), `/kasir/piutang` (rekap per pelanggan dan umur), `/kasir/shift` dan detail (rekap kas, non-tunai, persetujuan, cetak laporan).
+- Dialog: buka/tutup shift (hitung per pecahan), kas keluar, penjualan part (cari barang, pelanggan, diskon, lanjut bayar), pembayaran split dengan kembalian dan PIN bila diminta, invoice WO, terima DP.
+- Kartu **Penagihan** di detail WO (DP, buat invoice, status tagihan).
+- Gaya cetak: sidebar dan top bar disembunyikan saat mencetak.
+
+### Changed
+- Penyerahan kendaraan (`delivered`) butuh invoice terlebih dahulu (kecuali WO garansi atau total nol). WO yang sudah diinvoice terkunci dari perubahan dan status mundur; batalkan invoice untuk mengubahnya.
+- `app.lock_open_wo` dan `public.set_work_order_status` ditulis ulang untuk aturan di atas.
+- Tes servis diperbarui: WO diinvoice dulu sebelum diserahkan.
+- Menu sidebar **Kasir** aktif.
+
+### Catatan
+- Belum ada: retur penjualan (uang kembali/potong piutang/tukar barang, barang rusak ke karantina), batas waktu retur, cetak thermal 58/80 mm khusus (cetak memakai dialog cetak browser), scan QR di POS, harga bertingkat, PDF.
+- Masa garansi masih dihitung dari tanggal kendaraan diserahkan (sama dengan tanggal invoice pada alur normal), belum dari tanggal invoice.
+- Komisi baru tercatat dan diakui; pembayarannya lewat modul Penggajian (menyusul). Pengaturan batas diskon belum punya layar, diubah lewat tabel `settings`.
+- Batas diskon memakai persen dari harga normal seluruh transaksi; persetujuan PIN tidak membatasi persen penyetuju (Admin 10% belum ditegakkan terhadap penyetuju).
+
+### Verifikasi
+- `npm run test:db`: 62 tes kasir + semua tes lama lulus (311 tes).
+- `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos. Bentuk query PostgREST halaman kasir dicek terhadap DB lokal (service role, baca saja).
+- Rute `/kasir/*` mengarahkan ke login tanpa sesi dan tidak ada error di log dev.
+- **Belum diverifikasi di browser dengan login.**
+
+### File terdampak
+`supabase/migrations/20261103000014_cashier.sql`, `supabase/tests/cashier_test.sql`, `supabase/tests/service_orders_test.sql`, `src/app/(app)/kasir/**`, `src/app/(app)/servis/[id]/page.tsx`, `src/lib/cashier.ts`, `src/lib/validation/cashier.ts`, `src/lib/navigation.ts`, `src/components/app-nav.tsx`, `src/app/globals.css`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.10.0] 2026-11-03
 **Ringkasan:** Modul Servis (PRD §7): estimasi berversi dengan persetujuan pelanggan, work order, papan status kanban, pengeluaran part dari gudang, riwayat servis kendaraan, dan klaim garansi.
 

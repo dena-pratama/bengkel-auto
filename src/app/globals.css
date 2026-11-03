@@ -186,3 +186,16 @@
     overflow-x: clip;
   }
 }
+/* Cetak invoice / laporan shift: hanya isi halaman, tanpa sidebar & top bar */
+@media print {
+  #app-sidebar,
+  header {
+    display: none !important;
+  }
+  body,
+  main {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}

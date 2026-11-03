@@ -166,7 +166,7 @@ export function SidebarFrame({
 
         <div
           className={cn(
-            "flex min-w-0 flex-1 flex-col md:pl-[88px]",
+            "flex min-w-0 flex-1 flex-col md:pl-[88px] print:pl-0!",
             ready && "transition-[padding] duration-300 ease-out",
             desktopOpen ? "lg:pl-[280px]" : "lg:pl-[88px]",
           )}

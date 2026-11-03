@@ -314,6 +314,13 @@ select pg_temp.check((select completed_at is not null from public.work_orders wh
 select pg_temp.fails($q$ select public.set_work_order_status(pg_temp.id('wo'), 'delivered') $q$, 'tidak punya izin', 'mekanik: tidak bisa menyerahkan kendaraan');
 reset role;
 select pg_temp.login('u_admin');
+select pg_temp.fails($q$ select public.set_work_order_status(pg_temp.id('wo'), 'delivered') $q$, 'Buat invoice', 'penyerahan butuh invoice dulu');
+reset role;
+select pg_temp.login('u_cashier');
+select public.open_shift(0);
+select public.post_work_order_invoice(pg_temp.id('wo'), '[{"method": "cash", "amount": 247500}]');
+reset role;
+select pg_temp.login('u_admin');
 select public.set_work_order_status(pg_temp.id('wo'), 'delivered');
 select pg_temp.check((select status = 'delivered' and delivered_at is not null from public.work_orders where id = pg_temp.id('wo')), 'admin: kendaraan diserahkan');
 select pg_temp.check((select total = 50000 + 57500 + 150000 - 10000 and warranty_until = app.today_wib() + 30 from public.v_work_orders where id = pg_temp.id('wo')),

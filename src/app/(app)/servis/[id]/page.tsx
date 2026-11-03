@@ -8,6 +8,8 @@ import { formatDate, formatDateTime, formatDuration, formatQty, formatRupiah, to
 import { employeeNames, getWorkOrder, listAdditionalEstimates, listCatalog, listMechanics, stockByLocation } from "@/lib/service";
 import { NEXT_STATUS } from "@/lib/validation/service";
 import { cn } from "@/lib/utils";
+import { getWorkOrderBilling } from "@/lib/cashier";
+import { DepositDialog, InvoiceDialog } from "../../kasir/_components/sale-dialog";
 import { AddWorkDialog, WarrantyDialog } from "../_components/dialogs";
 import { EstimateActions } from "../_components/estimate-actions";
 import { EstimateStatusBadge, UUID, WarrantyBadge, WoStatusBadge } from "../_components/ui";
@@ -50,12 +52,15 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
   const canAddWork = canUpdate && !locked && wo.status !== "waiting_approval" && !wo.is_warranty;
   const today = todayWib();
 
-  const [mechanics, names, stock, catalog, additional] = await Promise.all([
+  const canBill = can(ctx, "sales", "view", false) && !wo.is_warranty;
+  const canSell = can(ctx, "sales", "create", false);
+  const [mechanics, names, stock, catalog, additional, billing] = await Promise.all([
     listMechanics(),
     employeeNames([...wo.logs.map((l) => l.employee_id ?? ""), ...wo.lines.flatMap((l) => l.mechanics.map((m) => m.employee_id))]),
     canIssue ? stockByLocation(partItems) : Promise.resolve([]),
     canAddWork ? listCatalog() : Promise.resolve([]),
     canViewAll ? listAdditionalEstimates(id) : Promise.resolve([]),
+    canBill ? getWorkOrderBilling(id) : Promise.resolve(null),
   ]);
   const nameRecord = Object.fromEntries(names);
   const pending = additional.find((e) => e.id === wo.pending_estimate_id);
@@ -103,8 +108,31 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
         {wo.void_reason && <p className="text-sm text-brand-red">Alasan batal: {wo.void_reason}</p>}
         {wo.status === "waiting_approval" && <p className="text-sm">Menunggu keputusan pelanggan atas pekerjaan tambahan. Status kembali berjalan setelah disetujui atau ditolak.</p>}
         {!locked && <StatusControls id={wo.id} next={next} />}
-        {wo.status === "ready" && canUpdate && <p className="text-xs text-muted-foreground">Invoice & pembayaran dibuat di modul Kasir (menyusul). Serahkan setelah pelanggan membayar.</p>}
       </section>
+
+      {billing && (
+        <section className={cn(panel, "grid gap-3")}>
+          <h2 className="text-lg font-semibold">Penagihan</h2>
+          {billing.invoice ? (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+              <Link href={`/kasir/penjualan/${billing.invoice.id}`} className="font-mono font-semibold text-brand-blue-fg hover:underline">
+                {billing.invoice.sale_no}
+              </Link>
+              <span className="tabular-nums">Total {formatRupiah(billing.invoice.total)}</span>
+              <span className={cn("font-medium tabular-nums", billing.invoice.outstanding > 0 && "text-brand-red")}>
+                {billing.invoice.outstanding > 0 ? `Sisa ${formatRupiah(billing.invoice.outstanding)}` : "Lunas"}
+              </span>
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-center gap-3">
+              {billing.deposit > 0 && <span className="text-sm">DP diterima <strong className="tabular-nums">{formatRupiah(billing.deposit)}</strong></span>}
+              {canSell && !locked && <DepositDialog woId={wo.id} woNo={wo.wo_no} />}
+              {canSell && wo.status === "ready" && <InvoiceDialog woId={wo.id} woNo={wo.wo_no} deposit={billing.deposit} />}
+              {wo.status !== "ready" && <span className="text-xs text-muted-foreground">Invoice dibuat setelah WO berstatus Siap Diambil.</span>}
+            </div>
+          )}
+        </section>
+      )}
 
       {pending && (
         <section className={cn(panel, "grid gap-3 ring-2 ring-brand-sand")}>

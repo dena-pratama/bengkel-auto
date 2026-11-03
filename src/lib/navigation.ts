@@ -14,7 +14,7 @@ export type NavItem = {
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Beranda", icon: "home", ready: true },
   { href: "/servis", label: "Servis & Work Order", icon: "wrench", module: "service_orders", ready: true },
-  { href: "/kasir", label: "Kasir", icon: "cart", module: "sales", ready: false },
+  { href: "/kasir", label: "Kasir", icon: "cart", module: "sales", ready: true },
   { href: "/inventory", label: "Barang & Jasa", icon: "package", module: "master_data", ready: true },
   { href: "/pembelian", label: "Pembelian", icon: "truck", module: "purchasing", ready: true },
   { href: "/pelanggan", label: "Pelanggan", icon: "users", module: "customers", ready: true },

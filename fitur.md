@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.10.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.11.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -43,15 +43,17 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.10.0**
 | | Papan status kanban (lama di status, tanda merah lewat durasi, layar penuh TV, segar tiap 30 detik) | ✅ | 0.10.0 |
 | | Papan realtime (Supabase Realtime) | ⬜ | - |
 | | Garansi & klaim (WO garansi Rp0, biaya part ke Beban Garansi) | 🟨 | 0.10.0 (masa garansi dari tanggal diserahkan; dari invoice & laporan klaim menyusul) |
-| | WO ditutup jadi invoice, komisi mekanik | ⬜ | menunggu modul Kasir |
-| Penjualan & Kas | POS, diskon per role | ⬜ | - |
-| | Pembayaran fleksibel (split, DP, tempo) | ⬜ | - |
-| | Nota/invoice (thermal, A4, PDF, WA) | ⬜ | - |
-| | Buka-tutup kas shift | ⬜ | - |
-| | Retur penjualan, piutang | ⬜ | - |
+| | WO ditutup jadi invoice (wajib sebelum kendaraan diserahkan) | ✅ | 0.11.0 |
+| Penjualan & Kas | POS part langsung (draft ditahan, pelanggan opsional), diskon per role + PIN Owner | ✅ | 0.11.0 |
+| | POS dengan scan QR | ⬜ | menunggu QR label |
+| | Pembayaran fleksibel (split tunai/transfer/QRIS/EDC, DP dipotong otomatis, tempo + batas kredit) | ✅ | 0.11.0 |
+| | Nota/invoice: cetak lewat browser, kirim WA klik-ke-chat, DPP/PPN terpisah saat PPN aktif | 🟨 | 0.11.0 (thermal 58/80 mm khusus & PDF menyusul) |
+| | Buka-tutup kas shift (modal awal, kas keluar kecil, hitung per pecahan, selisih + persetujuan, rekap non-tunai) | ✅ | 0.11.0 |
+| | Piutang: rekap per pelanggan, umur 0-30/31-60/> 60, pelunasan sebagian | ✅ | 0.11.0 |
+| | Retur penjualan | ⬜ | - |
 | Stok Opname | Menyeluruh, parsial, cycle count, blind count, posting | ⬜ | - |
 | Karyawan | Data karyawan, role ganda, status + riwayat, akun login, PIN, role dinamis & matriks izin, RLS | ✅ | 0.5.0 |
-| | Komisi mekanik | ⬜ | - |
+| | Komisi mekanik (aturan per jasa, porsi, diakui saat invoice lunas) | 🟨 | 0.11.0 (layar ringkasan komisi & pembayaran lewat penggajian menyusul) |
 | | Penggajian sederhana & kasbon, slip gaji | ⬜ | - |
 | Finance | Kas/bank, pemasukan/pengeluaran, biaya rutin | ⬜ | - |
 | | Chart of accounts, jurnal otomatis, jurnal manual, tutup buku | 🟨 | 0.7.0 (DB: bagan akun, jurnal otomatis pembelian) |
