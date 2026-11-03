@@ -73,13 +73,17 @@ function writeDesktopPref(open: boolean) {
   window.dispatchEvent(new Event(STORAGE_EVENT));
 }
 
-type SidebarState = { open: boolean; toggle: () => void };
+type SidebarState = { mobileOpen: boolean; toggle: () => void };
 const SidebarContext = createContext<SidebarState | null>(null);
 
 function useSidebar() {
   const ctx = use(SidebarContext);
   if (!ctx) throw new Error("useSidebar harus di dalam SidebarFrame");
-  return ctx;
+  // Baca store langsung (bukan lewat context) agar tombol di dalam Suspense yang di-hydrate
+  // belakangan tetap memakai snapshot server saat hydrate → tidak ada hydration mismatch.
+  const desktopOpen = useSyncExternalStore(subscribeDesktopPref, readDesktopPref, () => true);
+  const isDesktopView = useSyncExternalStore(subscribeViewport, readIsDesktop, () => true);
+  return { open: isDesktopView ? desktopOpen : ctx.mobileOpen, toggle: ctx.toggle };
 }
 
 /**
@@ -133,7 +137,7 @@ export function SidebarFrame({
   const open = isDesktopView ? desktopOpen : mobileOpen;
 
   return (
-    <SidebarContext value={{ open, toggle }}>
+    <SidebarContext value={{ mobileOpen, toggle }}>
       <div className="relative flex min-h-full flex-1 bg-background">
         {/* Latar gelap (tablet & HP) */}
         <div

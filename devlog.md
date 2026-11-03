@@ -4,6 +4,22 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.4.2] — 2026-11-03
+**Ringkasan:** Perbaiki error hydration mismatch tombol sidebar dan peringatan "script tag" skrip tema.
+
+### Fixed
+- **Hydration mismatch** (tombol ciut/bentang sidebar & tombol menu HP): tombol berada di dalam Suspense yang di-hydrate belakangan sehingga membaca status sidebar versi browser lewat context, sementara HTML server memakai default. Kini `useSidebar()` membaca store langsung via `useSyncExternalStore` (snapshot server saat hydrate); context hanya membawa `mobileOpen` & `toggle`.
+- **"Encountered a script tag while rendering React component"**: skrip tema di `<head>` diganti `next/script` dengan `strategy="beforeInteractive"` (tetap jalan sebelum hydrate, tanpa kedipan).
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Browser tab baru: sidebar posisi ciut + mode gelap setelah reload → tidak ada error di console & log server; halaman login bersih.
+
+### File terdampak
+`src/components/app-nav.tsx`, `src/app/layout.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.4.1] — 2026-11-03
 **Ringkasan:** Ukuran huruf dinaikkan secara proporsional dan angka metrik diperbesar agar mudah dibaca owner.
 
