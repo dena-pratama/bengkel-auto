@@ -1,6 +1,7 @@
-import { Bell, LogOut, Search, Settings, Wrench } from "lucide-react";
+import { Bell, Search, Settings, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SideNav, SidebarFrame, SidebarRailToggle, SidebarToggle } from "@/components/app-nav";
+import { ProfileMenu, ThemeToggle } from "@/components/topbar-controls";
 import { can, type UserContext } from "@/lib/auth";
 import { NAV_ITEMS } from "@/lib/navigation";
 import { logoutAction } from "@/app/(auth)/actions";
@@ -51,28 +52,8 @@ export function RailView({ ctx }: { ctx: UserContext }) {
       </div>
 
       <p className="px-5 pt-2 pb-2 group-data-[collapsed=true]/sb:hidden text-[10px] font-semibold tracking-[0.14em] text-white/50 uppercase">Menu</p>
-      <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3 [scrollbar-width:thin] [scrollbar-color:rgb(255_255_255/0.2)_transparent] group-data-[collapsed=true]/sb:overflow-visible">
+      <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-4 [scrollbar-width:thin] [scrollbar-color:rgb(255_255_255/0.2)_transparent] group-data-[collapsed=true]/sb:overflow-visible">
         <SideNav items={visibleNavItems(ctx)} />
-      </div>
-
-      <div className="m-3 flex items-center gap-2.5 rounded-2xl bg-white/10 p-2.5 group-data-[collapsed=true]/sb:flex-col group-data-[collapsed=true]/sb:bg-transparent group-data-[collapsed=true]/sb:p-0">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white text-xs font-semibold text-brand-blue-ink" title={ctx.employee.full_name}>
-          {initials(ctx.employee.full_name)}
-        </span>
-        <div className="min-w-0 flex-1 leading-tight group-data-[collapsed=true]/sb:hidden">
-          <p className="truncate text-sm font-medium">{ctx.employee.full_name}</p>
-          <p className="truncate text-[11px] text-white/65">{ctx.roles.map((r) => r.name).join(", ")}</p>
-        </div>
-        <form action={logoutAction}>
-          <button
-            type="submit"
-            className="flex size-9 items-center justify-center rounded-xl text-white/80 hover:bg-brand-red hover:text-white"
-            aria-label="Keluar"
-            title="Keluar"
-          >
-            <LogOut className="size-[18px]" />
-          </button>
-        </form>
       </div>
     </>
   );
@@ -100,6 +81,7 @@ export function TopbarView({ ctx }: { ctx: UserContext }) {
       </label>
 
       <div className="ml-auto flex items-center gap-1 sm:gap-2">
+        <ThemeToggle />
         <Button variant="ghost" size="icon" className="relative" aria-label="Notifikasi" title="Notifikasi">
           <Bell className="size-5" />
           <span className="absolute top-2 right-2 size-2 rounded-full bg-brand-red ring-2 ring-background" />
@@ -107,15 +89,13 @@ export function TopbarView({ ctx }: { ctx: UserContext }) {
         <Button variant="ghost" size="icon" className="hidden sm:inline-flex" aria-label="Pengaturan" title="Pengaturan (segera)">
           <Settings className="size-5" />
         </Button>
-        <div className="ml-1 flex items-center gap-2.5 rounded-xl border border-border bg-card py-1 pr-3 pl-1">
-          <span className="flex size-8 items-center justify-center rounded-lg bg-brand-blue-soft text-xs font-semibold text-brand-blue-ink">
-            {initials(ctx.employee.full_name)}
-          </span>
-          <div className="hidden leading-tight lg:block">
-            <p className="text-sm font-medium">{ctx.employee.full_name}</p>
-            <p className="text-[11px] text-muted-foreground">{ctx.roles.map((r) => r.name).join(", ")}</p>
-          </div>
-        </div>
+        <ProfileMenu
+          name={ctx.employee.full_name}
+          role={ctx.roles.map((r) => r.name).join(", ")}
+          branch={ctx.branch.name}
+          initials={initials(ctx.employee.full_name)}
+          logout={logoutAction}
+        />
       </div>
     </>
   );

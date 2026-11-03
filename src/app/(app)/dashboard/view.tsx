@@ -52,7 +52,7 @@ export function DashboardView({ ctx }: { ctx: UserContext }) {
           {showFinance && (
             <span className="hidden items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium sm:flex" title="Segera">
               <Download className="size-4" /> Ekspor
-              <span className="rounded-md bg-brand-blue-soft px-1.5 py-0.5 text-[10px] text-brand-blue-ink">xlsx</span>
+              <span className="rounded-md bg-brand-blue-soft px-1.5 py-0.5 text-[10px] text-brand-blue-fg">xlsx</span>
             </span>
           )}
           <span className="flex items-center gap-1.5 rounded-xl bg-brand-blue-ink px-4 py-2 text-sm font-medium text-white shadow-md shadow-brand-blue-ink/25" title="Tersedia setelah modul Servis">

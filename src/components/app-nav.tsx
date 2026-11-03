@@ -150,7 +150,7 @@ export function SidebarFrame({
           aria-label="Sidebar"
           data-collapsed={!open}
           className={cn(
-            "group/sb fixed top-3 bottom-3 left-3 z-40 flex flex-col rounded-[28px] bg-brand-blue-ink text-white shadow-2xl shadow-brand-blue-deep/30",
+            "group/sb fixed top-3 bottom-3 left-3 z-40 flex flex-col rounded-[28px] bg-brand-rail text-white shadow-2xl shadow-brand-blue-ink/30 dark:shadow-black/40 dark:ring-1 dark:ring-white/5",
             ready && "transition-[width,translate,opacity] duration-300 ease-out",
             mobileOpen
               ? "max-lg:w-[248px]"
@@ -189,7 +189,7 @@ export function SidebarToggle() {
       aria-expanded={open}
       aria-label="Buka menu"
       title="Buka menu"
-      className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-foreground shadow-sm transition-colors hover:bg-brand-blue-soft hover:text-brand-blue-ink md:hidden"
+      className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-foreground shadow-sm transition-colors hover:bg-brand-blue-soft hover:text-brand-blue-fg md:hidden"
     >
       <Menu className="size-5" />
     </button>
@@ -240,7 +240,7 @@ export function SideNav({ items }: { items: NavItem[] }) {
           "group relative flex min-w-0 items-center gap-3 rounded-2xl px-3 py-2.5 text-sm transition-colors",
           RAIL_ROW,
           active
-            ? "bg-white font-semibold text-brand-blue-ink shadow-md"
+            ? "bg-card font-semibold text-brand-blue-fg shadow-md"
             : item.ready
               ? "text-white/85 hover:bg-white/12 hover:text-white"
               : "cursor-not-allowed text-white/45",

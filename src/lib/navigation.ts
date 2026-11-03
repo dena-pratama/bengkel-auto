@@ -9,7 +9,8 @@ export type NavItem = {
   ready: boolean;
 };
 
-/** Menu utama, urutan mengikuti modul PRD. `ready: false` = modul belum dibangun. */
+/** Menu utama, urutan mengikuti modul PRD. `ready: false` = modul belum dibangun.
+ *  Pengaturan & profil ada di top bar (menu profil), bukan di sidebar. */
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Beranda", icon: "home", ready: true },
   { href: "/servis", label: "Servis & Work Order", icon: "wrench", module: "service_orders", ready: false },
@@ -22,5 +23,4 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/keuangan", label: "Keuangan", icon: "wallet", module: "finance_reports", ready: false },
   { href: "/pajak", label: "Pajak", icon: "receipt", module: "tax_settings", ready: false },
   { href: "/ai", label: "AI Analyst", icon: "bot", module: "ai_analyst", ready: false },
-  { href: "/pengaturan", label: "Pengaturan", icon: "settings", module: "settings", ready: false },
 ];
