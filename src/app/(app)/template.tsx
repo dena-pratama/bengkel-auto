@@ -16,9 +16,9 @@ export default function AppTemplate({ children }: { children: React.ReactNode })
 
   return (
     <motion.div
-      initial={!animate ? false : reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      initial={!animate ? false : reduce ? { opacity: 0 } : { opacity: 0, y: 14, scale: 0.995 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={reduce ? { duration: 0.15 } : { opacity: { duration: 0.22, ease: "easeOut" }, default: { type: "spring", stiffness: 300, damping: 30, mass: 0.8 } }}
     >
       {children}
     </motion.div>

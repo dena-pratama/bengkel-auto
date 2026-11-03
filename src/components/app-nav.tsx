@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, use, useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -233,7 +234,12 @@ const RAIL_TOOLTIP = [
 export function SideNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
   const { closeMobile } = useSidebar();
-  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  const reduce = useReducedMotion();
+  // Menu langsung terasa aktif saat diklik, tanpa menunggu halaman tujuan selesai dirender server.
+  // Disimpan bersama path asal: begitu path berubah, nilai lama otomatis diabaikan.
+  const [clicked, setClicked] = useState<{ href: string; from: string } | null>(null);
+  const optimistic = clicked && clicked.from === pathname ? clicked.href : null;
+  const isActive = (href: string) => (optimistic ? optimistic === href : pathname === href || pathname.startsWith(`${href}/`));
 
   return (
     <nav className="grid gap-1" aria-label="Menu utama">
@@ -244,7 +250,7 @@ export function SideNav({ items }: { items: NavItem[] }) {
           "group relative flex min-w-0 items-center gap-3 rounded-2xl px-3 py-2.5 text-sm transition-colors",
           RAIL_ROW,
           active
-            ? "bg-card font-semibold text-brand-blue-fg shadow-md"
+            ? "font-semibold text-brand-blue-fg"
             : item.ready
               ? "text-white/85 hover:bg-white/12 hover:text-white"
               : "cursor-not-allowed text-white/45",
@@ -252,7 +258,7 @@ export function SideNav({ items }: { items: NavItem[] }) {
         const icon = (
           <span
             className={cn(
-              "flex size-8 shrink-0 items-center justify-center rounded-xl transition-colors",
+              "relative flex size-8 shrink-0 items-center justify-center rounded-xl transition-colors",
               active ? "bg-brand-red text-white" : "bg-white/8 group-hover:bg-white/15",
             )}
           >
@@ -260,7 +266,7 @@ export function SideNav({ items }: { items: NavItem[] }) {
           </span>
         );
         const label = (
-          <span className={cn("min-w-0 truncate", !item.ready && "flex-1", RAIL_TOOLTIP)}>
+          <span className={cn("relative min-w-0 truncate", !item.ready && "flex-1", RAIL_TOOLTIP)}>
             {item.label}
             {!item.ready && <span className="hidden text-white/60 group-data-[collapsed=true]/sb:inline"> · segera</span>}
           </span>
@@ -269,11 +275,22 @@ export function SideNav({ items }: { items: NavItem[] }) {
           <Link
             key={item.href}
             href={item.href}
-            onClick={closeMobile}
+            onClick={() => {
+              closeMobile();
+              setClicked({ href: item.href, from: pathname });
+            }}
             className={row}
             aria-label={item.label}
             aria-current={active ? "page" : undefined}
           >
+            {active && (
+              <motion.span
+                layoutId="nav-active-pill"
+                aria-hidden
+                className="absolute inset-0 rounded-2xl bg-card shadow-md"
+                transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 36, mass: 0.9 }}
+              />
+            )}
             {icon}
             {label}
           </Link>

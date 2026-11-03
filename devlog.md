@@ -4,6 +4,22 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.11.1] 2026-11-03
+**Ringkasan:** Perpindahan antar halaman lebih mulus dengan Motion (sudah terpasang sejak 0.8.0, belum dimaksimalkan).
+
+### Changed
+- Menu samping: penanda menu aktif berupa pil yang meluncur antar menu (`layoutId` Motion, pegas) dan langsung pindah saat menu diklik, tanpa menunggu halaman tujuan selesai dirender server. Mengikuti setting "kurangi gerakan".
+- Animasi masuk halaman (`template.tsx`) memakai pegas dengan geser 14px dan skala halus, fade lebih cepat dari geseran.
+
+### Verifikasi
+- `tsc`, `eslint` lolos; dev server tanpa error.
+- **Belum dilihat di browser dengan login** (menu samping ada di balik login).
+
+### File terdampak
+`src/components/app-nav.tsx`, `src/app/(app)/template.tsx`, `devlog.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.11.0] 2026-11-03
 **Ringkasan:** Modul Kasir (PRD §8): shift kas, penjualan part langsung (POS), invoice work order, pembayaran split, DP, bayar tempo & piutang, PPN dari tarif bertanggal, batas diskon dengan PIN, dan pengakuan komisi mekanik. Menutup alur servis: WO Siap Diambil, invoice, bayar, serahkan.
 
