@@ -4,6 +4,25 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.11.3] 2026-11-03
+**Ringkasan:** Kolom isian dan pop-up dirapikan agar seragam dan selaras dengan tema moodboard.
+
+### Changed
+- Satu gaya kolom untuk semua isian (`Input`, `Textarea`, `inputClass`, select bawaan): tinggi 44px, sudut 14px, latar putih dengan border biru lembut, cincin fokus biru, status error merah. Sebelumnya ada tiga gaya berbeda (pil kecil, persegi, tinggi berbeda).
+- Select bawaan memakai panah sendiri (terang dan gelap) dan ruang kanan yang cukup.
+- Label seragam (15px, medium) di komponen `Label` dan label biasa.
+- Pop-up (`FormDialog`): permukaan putih tanpa pita header bergaris, judul lebih besar, tombol tutup bulat, sudut 32px. Bagian (`panel`) di dalam pop-up menjadi blok kebiruan datar tanpa bayangan, sehingga tidak ada kartu di dalam kartu.
+- Tombol: tinggi default 40px (sm 32px, lg 44px), semua berbentuk pil agar sebanding dengan kolom.
+
+### Verifikasi
+- `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos.
+- Dilihat di browser: pop-up tambah supplier (atas dan bawah) dan dashboard. Pop-up kasir/servis belum dilihat dengan data nyata.
+
+### File terdampak
+`src/components/ui/input.tsx`, `src/components/ui/textarea.tsx`, `src/components/ui/label.tsx`, `src/components/ui/button.tsx`, `src/components/page-kit.tsx`, `src/components/form-dialog.tsx`, `src/components/form-field.tsx`, `src/app/globals.css`, `src/app/(app)/kasir/_components/*`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.11.2] 2026-11-03
 **Ringkasan:** Tampilan baru mengikuti moodboard (bingkai gelap membulat dengan rail ikon, panel tengah kebiruan, kartu putih sangat membulat), warna merah dan biru dari logo. Menjadi tema default.
 

@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 
 /** Komponen halaman modul yang dipakai bersama (kartu, header, tab bagian, tanpa akses). */
 
-export const panel = "min-w-0 rounded-[28px] bg-card p-5 shadow-[0_1px_2px_rgb(23_36_51/0.04),0_10px_28px_-14px_rgb(23_36_51/0.14)] sm:p-6";
+export const panel = "min-w-0 rounded-[28px] bg-card p-5 shadow-[0_1px_2px_rgb(23_36_51/0.04),0_10px_28px_-14px_rgb(23_36_51/0.14)] sm:p-6 in-data-[slot=dialog-body]:rounded-3xl in-data-[slot=dialog-body]:bg-muted/60 in-data-[slot=dialog-body]:p-4 in-data-[slot=dialog-body]:shadow-none sm:in-data-[slot=dialog-body]:p-5";
 // text-base (≥16px) di HP: Safari iOS otomatis zoom pada input bertekstur < 16px, halaman jadi bisa digeser
 export const inputClass =
-  "h-10 w-full min-w-0 rounded-sm border border-input bg-card px-3 text-base outline-none sm:text-sm transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 aria-invalid:border-destructive disabled:opacity-60";
+  "h-11 w-full min-w-0 rounded-[14px] border border-input bg-card px-4 text-base text-foreground shadow-xs outline-none transition-[color,box-shadow,border-color] placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/25 aria-invalid:border-destructive aria-invalid:ring-4 aria-invalid:ring-destructive/15 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-70 sm:text-sm";
 
 export function PageHeader({
   title,

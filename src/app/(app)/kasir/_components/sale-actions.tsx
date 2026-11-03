@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { FormDialog } from "@/components/form-dialog";
 import { FormError } from "@/components/form-field";
 import { inputClass } from "@/components/page-kit";
+import { cn } from "@/lib/utils";
 import { formatRupiah } from "@/lib/format";
 import { approveShiftAction, paySaleAction, voidPaymentAction, voidSaleAction } from "../actions";
 import { PaymentLines } from "./payment-lines";
@@ -57,7 +58,7 @@ export function VoidPaymentButton({ id }: { id: string }) {
   };
   return open ? (
     <span className="flex flex-wrap items-center gap-2">
-      <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Alasan" aria-label="Alasan pembatalan pembayaran" className={`${inputClass} h-8 w-48`} />
+      <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Alasan" aria-label="Alasan pembatalan pembayaran" className={cn(inputClass, "h-9 w-48 px-3")} />
       <Button size="sm" variant="destructive" disabled={pending || reason.trim().length < 3} onClick={submit}>
         Batalkan
       </Button>

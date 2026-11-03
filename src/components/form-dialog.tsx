@@ -42,23 +42,23 @@ export function FormDialog({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 380, damping: 32, mass: 0.8 }}
             className={cn(
-              "pointer-events-auto flex max-h-[94svh] w-full flex-col overflow-hidden rounded-t-[24px] bg-background shadow-2xl sm:max-h-[90svh] sm:rounded-md",
+              "pointer-events-auto flex max-h-[94svh] w-full flex-col overflow-hidden rounded-t-[28px] bg-card shadow-2xl shadow-brand-blue-deep/25 ring-1 ring-black/5 sm:max-h-[90svh] sm:rounded-[32px]",
               SIZE[size],
             )}
           >
-            <div className="flex items-start justify-between gap-3 border-b border-border bg-card px-4 py-3 sm:px-5">
+            <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-3 sm:px-7 sm:pt-6">
               <div className="min-w-0">
-                <DialogPrimitive.Title className="text-lg font-semibold">{title}</DialogPrimitive.Title>
-                {description && <DialogPrimitive.Description className="text-sm text-muted-foreground">{description}</DialogPrimitive.Description>}
+                <DialogPrimitive.Title className="text-xl font-semibold tracking-tight">{title}</DialogPrimitive.Title>
+                {description && <DialogPrimitive.Description className="mt-0.5 text-sm text-muted-foreground">{description}</DialogPrimitive.Description>}
               </div>
               <DialogPrimitive.Close
                 aria-label="Tutup"
-                className="flex size-9 shrink-0 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-brand-blue-soft hover:text-foreground"
               >
                 <XIcon className="size-5" />
               </DialogPrimitive.Close>
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 sm:p-5">{children}</div>
+            <div data-slot="dialog-body" className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pt-2 pb-6 sm:px-7">{children}</div>
           </motion.div>
         </DialogPrimitive.Popup>
       </DialogPrimitive.Portal>

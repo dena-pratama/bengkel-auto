@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { FormDialog } from "@/components/form-dialog";
 import { FormError } from "@/components/form-field";
 import { inputClass } from "@/components/page-kit";
+import { cn } from "@/lib/utils";
 import { formatRupiah } from "@/lib/format";
 import type { ExpenseAccount } from "@/lib/cashier";
 import { toNumber } from "@/lib/validation/common";
@@ -141,7 +142,7 @@ export function CloseShiftDialog({ expected }: { expected: number }) {
                   aria-label={`Jumlah lembar ${formatRupiah(d)}`}
                   value={counts[d] ?? ""}
                   onChange={(e) => setCounts({ ...counts, [d]: e.target.value })}
-                  className={`${inputClass} h-8 w-20`}
+                  className={cn(inputClass, "h-9 w-20 px-3")}
                 />
                 <span className="ml-auto text-xs text-muted-foreground tabular-nums">{formatRupiah(d * Math.max(0, Math.trunc(toNumber(counts[d]))))}</span>
               </label>
