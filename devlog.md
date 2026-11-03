@@ -4,6 +4,30 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.4.5] — 2026-11-03
+**Ringkasan:** Logo baru AutoMobi (latar transparan) di sidebar, login/setup, dan favicon.
+
+### Added
+- `scripts/make-logo.mjs` (sharp): mengubah `design/automobi-logo-source.jpg` (latar hitam) menjadi PNG transparan. Tiap piksel digolongkan ke warna logo (merah mobil, navy kunci, biru tulisan) dan dibuat solid; alpha dari kecerahan → tepi halus tanpa garis gelap.
+- Aset: `public/brand/automobi-logo.png` (latar terang), `public/brand/automobi-logo-dark.png` (mode gelap: navy & biru dicerahkan ke `#7DAACB` agar terbaca), `public/brand/automobi-mark.png` (ikon mobil + kunci), `src/app/icon.png` (favicon).
+
+### Changed
+- Sidebar: tile merah ikon kunci → tile putih berisi ikon AutoMobi; nama "AutoMobi" + nama cabang.
+- Login/setup: logo lengkap AutoMobi (otomatis varian terang/gelap).
+- Judul tab browser: "AutoMobi".
+
+### Removed
+- `src/app/favicon.ico` bawaan Next (diganti `icon.png`).
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos; aset `/brand/*` & `/icon.png` bisa diakses tanpa login (200).
+- Browser: sidebar HP terbuka, login terang & gelap, console bersih.
+
+### File terdampak
+`scripts/make-logo.mjs`, `design/automobi-logo-source.jpg`, `public/brand/*`, `src/app/icon.png`, `src/app/favicon.ico`, `src/components/app-shell.tsx`, `src/app/(auth)/layout.tsx`, `src/app/layout.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.4.4] — 2026-11-03
 **Ringkasan:** Radius sudut kartu dashboard diperkecil.
 

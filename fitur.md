@@ -1,6 +1,6 @@
 # Daftar Fitur — Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.4.4**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.4.5**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -17,6 +17,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai — Versi saat ini: **0.4.4**
 | Sidebar melayang: bentang berlabel / ciut jadi rail ikon (Ctrl+B) | ✅ | 0.3.5 |
 | Dark mode + toggle; menu profil (profil, pengaturan, keluar) di top bar | ✅ | 0.4.0 |
 | Skala huruf lebih besar (min. 12px) + angka metrik menonjol | ✅ | 0.4.1 |
+| Logo AutoMobi transparan (sidebar, login, favicon; varian mode gelap) | ✅ | 0.4.5 |
 
 ## MVP
 | Modul | Fitur | Status | Versi |

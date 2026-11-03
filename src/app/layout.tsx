@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Bengkel Mobil App",
+  title: "AutoMobi",
   description: "Manajemen bengkel: servis, sparepart, kas, keuangan, dan pajak",
 };
 

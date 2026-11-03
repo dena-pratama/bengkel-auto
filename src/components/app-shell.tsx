@@ -1,4 +1,5 @@
-import { Bell, Search, Settings, Wrench } from "lucide-react";
+import Image from "next/image";
+import { Bell, Search, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SideNav, SidebarFrame, SidebarRailToggle, SidebarToggle } from "@/components/app-nav";
 import { ProfileMenu, ThemeToggle } from "@/components/topbar-controls";
@@ -41,11 +42,11 @@ export function RailView({ ctx }: { ctx: UserContext }) {
   return (
     <>
       <div className="flex items-center gap-3 px-4 pt-4 pb-3 group-data-[collapsed=true]/sb:flex-col group-data-[collapsed=true]/sb:gap-2 group-data-[collapsed=true]/sb:px-0">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-red text-white shadow-lg shadow-black/15">
-          <Wrench className="size-5" />
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-white p-1 shadow-lg shadow-black/15">
+          <Image src="/brand/automobi-mark.png" alt="AutoMobi" width={64} height={64} className="size-full object-contain" priority />
         </span>
         <div className="min-w-0 flex-1 leading-tight group-data-[collapsed=true]/sb:hidden">
-          <p className="truncate text-sm font-semibold">Bengkel Mobil</p>
+          <p className="truncate text-base font-bold tracking-tight">AutoMobi</p>
           <p className="truncate text-2xs text-white/65">{ctx.branch.name}</p>
         </div>
         <SidebarRailToggle />
