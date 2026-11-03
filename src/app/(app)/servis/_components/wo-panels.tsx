@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowRight, PackageMinus, PackagePlus, PackageSearch, Users, XCircle } from "lucide-react";
+import { ArrowRight, PackageOpen, PackagePlus, PackageSearch, Users, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-field";
 import { inputClass } from "@/components/page-kit";
@@ -210,7 +210,7 @@ export function WoLine({
           )}
           {line.line_type === "part" && canIssue && remaining > 0 && (
             <Button size="sm" variant="outline" onClick={() => toggle("issue")}>
-              <PackageMinus className="size-3.5" /> Keluarkan part
+              <PackageOpen className="size-3.5" /> Keluarkan part
             </Button>
           )}
           {line.line_type === "part" && canIssue && line.issued_qty > 0 && (

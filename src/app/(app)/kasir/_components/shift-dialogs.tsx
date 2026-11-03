@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Lock, Minus, Play } from "lucide-react";
+import { HandCoins, Lock, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FormDialog } from "@/components/form-dialog";
 import { FormError } from "@/components/form-field";
@@ -71,7 +71,7 @@ export function CashOutDialog({ accounts }: { accounts: ExpenseAccount[] }) {
   return (
     <>
       <Button variant="outline" onClick={() => a.setOpen(true)}>
-        <Minus className="size-4" /> Kas keluar
+        <HandCoins className="size-4" /> Kas keluar
       </Button>
       <FormDialog open={a.open} onOpenChange={a.setOpen} title="Kas keluar kecil" description="Bensin, parkir, makan, dan pengeluaran kecil lain dari laci." size="md">
         <div className="grid gap-3">

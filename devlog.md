@@ -4,6 +4,21 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.11.5] 2026-11-03
+**Ringkasan:** Ikon yang tampil seperti tanda pisah panjang diganti.
+
+### Fixed
+- Tombol **Kas keluar** (shift kasir) memakai ikon `Minus` yang terlihat seperti em dash; diganti ikon `HandCoins`.
+- Tombol **Keluarkan part** (detail WO) memakai `PackageMinus`; diganti `PackageOpen`.
+
+### Verifikasi
+- `tsc`, `eslint`, `npm run check:dashes` lolos; tidak ada lagi pemakaian ikon `Minus` di `src`.
+
+### File terdampak
+`src/app/(app)/kasir/_components/shift-dialogs.tsx`, `src/app/(app)/servis/_components/wo-panels.tsx`, `devlog.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.11.4] 2026-11-03
 **Ringkasan:** Notifikasi (toast) dirapikan: di tengah layar, warna biru dan merah logo, durasi singkat.
 
