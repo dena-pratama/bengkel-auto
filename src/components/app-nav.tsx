@@ -55,9 +55,9 @@ function subscribeDesktopPref(onChange: () => void) {
 }
 function readDesktopPref() {
   try {
-    return localStorage.getItem(STORAGE_KEY) !== "0";
+    return localStorage.getItem(STORAGE_KEY) === "1";
   } catch {
-    return true;
+    return false;
   }
 }
 function subscribeViewport(onChange: () => void) {
@@ -82,7 +82,7 @@ function useSidebar() {
   if (!ctx) throw new Error("useSidebar harus di dalam SidebarFrame");
   // Baca store langsung (bukan lewat context) agar tombol di dalam Suspense yang di-hydrate
   // belakangan tetap memakai snapshot server saat hydrate → tidak ada hydration mismatch.
-  const desktopOpen = useSyncExternalStore(subscribeDesktopPref, readDesktopPref, () => true);
+  const desktopOpen = useSyncExternalStore(subscribeDesktopPref, readDesktopPref, () => false);
   const isDesktopView = useSyncExternalStore(subscribeViewport, readIsDesktop, () => true);
   return { open: isDesktopView ? desktopOpen : ctx.mobileOpen, toggle: ctx.toggle, closeMobile: ctx.closeMobile };
 }
@@ -103,7 +103,7 @@ export function SidebarFrame({
   topbar: React.ReactNode;
   children: React.ReactNode;
 }) {
-  const desktopOpen = useSyncExternalStore(subscribeDesktopPref, readDesktopPref, () => true);
+  const desktopOpen = useSyncExternalStore(subscribeDesktopPref, readDesktopPref, () => false);
   const isDesktopView = useSyncExternalStore(subscribeViewport, readIsDesktop, () => true);
   // Tablet/HP: panel overlay; ditutup saat link menu diklik (SideNav), klik latar, atau Esc.
   // Sengaja tanpa usePathname di sini: kerangka ada di luar Suspense (wajib untuk route dinamis).
@@ -138,7 +138,8 @@ export function SidebarFrame({
 
   return (
     <SidebarContext value={{ mobileOpen, toggle, closeMobile }}>
-      <div className="relative flex min-h-full flex-1 bg-background">
+      <div className="flex min-h-full flex-1 flex-col md:p-4 lg:p-5">
+        <div className="relative flex flex-1 md:rounded-[40px] md:bg-brand-rail md:p-3 md:shadow-2xl md:shadow-brand-blue-deep/30 md:ring-1 md:ring-white/10">
         {/* Latar gelap (tablet & HP) */}
         <div
           aria-hidden
@@ -154,28 +155,23 @@ export function SidebarFrame({
           aria-label="Sidebar"
           data-collapsed={!open}
           className={cn(
-            "group/sb fixed top-3 bottom-3 left-3 z-40 flex flex-col rounded-[36px] bg-brand-rail text-white shadow-2xl shadow-brand-blue-ink/30 dark:shadow-black/40 dark:ring-1 dark:ring-white/5",
+            "group/sb z-40 flex flex-col text-white",
+            "max-md:fixed max-md:top-3 max-md:bottom-3 max-md:left-3 max-md:rounded-[36px] max-md:bg-brand-rail max-md:shadow-2xl max-md:shadow-brand-blue-ink/30",
+            "md:sticky md:top-7 md:h-[calc(100dvh-3.5rem)] md:shrink-0 md:self-start lg:top-8 lg:h-[calc(100dvh-4rem)]",
             ready && "transition-[width,translate,opacity] duration-300 ease-out",
-            mobileOpen
-              ? "max-lg:w-[264px]"
-              : "max-lg:w-[72px] max-md:pointer-events-none max-md:-translate-x-[calc(100%+1.5rem)] max-md:opacity-0",
-            desktopOpen ? "lg:w-[264px]" : "lg:w-[72px]",
+            mobileOpen ? "max-md:w-[264px]" : "max-md:w-[72px] max-md:pointer-events-none max-md:-translate-x-[calc(100%+1.5rem)] max-md:opacity-0",
+            open ? "md:w-[264px]" : "md:w-[72px]",
           )}
         >
           {sidebar}
         </aside>
 
-        <div
-          className={cn(
-            "flex min-w-0 flex-1 flex-col md:pl-[88px] print:pl-0!",
-            ready && "transition-[padding] duration-300 ease-out",
-            desktopOpen ? "lg:pl-[280px]" : "lg:pl-[88px]",
-          )}
-        >
-          <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b border-border/70 bg-background/85 px-3 backdrop-blur sm:px-6">
+        <div className="flex min-w-0 flex-1 flex-col bg-background md:rounded-[30px] print:rounded-none">
+          <header className="sticky top-0 z-20 flex h-16 items-center gap-2 bg-background/85 px-3 backdrop-blur md:rounded-t-[30px] sm:px-6">
             {topbar}
           </header>
-          <main className="min-w-0 flex-1 px-3 pt-4 pb-8 sm:px-6">{children}</main>
+          <main className="min-w-0 flex-1 px-3 pt-2 pb-8 sm:px-6">{children}</main>
+        </div>
         </div>
       </div>
     </SidebarContext>
@@ -250,7 +246,7 @@ export function SideNav({ items }: { items: NavItem[] }) {
           "group relative flex min-w-0 items-center gap-3 rounded-2xl px-3 py-2.5 text-sm transition-colors",
           RAIL_ROW,
           active
-            ? "font-semibold text-brand-blue-fg"
+            ? "font-semibold text-white"
             : item.ready
               ? "text-white/85 hover:bg-white/12 hover:text-white"
               : "cursor-not-allowed text-white/45",
@@ -287,9 +283,11 @@ export function SideNav({ items }: { items: NavItem[] }) {
               <motion.span
                 layoutId="nav-active-pill"
                 aria-hidden
-                className="absolute inset-0 rounded-2xl bg-card shadow-md"
+                className="absolute inset-0 rounded-2xl bg-white/14 ring-1 ring-white/15"
                 transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 36, mass: 0.9 }}
-              />
+              >
+                <span className="absolute top-1/2 left-0 h-5 w-1 -translate-y-1/2 rounded-r-full bg-brand-red" />
+              </motion.span>
             )}
             {icon}
             {label}

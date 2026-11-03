@@ -50,6 +50,7 @@
   --color-brand-sand: var(--brand-sand);
   --color-brand-sand-soft: var(--brand-sand-soft);
   --color-brand-cream: var(--brand-cream);
+  --color-brand-gold: var(--brand-gold);
   /* Skala teks dinaikkan ±1px agar metrik mudah dibaca (owner/bos); proporsi tetap */
   --text-2xs: 0.75rem;
   --text-2xs--line-height: 1.4;
@@ -81,12 +82,15 @@
   --brand-blue-deep: #2b5675;
   --brand-blue-soft: #eaf2f8;
   --brand-blue-fg: #3b6a8c; /* teks biru di atas latar terang/lembut */
-  --brand-rail: #3b6a8c; /* latar sidebar */
+  --brand-rail: #2f5878; /* bingkai & sidebar */
+  --brand-gold: #e5b947; /* turunan pasir logo, hanya untuk grafik & penanda */
   --brand-sand: #e8dbb3;
   --brand-sand-soft: #f6f0dd;
   --brand-cream: #fffdeb;
 
-  --background: #eef3f7;
+  /* Moodboard default: latar luar biru lembut, bingkai biru tua, panel tengah kebiruan, kartu putih */
+  --page-bg: linear-gradient(145deg, #cde3f1 0%, #a9cbe0 55%, #8fb8d4 100%);
+  --background: #dbe8f2;
   --foreground: #172433;
   --card: #ffffff;
   --card-foreground: #172433;
@@ -96,18 +100,18 @@
   --primary-foreground: #ffffff;
   --secondary: var(--brand-blue-soft);
   --secondary-foreground: var(--brand-blue-deep);
-  --muted: #f3f6f9;
+  --muted: #edf3f8;
   --muted-foreground: #66768a;
   --accent: var(--brand-blue-soft);
   --accent-foreground: var(--brand-blue-deep);
   --destructive: var(--brand-red);
-  --border: #e3eaf1;
-  --input: #dbe4ec;
+  --border: #d3e0ea;
+  --input: #c9d8e4;
   --ring: var(--brand-blue);
-  --chart-1: var(--brand-blue-ink);
+  --chart-1: var(--brand-blue-deep);
   --chart-2: var(--brand-red);
-  --chart-3: var(--brand-blue);
-  --chart-4: #9aa8b7;
+  --chart-3: var(--brand-gold);
+  --chart-4: var(--brand-blue);
   --chart-5: var(--brand-sand);
   --radius: 1rem;
   --sidebar: var(--brand-blue-ink);
@@ -130,7 +134,9 @@
   --brand-blue-deep: #c4dcee;
   --brand-blue-soft: #1b3145;
   --brand-blue-fg: #a8cbe6;
+  --brand-gold: #d1a53a;
   --brand-rail: #1c3a53;
+  --page-bg: #070d13;
   --brand-sand: #8a7a4c;
   --brand-sand-soft: #2e2a1e;
   --brand-cream: #2a2818;
@@ -174,7 +180,9 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: var(--page-bg);
+    background-attachment: fixed;
   }
   html {
     @apply font-sans;

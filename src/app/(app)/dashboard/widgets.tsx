@@ -24,13 +24,17 @@ import {
 import { agenda, cashShift, lowStock, mechanicJob, notifications, targets, todayWorkOrders } from "@/lib/demo/dashboard";
 import { cn } from "@/lib/utils";
 
-export const card = "min-w-0 rounded-md bg-card p-5 shadow-[0_1px_2px_rgb(23_36_51/0.04),0_8px_24px_-12px_rgb(23_36_51/0.08)]";
+export const card = "min-w-0 rounded-[28px] bg-card p-5 shadow-[0_1px_2px_rgb(23_36_51/0.04),0_10px_28px_-14px_rgb(23_36_51/0.14)] sm:p-6";
 
 function CardHead({ title, children }: { title: React.ReactNode; children?: React.ReactNode }) {
   return (
     <div className="mb-4 flex items-center justify-between gap-2">
       <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
-      {children}
+      {children ?? (
+        <span aria-hidden className="flex size-8 items-center justify-center rounded-full text-muted-foreground">
+          <MoreHorizontal className="size-5" />
+        </span>
+      )}
     </div>
   );
 }
@@ -87,7 +91,7 @@ export function QuickTiles() {
     <section className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:col-span-2 xl:col-span-7">
       <div
         title="Buat Work Order baru (tersedia setelah modul Servis)"
-        className="flex aspect-square flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-brand-blue/50 bg-brand-blue-soft/40 text-brand-blue-fg sm:aspect-auto"
+        className="flex aspect-square flex-col items-center justify-center gap-2 rounded-[28px] border-2 border-dashed border-brand-blue/50 bg-brand-blue-soft/40 text-brand-blue-fg sm:aspect-auto"
       >
         <span className="flex size-10 items-center justify-center rounded-sm bg-brand-blue-ink text-white shadow-md shadow-brand-blue-ink/30">
           <Plus className="size-5" />
@@ -349,7 +353,7 @@ export function TodayWorkOrdersCard() {
 /* ================================================================ Stok menipis (kartu sorotan merah) */
 export function LowStockCard() {
   return (
-    <section className="relative flex min-w-0 flex-col items-center justify-center gap-3 overflow-hidden rounded-md bg-brand-red p-6 text-center text-white shadow-xl shadow-brand-red/25 xl:col-span-3">
+    <section className="relative flex min-w-0 flex-col items-center justify-center gap-3 overflow-hidden rounded-[28px] bg-brand-red p-6 text-center text-white shadow-xl shadow-brand-red/25 xl:col-span-3">
       <div aria-hidden className="absolute -top-10 -right-10 size-32 rounded-full bg-white/10" />
       <div aria-hidden className="absolute -bottom-12 -left-8 size-28 rounded-full bg-white/10" />
       <span className="relative flex size-16 items-center justify-center rounded-sm bg-white/15">

@@ -75,7 +75,7 @@ export function TopbarView({ ctx }: { ctx: UserContext }) {
         <p className="truncate text-sm font-semibold">{ctx.branch.name}</p>
       </div>
 
-      <label className="hidden h-10 w-full max-w-sm items-center gap-2 rounded-xl border border-border bg-card px-3 sm:flex">
+      <label className="hidden h-10 w-full max-w-sm items-center gap-2 rounded-full bg-card px-4 shadow-sm sm:flex">
         <Search className="size-4 shrink-0 text-muted-foreground" />
         <input
           type="search"

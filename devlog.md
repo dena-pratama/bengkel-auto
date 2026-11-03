@@ -4,6 +4,26 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.11.2] 2026-11-03
+**Ringkasan:** Tampilan baru mengikuti moodboard (bingkai gelap membulat dengan rail ikon, panel tengah kebiruan, kartu putih sangat membulat), warna merah dan biru dari logo. Menjadi tema default.
+
+### Changed
+- Token warna (`globals.css`): latar luar gradien biru lembut (`--page-bg`), panel tengah `#dbe8f2`, bingkai & rail `#2f5878`, border lebih lembut, palet grafik merah / emas / biru tua / biru logo. Token baru `--brand-gold` (turunan pasir logo) hanya untuk grafik dan penanda. Mode gelap tetap berfungsi.
+- Kerangka (`app-nav.tsx`): aplikasi dibingkai kartu gelap membulat 40px (tablet ke atas); sidebar masuk ke dalam bingkai (sticky, tidak lagi melayang), konten di panel membulat 30px. HP tetap tanpa bingkai dengan menu geser.
+- Sidebar default **rail ikon**; bisa dibentangkan dengan tombol atau Ctrl+B dan pilihan tetap diingat.
+- Menu aktif: pil tembus pandang dengan penanda merah di kiri (tetap meluncur antar menu).
+- Kartu (`panel` dan kartu dashboard): sudut 28px, bayangan lembut, padding lebih lega, judul kartu dengan tombol titik tiga.
+- Tab bagian modul dan tab dashboard menjadi pil (aktif = biru tua, teks putih). Kolom cari di top bar berbentuk pil.
+
+### Verifikasi
+- `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos.
+- Dilihat di browser lewat `/dev/preview` (mode terang, mode gelap, rail ikon, sidebar bentang) dan `/login`. Halaman di balik login belum dilihat dengan sesi nyata.
+
+### File terdampak
+`src/app/globals.css`, `src/components/app-nav.tsx`, `src/components/app-shell.tsx`, `src/components/page-kit.tsx`, `src/app/(app)/dashboard/view.tsx`, `src/app/(app)/dashboard/widgets.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.11.1] 2026-11-03
 **Ringkasan:** Perpindahan antar halaman lebih mulus dengan Motion (sudah terpasang sejak 0.8.0, belum dimaksimalkan).
 

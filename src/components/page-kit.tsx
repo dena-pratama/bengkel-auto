@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 /** Komponen halaman modul yang dipakai bersama (kartu, header, tab bagian, tanpa akses). */
 
-export const panel = "min-w-0 rounded-md bg-card p-5 shadow-[0_1px_2px_rgb(23_36_51/0.04),0_8px_24px_-12px_rgb(23_36_51/0.08)]";
+export const panel = "min-w-0 rounded-[28px] bg-card p-5 shadow-[0_1px_2px_rgb(23_36_51/0.04),0_10px_28px_-14px_rgb(23_36_51/0.14)] sm:p-6";
 // text-base (≥16px) di HP: Safari iOS otomatis zoom pada input bertekstur < 16px, halaman jadi bisa digeser
 export const inputClass =
   "h-10 w-full min-w-0 rounded-sm border border-input bg-card px-3 text-base outline-none sm:text-sm transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 aria-invalid:border-destructive disabled:opacity-60";
@@ -48,8 +48,8 @@ export function SectionNav({ tabs, active, label }: { tabs: readonly SectionTab[
           href={href}
           aria-current={active === key ? "page" : undefined}
           className={cn(
-            "flex shrink-0 items-center gap-1.5 rounded-sm px-3 py-2 text-sm font-medium transition-colors",
-            active === key ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+            "flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors",
+            active === key ? "bg-brand-rail text-white shadow-sm" : "text-muted-foreground hover:bg-card/70 hover:text-foreground",
           )}
         >
           <Icon className="size-4" />

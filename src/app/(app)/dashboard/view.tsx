@@ -35,8 +35,8 @@ export function DashboardView({ ctx }: { ctx: UserContext }) {
             <span
               key={label}
               className={cn(
-                "flex shrink-0 items-center gap-1.5 rounded-sm px-3 py-2 text-sm font-medium",
-                active ? "bg-card text-foreground shadow-sm" : "text-muted-foreground",
+                "flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium",
+                active ? "bg-brand-rail text-white shadow-sm" : "text-muted-foreground",
               )}
               title={active ? undefined : `${label} (segera)`}
             >
@@ -92,10 +92,10 @@ export function DashboardView({ ctx }: { ctx: UserContext }) {
 export function DashboardSkeleton() {
   return (
     <div className="mx-auto grid w-full max-w-[1440px] gap-4 md:grid-cols-2 xl:grid-cols-12">
-      <div className="h-40 animate-pulse rounded-md bg-card/70 md:col-span-2 xl:col-span-5" />
-      <div className="h-40 animate-pulse rounded-md bg-card/70 md:col-span-2 xl:col-span-7" />
+      <div className="h-40 animate-pulse rounded-[28px] bg-card/70 md:col-span-2 xl:col-span-5" />
+      <div className="h-40 animate-pulse rounded-[28px] bg-card/70 md:col-span-2 xl:col-span-7" />
       {[4, 4, 4].map((s, i) => (
-        <div key={i} className="h-64 animate-pulse rounded-md bg-card/70 xl:col-span-4" />
+        <div key={i} className="h-64 animate-pulse rounded-[28px] bg-card/70 xl:col-span-4" />
       ))}
     </div>
   );
