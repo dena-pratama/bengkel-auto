@@ -7,7 +7,7 @@ import { SettingsNav } from "../_components/nav";
 
 export default function ShopSettingsPage() {
   return (
-    <div className="mx-auto grid w-full max-w-[900px] gap-5">
+    <div className="mx-auto w-full max-w-6xl space-y-6">
       <Suspense fallback={<Skeleton className="h-96" />}>
         <Content />
       </Suspense>

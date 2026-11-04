@@ -1,3 +1,13 @@
+## [0.50.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 14: Pengaturan
+- Mengadopsi visual token Figma page `15 · Pengaturan` (frame `7:20621`).
+- Tata letak responsif 2 kolom terstruktur pada halaman Profil:
+  - Kolom Kiri: Kartu Foto profil dengan avatar `rounded-full` dan kartu Data akun dengan daftar key-value bergaris halus, badge peran bulat penuh (`rounded-full`), serta form kontak WhatsApp.
+  - Kolom Kanan: Kartu Keamanan (Ganti password & PIN persetujuan) dan kartu Tampilan (Theme switcher).
+- Redesain halaman Pengaturan Bengkel (`/pengaturan/bengkel`) menjadi 2 kartu modern: Diskon dan retur serta Stok dan part, dilengkapi icon tile semantik, toggle modern, banner catatan pajak, dan save bar terpadu.
+- Memperbarui rute pratinjau `/dev/preview/pengaturan` dengan pratinjau komprehensif profil dan pengaturan bengkel.
+
 ## [0.49.0] - 2026-11-05
 
 ### Changed - UI/UX Redesign Module 13: Pop up Form & Input
