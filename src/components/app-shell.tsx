@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { LogOut, Search, Settings, Store } from "lucide-react";
+import { Search, Settings, Store } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { SettingsLink, SideNav, SidebarFrame, SidebarRailToggle, SidebarToggle, type NavBadge } from "@/components/app-nav";
+import { LogoutButton, SettingsLink, SideNav, SidebarFrame, SidebarRailToggle, SidebarToggle, type NavBadge } from "@/components/app-nav";
 import { NotificationBell } from "@/components/notification-bell";
 import { ProfileMenu, ThemeToggle } from "@/components/topbar-controls";
 import { can, type UserContext } from "@/lib/auth";
@@ -51,7 +51,7 @@ export async function RailView({ ctx }: { ctx: UserContext }) {
   return (
     <>
       {/* Merek + tombol ciutkan */}
-      <div className="flex items-center justify-between gap-2 px-1.5 group-data-[collapsed=true]/sb:flex-col group-data-[collapsed=true]/sb:gap-3 group-data-[collapsed=true]/sb:px-0">
+      <div className="flex items-center justify-between gap-2 px-1 group-data-[collapsed=true]/sb:flex-col group-data-[collapsed=true]/sb:gap-2 group-data-[collapsed=true]/sb:px-0">
         <span className="flex items-center group-data-[collapsed=true]/sb:hidden">
           <Image src="/brand/automobi-logo.png" alt="AutoMobi" width={671} height={335} className="h-9 w-auto dark:hidden" priority />
           <Image src="/brand/automobi-logo-dark.png" alt="AutoMobi" width={671} height={335} className="hidden h-9 w-auto dark:block" priority />
@@ -63,9 +63,12 @@ export async function RailView({ ctx }: { ctx: UserContext }) {
       </div>
 
       {/* Cabang (bengkel satu cabang: label saja) */}
-      <div className="flex items-center gap-2.5 rounded-[10px] border border-border bg-muted/60 px-2.5 py-2 group-data-[collapsed=true]/sb:justify-center group-data-[collapsed=true]/sb:px-0" title={ctx.branch.name}>
-        <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-card text-muted-foreground">
-          <Store className="size-[15px]" />
+      <div
+        className="flex items-center gap-2.5 rounded-xl border border-border bg-muted/60 px-2.5 py-2 group-data-[collapsed=true]/sb:size-10 group-data-[collapsed=true]/sb:mx-auto group-data-[collapsed=true]/sb:justify-center group-data-[collapsed=true]/sb:p-0"
+        title={ctx.branch.name}
+      >
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-card text-muted-foreground group-data-[collapsed=true]/sb:size-full group-data-[collapsed=true]/sb:bg-transparent">
+          <Store className="size-4" />
         </span>
         <span className="min-w-0 leading-tight group-data-[collapsed=true]/sb:hidden">
           <span className="block text-2xs font-medium text-muted-foreground">Cabang</span>
@@ -73,21 +76,14 @@ export async function RailView({ ctx }: { ctx: UserContext }) {
         </span>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-width:thin] group-data-[collapsed=true]/sb:overflow-visible">
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden [scrollbar-width:thin] group-data-[collapsed=true]/sb:[scrollbar-width:none] group-data-[collapsed=true]/sb:[&::-webkit-scrollbar]:hidden">
         <SideNav items={visibleNavItems(ctx)} badges={badges} />
       </div>
 
-      <div className="grid gap-0.5 border-t border-border pt-3">
+      <div className="shrink-0 grid gap-1 border-t border-border pt-2.5">
         <SettingsLink />
         <form action={logoutAction}>
-          <button
-            type="submit"
-            aria-label="Keluar"
-            className="group relative flex h-9 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium text-brand-red transition-colors hover:bg-brand-red-soft group-data-[collapsed=true]/sb:justify-center group-data-[collapsed=true]/sb:px-0"
-          >
-            <LogOut className="size-[18px] shrink-0" />
-            <span className="min-w-0 flex-1 truncate text-left group-data-[collapsed=true]/sb:hidden">Keluar</span>
-          </button>
+          <LogoutButton />
         </form>
       </div>
     </>

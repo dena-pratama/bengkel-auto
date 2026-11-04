@@ -1,3 +1,13 @@
+## [0.52.0] - 2026-11-05
+
+### Fixed - Tata Letak Sidebar Saat Diciutkan (Rail Mode) dan Tooltip Floating
+- Mengatasi masalah penumpukan ikon menu (Karyawan, AI Analyst, Pengaturan, Keluar) saat sidebar berada pada mode diciutkan (rail mode 72px).
+- Menjaga flex container navigasi tetap memiliki perilaku scroll vertikal (`overflow-y-auto overflow-x-hidden`) saat diciutkan sehingga menu tidak pernah meluber menabrak area footer.
+- Mengintegrasikan Base UI Tooltip dengan Portal (`Tooltip.Portal`) sehingga tooltip melayang di luar kontainer DOM (`document.body`) tanpa terpotong batas overflow sidebar.
+- Menyempurnakan ukuran dan penataan tombol ikon rail menjadi `size-10 rounded-xl` yang presisi dengan status aktif latar biru lembut (`bg-brand-blue-soft text-brand-blue`).
+- Menambahkan lencana notifikasi berbentuk dot bulat merah/biru (`size-2 rounded-full`) di sudut ikon saat menu dalam keadaan diciutkan.
+- Mengunci area footer (Pengaturan dan Keluar) dengan `shrink-0` agar selalu berada rapi di bagian bawah sidebar.
+
 ## [0.51.0] - 2026-11-05
 
 ### Changed - UI/UX Redesign Module 15: Notifikasi & Optimasi Navigasi Suspense

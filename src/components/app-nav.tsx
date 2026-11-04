@@ -9,6 +9,7 @@ import {
   History,
   Landmark,
   LayoutGrid,
+  LogOut,
   Menu,
   Package,
   PanelLeftClose,
@@ -24,6 +25,7 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
+import { Tooltip } from "@base-ui/react/tooltip";
 import { NAV_GROUP_LABEL, type NavGroup, type NavItem } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
@@ -145,12 +147,12 @@ export function SidebarFrame({ sidebar, topbar, children }: { sidebar: React.Rea
           aria-label="Sidebar"
           data-collapsed={collapsed}
           className={cn(
-            "group/sb z-50 flex flex-col gap-4 border-r border-sidebar-border bg-sidebar p-4 text-sidebar-foreground",
-            "max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:w-[300px] max-lg:max-w-[85vw] max-lg:overflow-y-auto",
+            "group/sb z-50 flex flex-col gap-3 border-r border-sidebar-border bg-sidebar text-sidebar-foreground",
+            "max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:w-[300px] max-lg:max-w-[85vw] max-lg:overflow-y-auto max-lg:p-4",
             "lg:sticky lg:top-0 lg:h-svh lg:shrink-0",
             ready && "transition-[width,translate] duration-200 ease-out",
             drawerOpen ? "max-lg:translate-x-0 max-lg:shadow-2xl" : "max-lg:-translate-x-full",
-            collapsed ? "lg:w-[72px] lg:px-3" : "lg:w-[264px]",
+            collapsed ? "lg:w-[72px] lg:p-2.5" : "lg:w-[264px] lg:p-4",
           )}
         >
           {sidebar}
@@ -181,37 +183,67 @@ export function SidebarToggle() {
   );
 }
 
+// Varian saat sidebar diciutkan (data-collapsed="true" di <aside>)
+const C = "group-data-[collapsed=true]/sb";
+
+/** Pembungkus tooltip melayang saat menu sidebar diciutkan ke rail */
+export function NavItemTooltip({
+  collapsed,
+  label,
+  children,
+}: {
+  collapsed: boolean;
+  label: string;
+  children: React.ReactElement;
+}) {
+  if (!collapsed) return children;
+  return (
+    <Tooltip.Provider delay={100} closeDelay={0}>
+      <Tooltip.Root>
+        <Tooltip.Trigger render={children} />
+        <Tooltip.Portal>
+          <Tooltip.Positioner side="right" sideOffset={12}>
+            <Tooltip.Popup className="z-[100] select-none rounded-lg bg-neutral-900 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl pointer-events-none dark:bg-neutral-100 dark:text-neutral-900">
+              {label}
+            </Tooltip.Popup>
+          </Tooltip.Positioner>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
+  );
+}
+
 /** Tombol di kepala sidebar: ciutkan/bentangkan (desktop) atau tutup drawer (kecil). */
 export function SidebarRailToggle() {
   const { isDesktop, collapsed, toggleCollapse, setDrawerOpen } = useSidebar();
   const Icon = !isDesktop ? X : collapsed ? PanelLeftOpen : PanelLeftClose;
   const label = !isDesktop ? "Tutup menu" : collapsed ? "Bentangkan menu" : "Ciutkan menu";
-  return (
+  const btn = (
     <button
       type="button"
       onClick={() => (isDesktop ? toggleCollapse() : setDrawerOpen(false))}
       aria-controls="app-sidebar"
       aria-label={label}
-      title={isDesktop ? `${label} (Ctrl+B)` : label}
-      className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      title={!collapsed ? (isDesktop ? `${label} (Ctrl+B)` : label) : undefined}
+      className={cn(
+        "flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+        `${C}:size-9 ${C}:mx-auto`,
+      )}
     >
       <Icon className="size-4" />
     </button>
   );
+  return (
+    <NavItemTooltip collapsed={collapsed} label={isDesktop ? `${label} (Ctrl+B)` : label}>
+      {btn}
+    </NavItemTooltip>
+  );
 }
 
-// Varian saat sidebar diciutkan (data-collapsed="true" di <aside>)
-const C = "group-data-[collapsed=true]/sb";
-const TOOLTIP = [
-  `${C}:pointer-events-none ${C}:absolute ${C}:left-full ${C}:z-50 ${C}:ml-3 ${C}:hidden ${C}:rounded-lg`,
-  `${C}:bg-foreground ${C}:px-2.5 ${C}:py-1.5 ${C}:text-xs ${C}:font-medium ${C}:whitespace-nowrap ${C}:text-background ${C}:shadow-lg`,
-  `${C}:group-hover:block ${C}:group-focus-visible:block`,
-].join(" ");
-
-/** Daftar menu bergrup di sidebar. Saat diciutkan hanya ikon; label muncul sebagai tooltip. */
+/** Daftar menu bergrup di sidebar. Saat diciutkan hanya ikon; label muncul sebagai tooltip melayang. */
 export function SideNav({ items, badges }: { items: NavItem[]; badges: Record<string, NavBadge> }) {
   const pathname = usePathname();
-  const { setDrawerOpen } = useSidebar();
+  const { setDrawerOpen, collapsed } = useSidebar();
   // Menu langsung terasa aktif saat diklik, tanpa menunggu halaman tujuan selesai dirender server.
   const [clicked, setClicked] = useState<{ href: string; from: string } | null>(null);
   const optimistic = clicked && clicked.from === pathname ? clicked.href : null;
@@ -224,22 +256,23 @@ export function SideNav({ items, badges }: { items: NavItem[]; badges: Record<st
   }
 
   return (
-    <nav className="flex flex-col gap-3.5" aria-label="Menu utama">
+    <nav className="flex flex-col gap-3" aria-label="Menu utama">
       {groups.map((g) => (
-        <div key={g.key} className="grid gap-0.5">
+        <div key={g.key} className="grid gap-1">
           {g.key !== "top" && (
             <>
-              <p className={cn("px-3 pb-1 text-2xs font-semibold tracking-wider text-muted-foreground uppercase", `${C}:hidden`)}>{NAV_GROUP_LABEL[g.key]}</p>
-              <div className={cn("mx-3 mb-1 hidden border-t border-border", `${C}:block`)} />
+              <p className={cn("px-3 pb-1 text-2xs font-semibold tracking-wider text-muted-foreground uppercase", `${C}:hidden`)}>
+                {NAV_GROUP_LABEL[g.key]}
+              </p>
+              <div className={cn("mx-auto mb-1 hidden w-8 border-t border-border", `${C}:block`)} />
             </>
           )}
           {g.items.map((item) => {
             const Icon = ICONS[item.icon] ?? LayoutGrid;
             const active = isActive(item.href);
             const badge = badges[item.href];
-            return (
+            const linkNode = (
               <Link
-                key={item.href}
                 href={item.href}
                 onClick={() => {
                   setDrawerOpen(false);
@@ -248,15 +281,37 @@ export function SideNav({ items, badges }: { items: NavItem[]; badges: Record<st
                 aria-label={item.label}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "group relative flex h-9 min-w-0 items-center gap-3 rounded-lg px-3 text-sm transition-colors",
-                  `${C}:justify-center ${C}:px-0`,
-                  active ? "bg-sidebar-accent font-semibold text-sidebar-accent-foreground" : "font-medium text-sidebar-foreground hover:bg-muted hover:text-foreground",
+                  "group relative flex h-10 min-w-0 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors",
+                  `${C}:size-10 ${C}:mx-auto ${C}:justify-center ${C}:px-0`,
+                  active
+                    ? "bg-brand-blue-soft font-semibold text-brand-blue dark:bg-brand-blue/20 dark:text-blue-400"
+                    : "text-sidebar-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
-                <Icon className="size-[18px] shrink-0" />
-                <span className={cn("min-w-0 flex-1 truncate", TOOLTIP)}>{item.label}</span>
-                {badge && <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-xs font-medium", BADGE_TONE[badge.tone], `${C}:hidden`)}>{badge.text}</span>}
+                <Icon className="size-5 shrink-0" />
+                <span className={cn("min-w-0 flex-1 truncate", `${C}:hidden`)}>{item.label}</span>
+                {badge && (
+                  <>
+                    <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-xs font-medium", BADGE_TONE[badge.tone], `${C}:hidden`)}>
+                      {badge.text}
+                    </span>
+                    <span
+                      aria-label={`${badge.text} notifikasi`}
+                      className={cn(
+                        "hidden size-2.5 rounded-full ring-2 ring-sidebar",
+                        badge.tone === "red" ? "bg-brand-red" : "bg-brand-blue",
+                        `${C}:absolute ${C}:top-1.5 ${C}:right-1.5 ${C}:block`,
+                      )}
+                    />
+                  </>
+                )}
               </Link>
+            );
+
+            return (
+              <NavItemTooltip key={item.href} collapsed={collapsed} label={item.label}>
+                {linkNode}
+              </NavItemTooltip>
             );
           })}
         </div>
@@ -265,25 +320,55 @@ export function SideNav({ items, badges }: { items: NavItem[]; badges: Record<st
   );
 }
 
-/** Menu bawah sidebar: Pengaturan (tautan) dan slot Keluar. */
+/** Menu bawah sidebar: Pengaturan (tautan). */
 export function SettingsLink() {
   const pathname = usePathname();
-  const { setDrawerOpen } = useSidebar();
+  const { setDrawerOpen, collapsed } = useSidebar();
   const active = pathname === "/pengaturan" || pathname.startsWith("/pengaturan/");
-  return (
+  const linkNode = (
     <Link
       href="/pengaturan"
       onClick={() => setDrawerOpen(false)}
       aria-label="Pengaturan"
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group relative flex h-9 items-center gap-3 rounded-lg px-3 text-sm transition-colors",
-        `${C}:justify-center ${C}:px-0`,
-        active ? "bg-sidebar-accent font-semibold text-sidebar-accent-foreground" : "font-medium text-sidebar-foreground hover:bg-muted hover:text-foreground",
+        "group relative flex h-10 min-w-0 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors",
+        `${C}:size-10 ${C}:mx-auto ${C}:justify-center ${C}:px-0`,
+        active
+          ? "bg-brand-blue-soft font-semibold text-brand-blue dark:bg-brand-blue/20 dark:text-blue-400"
+          : "text-sidebar-foreground hover:bg-muted hover:text-foreground",
       )}
     >
-      <Settings className="size-[18px] shrink-0" />
-      <span className={cn("min-w-0 flex-1 truncate", TOOLTIP)}>Pengaturan</span>
+      <Settings className="size-5 shrink-0" />
+      <span className={cn("min-w-0 flex-1 truncate", `${C}:hidden`)}>Pengaturan</span>
     </Link>
+  );
+  return (
+    <NavItemTooltip collapsed={collapsed} label="Pengaturan">
+      {linkNode}
+    </NavItemTooltip>
+  );
+}
+
+/** Tombol Keluar di bawah sidebar. */
+export function LogoutButton() {
+  const { collapsed } = useSidebar();
+  const btn = (
+    <button
+      type="submit"
+      aria-label="Keluar"
+      className={cn(
+        "group relative flex h-10 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-brand-red transition-colors hover:bg-brand-red-soft",
+        `${C}:size-10 ${C}:mx-auto ${C}:justify-center ${C}:px-0`,
+      )}
+    >
+      <LogOut className="size-5 shrink-0" />
+      <span className={cn("min-w-0 flex-1 truncate text-left", `${C}:hidden`)}>Keluar</span>
+    </button>
+  );
+  return (
+    <NavItemTooltip collapsed={collapsed} label="Keluar">
+      {btn}
+    </NavItemTooltip>
   );
 }
