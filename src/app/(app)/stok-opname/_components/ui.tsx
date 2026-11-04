@@ -12,7 +12,7 @@ const STATUS_STYLE: Record<OpnameStatus, string> = {
 
 export function OpnameStatusBadge({ status }: { status: OpnameStatus }) {
   return (
-    <span className={cn("inline-flex rounded-sm px-2 py-0.5 text-xs font-medium whitespace-nowrap", STATUS_STYLE[status])}>
+    <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap", STATUS_STYLE[status])}>
       {OPNAME_STATUS_LABEL[status] ?? status}
     </span>
   );
@@ -27,7 +27,7 @@ const TYPE_STYLE: Record<OpnameType, string> = {
 
 export function OpnameTypeBadge({ type }: { type: OpnameType }) {
   return (
-    <span className={cn("inline-flex rounded-sm border px-2 py-0.5 text-xs font-medium whitespace-nowrap", TYPE_STYLE[type])}>
+    <span className={cn("inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap", TYPE_STYLE[type])}>
       {OPNAME_TYPE_LABEL[type] ?? type}
     </span>
   );
@@ -36,7 +36,7 @@ export function OpnameTypeBadge({ type }: { type: OpnameType }) {
 export function VarianceReasonBadge({ reason }: { reason: VarianceReason | null }) {
   if (!reason) return <span className="text-muted-foreground">-</span>;
   return (
-    <span className="inline-flex rounded-sm bg-muted px-2 py-0.5 text-xs font-medium text-foreground whitespace-nowrap">
+    <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground whitespace-nowrap">
       {VARIANCE_REASON_LABEL[reason] ?? reason}
     </span>
   );

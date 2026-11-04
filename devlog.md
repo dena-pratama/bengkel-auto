@@ -1,3 +1,12 @@
+## [0.42.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 06: Stok Opname
+- Mengadopsi visual token Figma page `07 · Stok Opname` (frame `3:2496`).
+- 4 Kartu ringkasan metrik stok opname (Sesi tercatat, Akurasi rata-rata, Menunggu tinjauan, Selisih nilai) dengan icon dan aksen warna soft.
+- Modernisasi badge status dan tipe opname menggunakan pill penuh (`rounded-full`).
+- Penyempurnaan styling daftar sesi stok opname, filter bar, dan status selisih.
+- Menambahkan rute pratinjau `/dev/preview/stok-opname` untuk verifikasi visual mandiri.
+
 # Devlog Bengkel Mobil App
 
 Catatan setiap perubahan. Entri terbaru di paling atas.
