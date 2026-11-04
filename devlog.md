@@ -1,3 +1,12 @@
+## [0.49.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 13: Pop up Form & Input
+- Mengadopsi visual token Figma page `14 · Pop up input` (frame `5:18426`).
+- Modernisasi Dialog & FormDialog: backdrop blur (`bg-black/50 backdrop-blur-sm`), kontainer sudut melengkung 18px (`rounded-2xl`), shadow elevasi tinggi, dan garis tepi lembut.
+- Header dialog yang diperbarui dengan tombol tutup melingkar (`rounded-full`) dan pembatas border bawah halus.
+- Footer dialog dengan tombol aksi rapi dan latar selaras.
+- Memperluas rute `/dev/preview/form-dialog` dengan showcase interaktif 5 modal form utama sesuai Figma (Estimasi baru, Tambah karyawan, Tambah pelanggan, Tambah barang, Catat pengeluaran) dan toast notifications.
+
 ## [0.48.0] - 2026-11-05
 
 ### Changed - UI/UX Redesign Module 12: Audit Log
