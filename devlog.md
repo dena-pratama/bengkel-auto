@@ -4,6 +4,17 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.36.1] 2026-11-04
+**Ringkasan:** `catatan-redesain.md` dikeluarkan dari git (catatan serah terima lokal, hanya ada di mesin developer).
+
+### Changed
+- `.gitignore` menambahkan `catatan-redesain.md`; berkas dilepas dari pelacakan git (isi di disk tetap ada).
+
+### File terdampak
+`.gitignore`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.36.0] 2026-11-04
 **Ringkasan:** Redesain UI/UX tahap 3, halaman pertama: Beranda mengikuti Figma dengan data nyata dari database (bukan data contoh lagi). Ditambah `catatan-redesain.md` untuk melanjutkan redesain modul lain.
 
