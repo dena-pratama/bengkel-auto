@@ -4,6 +4,31 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.21.0] 2026-11-04
+**Ringkasan:** Papan servis realtime (PRD §7.3): perubahan work order muncul di papan dan layar TV seketika lewat Supabase Realtime, tanpa menunggu polling.
+
+### Added
+- Migration `20261103000024_realtime_board.sql`: `work_orders`, `work_order_items`, dan `work_order_mechanics` masuk publikasi `supabase_realtime`.
+- Papan servis berlangganan perubahan ketiga tabel itu. Realtime hanya dipakai sebagai pemicu: bila ada perubahan, data dimuat ulang dari server (RLS tetap berlaku, perubahan beruntun digabung dalam 0,4 detik).
+- Indikator di papan: "Langsung" saat realtime tersambung, "Tiap 30 dtk" bila belum.
+
+### Changed
+- Polling 30 detik tetap jalan sebagai cadangan bila koneksi realtime putus.
+
+### Catatan
+- Siaran realtime mengikuti RLS tiap pengguna: pengguna hanya menerima perubahan WO yang boleh dilihatnya.
+- Perubahan status yang dilakukan di HP gudang atau mekanik langsung terlihat di TV bengkel.
+
+### Verifikasi
+- Jalur realtime diuji nyata dengan tabel probe sementara (service role): langganan `SUBSCRIBED` dan event INSERT diterima; tabel probe sudah dihapus.
+- `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- **Belum diverifikasi:** papan di browser dengan login (pengguna biasa dengan RLS), karena DB lokal belum punya work order dan agen tidak punya login. Perilaku indikator "Langsung" pada halaman nyata juga belum dilihat.
+
+### File terdampak
+`supabase/migrations/20261103000024_realtime_board.sql`, `src/app/(app)/servis/_components/board.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.20.0] 2026-11-04
 **Ringkasan:** Pengeluaran part untuk work order dengan scan QR barang dan rak (PRD alur servis: tidak ada part keluar tanpa scan QR). Pengeluaran yang terverifikasi scan ditandai, dan Owner bisa mewajibkan scan lewat setelan.
 

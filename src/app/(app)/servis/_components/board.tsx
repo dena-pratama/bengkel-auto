@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, Clock, Maximize2, Minimize2, PackageSearch, Search, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 import { EmptyState, inputClass, panel } from "@/components/page-kit";
 import { formatDate, formatDuration, formatRupiah } from "@/lib/format";
 import type { WorkOrderRow } from "@/lib/service";
@@ -17,13 +18,35 @@ const norm = (v: string) => v.toLowerCase().replace(/[\s.-]/g, "");
 
 /**
  * Papan status kanban (PRD §7.3): kartu per status dengan nomor polisi, mekanik, lama di status.
- * Kartu lewat estimasi durasi bertanda merah. Data diperbarui tiap 30 detik; mode layar penuh untuk TV.
+ * Kartu lewat estimasi durasi bertanda merah. Perubahan work order masuk langsung lewat Supabase Realtime;
+ * polling 30 detik tetap jalan sebagai cadangan bila koneksi realtime putus. Mode layar penuh untuk TV.
  */
 export function ServiceBoard({ orders, showMoney }: { orders: WorkOrderRow[]; showMoney: boolean }) {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [full, setFull] = useState(false);
   const [query, setQuery] = useState("");
+  const [live, setLive] = useState(false);
+
+  // Realtime hanya pemicu: ada perubahan di tabel WO, muat ulang data dari server (RLS tetap berlaku).
+  // Beberapa perubahan beruntun digabung jadi satu muat ulang.
+  useEffect(() => {
+    const supabase = createClient();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const bump = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => router.refresh(), 400);
+    };
+    const channel = supabase.channel("service-board");
+    for (const table of ["work_orders", "work_order_items", "work_order_mechanics"]) {
+      channel.on("postgres_changes", { event: "*", schema: "public", table }, bump);
+    }
+    channel.subscribe((status) => setLive(status === "SUBSCRIBED"));
+    return () => {
+      clearTimeout(timer);
+      void supabase.removeChannel(channel);
+    };
+  }, [router]);
 
   useEffect(() => {
     const t = setInterval(() => router.refresh(), REFRESH_MS);
@@ -63,6 +86,13 @@ export function ServiceBoard({ orders, showMoney }: { orders: WorkOrderRow[]; sh
               />
             </label>
           )}
+          <span
+            className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium", live ? "bg-brand-blue-soft text-brand-blue-fg" : "bg-muted text-muted-foreground")}
+            title={live ? "Perubahan tampil langsung" : "Realtime belum tersambung; data disegarkan tiap 30 detik"}
+          >
+            <span className={cn("size-2 rounded-full", live ? "bg-brand-blue" : "bg-muted-foreground/50")} />
+            {live ? "Langsung" : "Tiap 30 dtk"}
+          </span>
           <Button variant="outline" onClick={toggleFull}>
             {full ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
             {full ? "Keluar layar penuh" : "Layar penuh (TV)"}
