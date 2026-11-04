@@ -89,14 +89,14 @@ const toOpnameItem = (r: StockOpnameItemRow): StockOpnameItemRow => ({
   difference_amount: num(r.difference_amount),
 });
 
-export async function listStockOpnames(): Promise<StockOpnameRow[]> {
+export async function listStockOpnames(f?: { from: string | null; to: string | null; status?: string | null; type?: string | null }): Promise<StockOpnameRow[]> {
   const s = await createClient();
-  const res = await s
-    .from("v_stock_opnames")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(300);
-  return must<StockOpnameRow[]>(res, "daftar stok opname").map(toOpname);
+  let q = s.from("v_stock_opnames").select("*").order("created_at", { ascending: false }).limit(500);
+  if (f?.from) q = q.gte("created_at", `${f.from}T00:00:00+07:00`);
+  if (f?.to) q = q.lte("created_at", `${f.to}T23:59:59.999+07:00`);
+  if (f?.status) q = q.eq("status", f.status);
+  if (f?.type) q = q.eq("opname_type", f.type);
+  return must<StockOpnameRow[]>(await q, "daftar stok opname").map(toOpname);
 }
 
 export async function getStockOpname(id: string): Promise<StockOpnameDetail | null> {

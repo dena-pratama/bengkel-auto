@@ -33,12 +33,14 @@ export type CashTransaction = {
   void_reason: string | null;
 };
 
-export async function listCashTransactions(limit = 40): Promise<CashTransaction[]> {
+export async function listCashTransactions(f?: { from: string | null; to: string | null; kind?: string | null; account?: string | null; limit?: number }): Promise<CashTransaction[]> {
   const s = await createClient();
-  return must<CashTransaction[]>(
-    await s.from("v_cash_transactions").select("*").order("txn_date", { ascending: false }).order("created_at", { ascending: false }).limit(limit),
-    "transaksi kas",
-  ).map((t) => ({ ...t, amount: num(t.amount) }));
+  let q = s.from("v_cash_transactions").select("*").order("txn_date", { ascending: false }).order("created_at", { ascending: false }).limit(f?.limit ?? 300);
+  if (f?.from) q = q.gte("txn_date", f.from);
+  if (f?.to) q = q.lte("txn_date", f.to);
+  if (f?.kind) q = q.eq("kind", f.kind);
+  if (f?.account) q = q.eq("cash_bank_account_id", f.account);
+  return must<CashTransaction[]>(await q, "transaksi kas").map((t) => ({ ...t, amount: num(t.amount) }));
 }
 
 export type RecurringExpense = {

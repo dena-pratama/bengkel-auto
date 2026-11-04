@@ -4,26 +4,43 @@ import { Wallet } from "lucide-react";
 import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
 import { formatDate, formatRupiah, todayWib } from "@/lib/format";
+import { ListFilter } from "@/components/list-filter";
+import { describeRange, readOption, readRange } from "@/lib/list-filter";
 import { listApReceipts, listCashBankAccounts, listSupplierPayments } from "@/lib/purchasing";
 import { cn } from "@/lib/utils";
 import { PaymentForm } from "../_components/payment-form";
 import { DueBadge, PurchasingNav } from "../_components/ui";
 import { VoidPayment } from "../_components/void-payment";
 
-export default function PayablesPage() {
+export default function PayablesPage({ searchParams }: PageProps<"/pembelian/hutang">) {
   return (
     <div className="mx-auto grid w-full max-w-[1440px] gap-5">
       <Suspense fallback={<Skeleton className="h-96" />}>
-        <Content />
+        <Content searchParams={searchParams} />
       </Suspense>
     </div>
   );
 }
 
-async function Content() {
+async function Content({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const ctx = await requireUser();
   if (!can(ctx, "payables", "view", false)) return <NoAccess />;
   const [open, payments, cashAccounts] = await Promise.all([listApReceipts(), listSupplierPayments(), listCashBankAccounts()]);
+  const sp = await searchParams;
+  const today = todayWib();
+  const range = readRange(sp, today, "semua");
+  const supplierOptions = [...new Map(open.map((r) => [r.supplier_id, r.supplier_name])).entries()].map(([value, label]) => ({ value, label })).sort((a, b) => a.label.localeCompare(b.label, "id"));
+  const supplier = readOption(sp, "supplier", supplierOptions.map((s) => s.value));
+  const age = readOption(sp, "umur", ["0-30", "31-60", ">60"] as const);
+  const due = readOption(sp, "jatuh-tempo", ["lewat", "segera", "belum"] as const);
+  const listed = open.filter(
+    (r) =>
+      (!range.from || r.due_date >= range.from) &&
+      (!range.to || r.due_date <= range.to) &&
+      (!supplier || r.supplier_id === supplier) &&
+      (!age || r.age_bucket === age) &&
+      (!due || (due === "lewat" ? r.days_overdue > 0 : due === "segera" ? r.days_overdue <= 0 && r.days_overdue >= -3 : r.days_overdue < -3)),
+  );
   const total = open.reduce((t, r) => t + r.outstanding, 0);
   const overdue = open.filter((r) => r.days_overdue > 0).reduce((t, r) => t + r.outstanding, 0);
   const dueSoon = open.filter((r) => r.days_overdue <= 0 && r.days_overdue >= -3);
@@ -51,13 +68,29 @@ async function Content() {
 
       {can(ctx, "payables", "create", false) && <PaymentForm open={open} cashAccounts={cashAccounts} today={todayWib()} />}
 
+      <ListFilter
+        today={today}
+        range={range}
+        defaultRange="semua"
+        dateLabel="Tanggal jatuh tempo"
+        selects={[
+          { name: "supplier", label: "Supplier", value: supplier, options: supplierOptions, allLabel: "Semua supplier" },
+          { name: "umur", label: "Umur hutang", value: age, options: [{ value: "0-30", label: "0-30 hari" }, { value: "31-60", label: "31-60 hari" }, { value: ">60", label: "Lebih dari 60 hari" }], allLabel: "Semua umur" },
+          { name: "jatuh-tempo", label: "Jatuh tempo", value: due, options: [{ value: "lewat", label: "Sudah lewat" }, { value: "segera", label: "3 hari ke depan" }, { value: "belum", label: "Masih lama" }], allLabel: "Semua" },
+        ]}
+      />
       <section className={cn(panel, "grid gap-3")}>
-        <h2 className="text-lg font-semibold">Faktur belum lunas</h2>
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-lg font-semibold">Faktur belum lunas</h2>
+          <p className="text-xs text-muted-foreground">
+            {describeRange(range, formatDate)} · {listed.length} dari {open.length} faktur · {formatRupiah(listed.reduce((t, r) => t + r.outstanding, 0))}
+          </p>
+        </div>
         {open.length === 0 ? (
           <EmptyState icon={Wallet} text="Tidak ada hutang supplier." />
         ) : (
           <ul className="grid divide-y divide-border">
-            {open.map((r) => (
+            {listed.map((r) => (
               <li key={r.receipt_id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3">
                 <div className="min-w-0 flex-1">
                   <Link href={`/pembelian/penerimaan/${r.receipt_id}`} className="font-mono text-sm font-semibold hover:underline">

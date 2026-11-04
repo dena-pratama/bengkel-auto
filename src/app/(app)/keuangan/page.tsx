@@ -3,24 +3,26 @@ import { Landmark, Repeat } from "lucide-react";
 import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
 import { AttachmentButton } from "@/components/attachment-panel";
+import { ListFilter } from "@/components/list-filter";
+import { describeRange, readOption, readRange } from "@/lib/list-filter";
 import { listAccounts, listCashBankBalances, listCashTransactions, listRecurringExpenses } from "@/lib/finance";
 import { formatDate, formatRupiah, todayWib } from "@/lib/format";
-import { TXN_KIND_LABEL } from "@/lib/validation/finance";
+import { TXN_KINDS, TXN_KIND_LABEL } from "@/lib/validation/finance";
 import { cn } from "@/lib/utils";
 import { FinanceNav } from "./_components/ui";
 import { CashBankDialog, CashTxnDialog, ConfirmRecurringDialog, RecurringDialog, ToggleRecurringButton, VoidTxnButton } from "./_components/dialogs";
 
-export default function FinancePage() {
+export default function FinancePage({ searchParams }: PageProps<"/keuangan">) {
   return (
     <div className="mx-auto grid w-full max-w-[1440px] gap-5">
       <Suspense fallback={<Skeleton className="h-96" />}>
-        <Content />
+        <Content searchParams={searchParams} />
       </Suspense>
     </div>
   );
 }
 
-async function Content() {
+async function Content({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const ctx = await requireUser();
   const canExpenses = can(ctx, "expenses", "view", false);
   const canReports = can(ctx, "finance_reports", "view", false);
@@ -29,9 +31,14 @@ async function Content() {
   const today = todayWib();
   const canCreate = can(ctx, "expenses", "create", false);
   const canOwnerTxn = can(ctx, "journal", "create", false);
+  const sp = await searchParams;
+  const range = readRange(sp, today, "30-hari");
+  const kind = readOption(sp, "jenis", TXN_KINDS);
+  const balancesAll = await listCashBankBalances(today);
+  const account = readOption(sp, "akun-kas", balancesAll.map((b) => b.cash_bank_account_id));
   const [balances, txns, recurring, accounts] = await Promise.all([
-    listCashBankBalances(today),
-    listCashTransactions(30),
+    Promise.resolve(balancesAll),
+    listCashTransactions({ from: range.from, to: range.to, kind, account }),
     canExpenses ? listRecurringExpenses() : Promise.resolve([]),
     listAccounts(),
   ]);
@@ -79,9 +86,22 @@ async function Content() {
         )}
       </section>
 
+      <ListFilter
+        today={today}
+        range={range}
+        defaultRange="30-hari"
+        dateLabel="Tanggal transaksi"
+        selects={[
+          { name: "jenis", label: "Jenis transaksi", value: kind, options: TXN_KINDS.map((v) => ({ value: v, label: TXN_KIND_LABEL[v] })), allLabel: "Semua jenis" },
+          { name: "akun-kas", label: "Kas atau bank", value: account, options: balancesAll.map((b) => ({ value: b.cash_bank_account_id, label: b.name })), allLabel: "Semua akun" },
+        ]}
+      />
+
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <section className={cn(panel, "grid content-start gap-2")}>
-          <h2 className="text-lg font-semibold">Transaksi terakhir</h2>
+          <h2 className="text-lg font-semibold">
+            Transaksi kas <span className="text-sm font-normal text-muted-foreground">· {describeRange(range, formatDate)} · {txns.length} transaksi</span>
+          </h2>
           {txns.length === 0 ? (
             <EmptyState icon={Landmark} text="Belum ada transaksi kas. Penjualan dan pembelian tercatat lewat modulnya masing-masing." />
           ) : (

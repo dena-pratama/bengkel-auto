@@ -4,16 +4,13 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { formatDate } from "@/lib/format";
 import type { StockOpnameRow } from "@/lib/stock-opname";
-import { OPNAME_STATUSES, OPNAME_STATUS_LABEL } from "@/lib/validation/stock-opname";
 import { OpnameStatusBadge, OpnameTypeBadge, formatRp } from "./ui";
 
 export function OpnameList({ items }: { items: StockOpnameRow[] }) {
-  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
     return items.filter((item) => {
-      if (statusFilter !== "all" && item.status !== statusFilter) return false;
       if (query.trim()) {
         const q = query.toLowerCase();
         const no = item.opname_no.toLowerCase();
@@ -25,42 +22,11 @@ export function OpnameList({ items }: { items: StockOpnameRow[] }) {
       }
       return true;
     });
-  }, [items, statusFilter, query]);
+  }, [items, query]);
 
   return (
     <div className="grid gap-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-1 border-b border-border pb-1">
-          <button
-            type="button"
-            onClick={() => setStatusFilter("all")}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-              statusFilter === "all"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
-          >
-            Semua ({items.length})
-          </button>
-          {OPNAME_STATUSES.map((st) => {
-            const count = items.filter((x) => x.status === st).length;
-            return (
-              <button
-                key={st}
-                type="button"
-                onClick={() => setStatusFilter(st)}
-                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                  statusFilter === st
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
-              >
-                {OPNAME_STATUS_LABEL[st]} ({count})
-              </button>
-            );
-          })}
-        </div>
-
         <div className="w-full sm:w-64">
           <input
             type="search"

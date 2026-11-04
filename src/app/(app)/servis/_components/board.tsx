@@ -21,7 +21,7 @@ const norm = (v: string) => v.toLowerCase().replace(/[\s.-]/g, "");
  * Kartu lewat estimasi durasi bertanda merah. Perubahan work order masuk langsung lewat Supabase Realtime;
  * polling 30 detik tetap jalan sebagai cadangan bila koneksi realtime putus. Mode layar penuh untuk TV.
  */
-export function ServiceBoard({ orders, showMoney }: { orders: WorkOrderRow[]; showMoney: boolean }) {
+export function ServiceBoard({ orders, showMoney, historyFilter, historyTitle = "Selesai & batal 14 hari terakhir" }: { orders: WorkOrderRow[]; showMoney: boolean; historyFilter?: React.ReactNode; historyTitle?: string }) {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const [full, setFull] = useState(false);
@@ -116,8 +116,9 @@ export function ServiceBoard({ orders, showMoney }: { orders: WorkOrderRow[]; sh
         </div>
       </div>
 
+      {historyFilter}
       <section className={cn(panel, "grid gap-3 p-4 sm:p-5")}>
-        <h2 className="text-lg font-semibold">Selesai & batal 14 hari terakhir</h2>
+        <h2 className="text-lg font-semibold">{historyTitle}</h2>
         {done.length === 0 ? (
           <EmptyState icon={Clock} text="Belum ada." />
         ) : (

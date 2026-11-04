@@ -120,20 +120,23 @@ export type PoListRow = {
   lines: number;
 };
 
-export async function listPurchaseOrders(): Promise<PoListRow[]> {
+export async function listPurchaseOrders(f?: { from: string | null; to: string | null; status?: string | null; supplier?: string | null }): Promise<PoListRow[]> {
   const s = await createClient();
   type Row = Omit<PoListRow, "supplier" | "total" | "lines"> & {
     suppliers: { name: string };
     purchase_order_items: { qty: number; unit_price: number }[];
   };
-  const rows = must<Row[]>(
-    await s
-      .from("purchase_orders")
-      .select("id, po_no, supplier_id, order_date, expected_date, status, suppliers(name), purchase_order_items(qty, unit_price)")
-      .order("created_at", { ascending: false })
-      .limit(300),
-    "PO",
-  );
+  let q = s
+    .from("purchase_orders")
+    .select("id, po_no, supplier_id, order_date, expected_date, status, suppliers(name), purchase_order_items(qty, unit_price)")
+    .order("order_date", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(500);
+  if (f?.from) q = q.gte("order_date", f.from);
+  if (f?.to) q = q.lte("order_date", f.to);
+  if (f?.status) q = q.eq("status", f.status);
+  if (f?.supplier) q = q.eq("supplier_id", f.supplier);
+  const rows = must<Row[]>(await q, "PO");
   return rows.map(({ suppliers, purchase_order_items, ...r }) => ({
     ...r,
     supplier: suppliers.name,
@@ -255,18 +258,22 @@ export type ReceiptListRow = {
   po_no: string | null;
 };
 
-export async function listReceipts(): Promise<ReceiptListRow[]> {
+export async function listReceipts(f?: { from: string | null; to: string | null; supplier?: string | null; withPo?: "po" | "tanpa" | null }): Promise<ReceiptListRow[]> {
   const s = await createClient();
   type Row = Omit<ReceiptListRow, "supplier" | "po_no"> & { suppliers: { name: string }; purchase_orders: { po_no: string } | null };
-  const rows = must<Row[]>(
-    await s
-      .from("goods_receipts")
-      .select("id, gr_no, supplier_id, receipt_date, invoice_no, total, suppliers(name), purchase_orders(po_no)")
-      .eq("status", "posted")
-      .order("created_at", { ascending: false })
-      .limit(300),
-    "penerimaan",
-  );
+  let q = s
+    .from("goods_receipts")
+    .select("id, gr_no, supplier_id, receipt_date, invoice_no, total, suppliers(name), purchase_orders(po_no)")
+    .eq("status", "posted")
+    .order("receipt_date", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(500);
+  if (f?.from) q = q.gte("receipt_date", f.from);
+  if (f?.to) q = q.lte("receipt_date", f.to);
+  if (f?.supplier) q = q.eq("supplier_id", f.supplier);
+  if (f?.withPo === "po") q = q.not("po_id", "is", null);
+  if (f?.withPo === "tanpa") q = q.is("po_id", null);
+  const rows = must<Row[]>(await q, "penerimaan");
   return rows.map(({ suppliers, purchase_orders, ...r }) => ({ ...r, total: num(r.total), supplier: suppliers.name, po_no: purchase_orders?.po_no ?? null }));
 }
 

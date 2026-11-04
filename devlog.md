@@ -4,6 +4,34 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.30.0] 2026-11-04
+**Ringkasan:** Filter rentang tanggal dan kategori di modul Pembelian, Stok opname, Servis, dan Kas & bank, memakai komponen filter bersama.
+
+### Added
+- **Pembelian**
+  - Purchase order: tanggal PO (bawaan Tahun ini), status, supplier.
+  - Penerimaan barang: tanggal terima (bawaan Bulan ini), supplier, asal (dari PO atau tanpa PO).
+  - Hutang supplier: tanggal jatuh tempo (bawaan Semua), supplier, umur hutang, status jatuh tempo (sudah lewat, 3 hari ke depan, masih lama). Filter berlaku untuk daftar faktur; kartu ringkasan tetap menghitung seluruh hutang.
+- **Stok opname**: tanggal dibuat (bawaan Bulan ini), status, jenis opname.
+- **Servis**
+  - Estimasi: tanggal dibuat (bawaan 30 hari), status.
+  - Papan servis: bagian "Selesai & batal" kini punya filter tanggal selesai/batal (bawaan 30 hari, sebelumnya tetap 14 hari) dan hasil (selesai diserahkan atau dibatalkan). Kartu kanban kendaraan yang sedang dikerjakan tidak terpengaruh filter.
+- **Kas & bank**: tanggal transaksi (bawaan 30 hari), jenis transaksi, akun kas/bank. Daftar transaksi kas dibatasi 300.
+
+### Changed
+- Tab status lokal di daftar Stok opname diganti filter bersama (pencarian teks tetap ada).
+- Daftar PO, penerimaan, opname, dan estimasi kini diurutkan menurut tanggal dokumen dan dibatasi 500.
+
+### Verifikasi
+- `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- Bentuk kueri semua filter baru dicek ke PostgREST dengan data lokal (PO, penerimaan dari/tanpa PO, opname, estimasi, work order aktif + riwayat, transaksi kas).
+- **Belum diverifikasi:** halaman-halaman ini dengan login nyata.
+
+### File terdampak
+`src/lib/purchasing.ts`, `src/lib/stock-opname.ts`, `src/lib/service.ts`, `src/lib/finance.ts`, `src/app/(app)/pembelian/page.tsx`, `src/app/(app)/pembelian/penerimaan/page.tsx`, `src/app/(app)/pembelian/hutang/page.tsx`, `src/app/(app)/stok-opname/page.tsx`, `src/app/(app)/stok-opname/_components/opname-list.tsx`, `src/app/(app)/servis/page.tsx`, `src/app/(app)/servis/_components/board.tsx`, `src/app/(app)/servis/estimasi/page.tsx`, `src/app/(app)/keuangan/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.29.0] 2026-11-04
 **Ringkasan:** Sistem filter daftar yang seragam (rentang tanggal dan kategori), dimulai dari modul Kasir.
 

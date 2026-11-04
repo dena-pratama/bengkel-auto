@@ -56,16 +56,17 @@ export type WorkOrderRow = {
 const toWo = (r: WorkOrderRow): WorkOrderRow => ({ ...r, discount_amount: num(r.discount_amount), subtotal: num(r.subtotal), total: num(r.total) });
 
 /** Papan: semua WO aktif + yang diambil/batal 14 hari terakhir */
-export async function listWorkOrders(): Promise<WorkOrderRow[]> {
+/** Work order aktif selalu ikut; yang selesai atau batal difilter tanggal status dan jenisnya (bawaan 14 hari terakhir). */
+export async function listWorkOrders(f?: { from: string | null; to: string | null; done?: "delivered" | "void" | null }): Promise<WorkOrderRow[]> {
   const s = await createClient();
   const since = new Date(Date.now() - 14 * 86_400_000).toISOString();
+  const from = f ? (f.from ? `${f.from}T00:00:00+07:00` : null) : since;
+  const to = f?.to ? `${f.to}T23:59:59.999+07:00` : null;
+  const doneStatuses = f?.done ? f.done : "delivered,void";
+  const range = [from ? `status_changed_at.gte.${from}` : null, to ? `status_changed_at.lte.${to}` : null].filter(Boolean).join(",");
+  const done = `and(status.in.(${doneStatuses})${range ? `,${range}` : ""})`;
   const rows = must<WorkOrderRow[]>(
-    await s
-      .from("v_work_orders")
-      .select("*")
-      .or(`status.not.in.(delivered,void),status_changed_at.gte.${since}`)
-      .order("created_at", { ascending: true })
-      .limit(500),
+    await s.from("v_work_orders").select("*").or(`status.not.in.(delivered,void),${done}`).order("created_at", { ascending: true }).limit(800),
     "work order",
   );
   return rows.map(toWo);
@@ -236,12 +237,13 @@ export type EstimateRow = {
 
 const toEstimate = (r: EstimateRow): EstimateRow => ({ ...r, subtotal: num(r.subtotal), discount_amount: num(r.discount_amount), total: num(r.total) });
 
-export async function listEstimates(): Promise<EstimateRow[]> {
+export async function listEstimates(f?: { from: string | null; to: string | null; status?: string | null }): Promise<EstimateRow[]> {
   const s = await createClient();
-  const rows = must<EstimateRow[]>(
-    await s.from("v_estimates").select("*").eq("is_latest", true).eq("is_additional", false).order("created_at", { ascending: false }).limit(300),
-    "estimasi",
-  );
+  let q = s.from("v_estimates").select("*").eq("is_latest", true).eq("is_additional", false).order("created_at", { ascending: false }).limit(500);
+  if (f?.from) q = q.gte("created_at", `${f.from}T00:00:00+07:00`);
+  if (f?.to) q = q.lte("created_at", `${f.to}T23:59:59.999+07:00`);
+  if (f?.status) q = q.eq("status", f.status);
+  const rows = must<EstimateRow[]>(await q, "estimasi");
   return rows.map(toEstimate);
 }
 
