@@ -52,7 +52,7 @@ const columns = col.columns([
     sortFn: "alphanumeric",
     cell: ({ row }) => (
       <div className="flex min-w-0 items-center gap-3">
-        <Avatar name={row.original.full_name} />
+        <Avatar name={row.original.full_name} photoUrl={row.original.photo_url} />
         <div className="min-w-0">
           <p className="truncate font-medium">{row.original.full_name}</p>
           <p className="font-mono text-xs text-muted-foreground">{row.original.code}</p>
@@ -239,7 +239,7 @@ export function EmployeesTable({ employees }: { employees: Employee[] }) {
             {rows.map(({ original: e }) => (
               <li key={e.id}>
                 <Link href={`/karyawan/${e.id}`} className="flex items-start gap-3 rounded-sm border border-border p-3 transition-colors hover:bg-muted/60">
-                  <Avatar name={e.full_name} />
+                  <Avatar name={e.full_name} photoUrl={e.photo_url} />
                   <div className="grid min-w-0 flex-1 gap-1.5">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">

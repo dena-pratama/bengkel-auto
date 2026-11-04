@@ -22,7 +22,7 @@ Siapkan data uji: 1 pelanggan + kendaraan, 1 barang ber-stok, 1 jasa, 1 supplier
 - [ ] **Stok opname** (`/stok-opname`): buat sesi, hitung (coba scan `I:SKU` di kotak cari), review, posting.
 - [ ] **AI Analyst** (`/ai`): skor kesehatan, ringkasan mingguan, buat token. Tanya AI butuh `ANTHROPIC_API_KEY`.
 - [ ] **Audit log** (`/audit`): filter, klik baris untuk sebelum/sesudah, **Ekspor Excel**.
-- [ ] **Pengaturan** (menu profil > Pengaturan): ubah batas diskon, wajib scan part, simpan.
+- [ ] **Pengaturan** (ikon gerigi atau menu profil): tab Profil saya (unggah, ganti, hapus foto; simpan nomor HP; ganti password; PIN; mode gelap) dan tab Bengkel (batas diskon, wajib scan part). Foto muncul di pojok kanan atas dan di daftar karyawan.
 
 ## Cek filter daftar
 - [ ] Buka Penjualan, Retur, Shift, Piutang, PO, Penerimaan, Hutang, Stok opname, Estimasi, Kas & bank, Jurnal, Penggajian (periode, kasbon, komisi), Audit log, Garansi: coba pilihan cepat (7 hari, Bulan ini, Semua), tanggal bebas, kategori, lalu Atur ulang. Alamat halaman ikut berubah dan bisa dibagikan.

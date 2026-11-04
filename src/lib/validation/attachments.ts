@@ -1,5 +1,5 @@
 // Aturan lampiran (sama di server dan klien): jenis dokumen, tipe berkas, ukuran.
-export const ENTITY_TYPES = ["item", "goods_receipt", "cash_transaction"] as const;
+export const ENTITY_TYPES = ["item", "goods_receipt", "cash_transaction", "employee_avatar"] as const;
 export type EntityType = (typeof ENTITY_TYPES)[number];
 
 export const MAX_BYTES = 5 * 1024 * 1024;
@@ -7,6 +7,7 @@ export const MAX_PER_ENTITY = 10;
 export const IMAGE_MIMES = ["image/jpeg", "image/png", "image/webp"] as const;
 export const ALLOWED_MIMES: Record<EntityType, readonly string[]> = {
   item: IMAGE_MIMES,
+  employee_avatar: IMAGE_MIMES,
   goods_receipt: [...IMAGE_MIMES, "application/pdf"],
   cash_transaction: [...IMAGE_MIMES, "application/pdf"],
 };

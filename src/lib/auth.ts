@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 export type PermissionAction = "view" | "create" | "update" | "void" | "approve" | "export";
 
 export type UserContext = {
-  employee: { id: string; code: string; full_name: string; position: string | null; status: string };
+  employee: { id: string; code: string; full_name: string; position: string | null; status: string; photo_url: string | null };
   branch: { id: string; code: string; name: string };
   is_superuser: boolean;
   roles: { code: string; name: string }[];

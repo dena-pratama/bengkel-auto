@@ -90,6 +90,47 @@ select pg_temp.check((select count(*) = 10 from public.attachments where entity_
 select pg_temp.fails($q$ delete from public.attachments $q$, 'append-only', 'lampiran tidak bisa dihapus permanen');
 select pg_temp.check(exists (select 1 from storage.buckets where id = 'attachments' and not public and file_size_limit = 5242880), 'bucket attachments privat dengan batas 5 MB');
 
+-- ---------------------------------------------------------------------------
+-- Foto profil dan profil saya
+-- ---------------------------------------------------------------------------
+select pg_temp.login('u_owner');
+select public.register_attachment('employee_avatar', pg_temp.id('e_owner'), format('%s/employee_avatar/%s/%s.jpg', pg_temp.id('branch'), pg_temp.id('e_owner'), gen_random_uuid()), 'foto1.jpg', 'image/jpeg', 50000);
+insert into t_ids select 'av1', id from public.attachments where entity_type = 'employee_avatar' and entity_id = pg_temp.id('e_owner') and removed_at is null;
+select public.set_my_avatar(pg_temp.id('av1'));
+reset role;
+select pg_temp.check((select photo_url = '/api/v1/attachments/' || pg_temp.id('av1')::text from public.employees where id = pg_temp.id('e_owner')), 'foto profil: photo_url menunjuk lampiran');
+select pg_temp.login('u_owner');
+select pg_temp.check((public.my_context() -> 'employee' ->> 'photo_url') = '/api/v1/attachments/' || pg_temp.id('av1')::text, 'foto profil: my_context membawa photo_url');
+
+-- foto kedua mengganti yang pertama
+select public.register_attachment('employee_avatar', pg_temp.id('e_owner'), format('%s/employee_avatar/%s/%s.png', pg_temp.id('branch'), pg_temp.id('e_owner'), gen_random_uuid()), 'foto2.png', 'image/png', 60000);
+insert into t_ids select 'av2', id from public.attachments where entity_type = 'employee_avatar' and entity_id = pg_temp.id('e_owner') and removed_at is null and id <> pg_temp.id('av1');
+select public.set_my_avatar(pg_temp.id('av2'));
+reset role;
+select pg_temp.check((select removed_at is not null from public.attachments where id = pg_temp.id('av1')), 'foto profil: foto lama dilepas saat diganti');
+select pg_temp.check((select count(*) = 1 from public.attachments where entity_type = 'employee_avatar' and entity_id = pg_temp.id('e_owner') and removed_at is null), 'foto profil: hanya satu foto aktif');
+
+-- hanya gambar, hanya untuk diri sendiri
+select pg_temp.login('u_owner');
+select pg_temp.fails(format($q$ select public.register_attachment('employee_avatar', '%s', '%s/employee_avatar/%s/x.pdf', 'x.pdf', 'application/pdf', 1000) $q$, pg_temp.id('e_owner'), pg_temp.id('branch'), pg_temp.id('e_owner')), 'harus berupa gambar', 'foto profil: PDF ditolak');
+select pg_temp.fails(format($q$ select public.set_my_avatar('%s') $q$, pg_temp.id('i_foto')), 'tidak ditemukan', 'foto profil: lampiran jenis lain tidak bisa jadi foto profil');
+
+-- hapus foto
+select public.clear_my_avatar();
+reset role;
+select pg_temp.check((select photo_url is null from public.employees where id = pg_temp.id('e_owner')) and not exists (select 1 from public.attachments where entity_type = 'employee_avatar' and entity_id = pg_temp.id('e_owner') and removed_at is null), 'foto profil: hapus foto mengosongkan photo_url');
+
+-- nomor HP saya
+select pg_temp.login('u_owner');
+select public.update_my_profile('+62 812-3456-7890');
+reset role;
+select pg_temp.check((select phone = '081234567890' from public.employees where id = pg_temp.id('e_owner')), 'profil saya: nomor HP dinormalisasi');
+select pg_temp.login('u_owner');
+select pg_temp.fails($q$ select public.update_my_profile('12345') $q$, 'tidak valid', 'profil saya: nomor HP tidak valid ditolak');
+select public.update_my_profile('');
+reset role;
+select pg_temp.check((select phone is null from public.employees where id = pg_temp.id('e_owner')), 'profil saya: nomor HP boleh dikosongkan');
+
 rollback;
 \o
 \echo SEMUA TES LAMPIRAN LULUS

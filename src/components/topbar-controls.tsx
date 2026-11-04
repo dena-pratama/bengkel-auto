@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { UserAvatar } from "@/components/user-avatar";
 import { THEME_STORAGE_KEY } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
@@ -67,14 +68,14 @@ export function ProfileMenu({
   name,
   role,
   branch,
-  initials,
+  photoUrl,
   logout,
 }: {
   employeeId: string;
   name: string;
   role: string;
   branch: string;
-  initials: string;
+  photoUrl?: string | null;
   logout: () => Promise<void>;
 }) {
   const [pending, startTransition] = useTransition();
@@ -85,9 +86,7 @@ export function ProfileMenu({
         className="ml-1 flex items-center gap-2.5 rounded-xl border border-border bg-card py-1 pr-2 pl-1 shadow-sm transition-colors outline-none hover:border-brand-blue/60 focus-visible:ring-2 focus-visible:ring-ring data-popup-open:border-brand-blue/60"
         aria-label={`Menu profil ${name}`}
       >
-        <span className="flex size-8 items-center justify-center rounded-lg bg-brand-blue-soft text-xs font-semibold text-brand-blue-fg">
-          {initials}
-        </span>
+        <UserAvatar name={name} photoUrl={photoUrl} className="size-8 rounded-lg text-xs" />
         <span className="hidden text-left leading-tight lg:block">
           <span className="block text-sm font-medium">{name}</span>
           <span className="block text-2xs text-muted-foreground">{role}</span>
@@ -97,9 +96,7 @@ export function ProfileMenu({
 
       <DropdownMenuContent align="end" sideOffset={8} className="w-60 rounded-2xl p-1.5">
         <div className="flex items-center gap-3 px-2 py-2">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-blue-soft text-sm font-semibold text-brand-blue-fg">
-            {initials}
-          </span>
+          <UserAvatar name={name} photoUrl={photoUrl} className="size-10 rounded-xl text-sm" />
           <div className="min-w-0 leading-tight">
             <p className="truncate text-sm font-semibold">{name}</p>
             <p className="truncate text-xs text-muted-foreground">

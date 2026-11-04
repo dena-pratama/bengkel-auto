@@ -4,6 +4,39 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.32.0] 2026-11-04
+**Ringkasan:** Halaman Pengaturan yang sebenarnya dan foto profil. Ikon gerigi di top bar sebelumnya hanya bertuliskan "segera" dan tidak membuka apa pun; kini membuka Pengaturan, dan setiap karyawan bisa mengganti foto, nomor HP, password, PIN, dan tema.
+
+### Added
+- Migration `20261103000030_profile_avatar.sql`:
+  - Lampiran jenis `employee_avatar` (foto profil, hanya gambar). Terlihat oleh semua karyawan aktif, diunggah untuk diri sendiri (atau oleh pemegang izin ubah karyawan).
+  - `set_my_avatar` (menjadikan foto baru sebagai foto profil dan melepas yang lama), `clear_my_avatar`, dan `update_my_profile` (nomor HP, dinormalisasi dan divalidasi).
+  - `my_context` membawa `photo_url`; `employees.photo_url` menunjuk lampiran.
+- Halaman **Pengaturan** bertab:
+  - **Profil saya** (`/pengaturan`, semua karyawan): foto profil (unggah, ganti, hapus; foto dipotong persegi dan diperkecil ke 512 px JPEG di browser sehingga kecil dan data EXIF terbuang), data akun (nama, kode, jabatan, peran, email login, cabang), ubah nomor HP, ganti password (password saat ini diverifikasi dulu), PIN persetujuan, dan mode terang/gelap.
+  - **Bengkel** (`/pengaturan/bengkel`, pemegang izin pengaturan): batas diskon, retur, opname, stok minus, wajib scan part (dipindah dari `/pengaturan`).
+- Foto profil tampil di top bar, menu profil, daftar karyawan, dan detail karyawan; tanpa foto atau gagal dimuat tampil inisial.
+- Tes DB (di `attachments_test.sql`): foto profil menunjuk lampiran, `my_context` membawa foto, foto baru melepas yang lama, PDF ditolak, lampiran jenis lain tidak bisa jadi foto profil, hapus foto, nomor HP dinormalisasi, tidak valid ditolak, bisa dikosongkan.
+- Pratinjau tanpa login (development saja): `/dev/preview/pengaturan`.
+
+### Changed
+- Ikon gerigi di top bar kini tautan ke `/pengaturan`. Alamat `/pengaturan` yang tadinya pengaturan bengkel kini Profil saya; pengaturan bengkel pindah ke `/pengaturan/bengkel`.
+- Foto profil di-cache browser 45 detik (URL bertanda tangan berlaku 60 detik).
+
+### Catatan
+- Nama, jabatan, dan peran tetap diubah Owner di menu Karyawan; nomor HP bisa diubah sendiri.
+- Berkas foto lama yang dilepas tetap di penyimpanan (jejak audit).
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus. `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- Di browser (pratinjau): tata letak Profil saya rapi; pemrosesan foto menghasilkan JPEG 512 x 512 (3,4 KB) dari gambar 1600 x 900.
+- **Belum diverifikasi:** unggah foto, simpan nomor HP, dan ganti password lewat aplikasi dengan login nyata (rute dan aksi butuh sesi).
+
+### File terdampak
+`supabase/migrations/20261103000030_profile_avatar.sql`, `supabase/tests/attachments_test.sql`, `src/app/(app)/pengaturan/**`, `src/components/user-avatar.tsx`, `src/components/topbar-controls.tsx`, `src/components/app-shell.tsx`, `src/lib/validation/profile.ts`, `src/lib/validation/attachments.ts`, `src/lib/auth.ts`, `src/lib/employees.ts`, `src/app/api/v1/attachments/**`, `src/app/(app)/karyawan/**`, `src/app/dev/preview/pengaturan/**`, `cek-halaman.md`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.31.0] 2026-11-04
 **Ringkasan:** Filter rentang tanggal dan kategori di Penggajian dan daftar master (barang, jasa, pelanggan, kendaraan, karyawan), serta Audit log, Garansi, dan Jurnal disamakan dengan komponen filter bersama. Sistem filter kini mencakup semua modul yang punya daftar.
 

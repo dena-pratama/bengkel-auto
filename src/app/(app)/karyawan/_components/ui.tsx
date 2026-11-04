@@ -1,5 +1,6 @@
 import { ShieldCheck, Users } from "lucide-react";
 import { SectionNav } from "@/components/page-kit";
+import { UserAvatar } from "@/components/user-avatar";
 import type { RoleRef } from "@/lib/employees";
 import { STATUS_LABEL, type EmployeeStatus } from "@/lib/validation/employee";
 import { cn } from "@/lib/utils";
@@ -16,17 +17,8 @@ export function initials(name: string) {
     .join("");
 }
 
-export function Avatar({ name, size = "md" }: { name: string; size?: "md" | "lg" }) {
-  return (
-    <span
-      className={cn(
-        "flex shrink-0 items-center justify-center rounded-sm bg-brand-blue-soft font-semibold text-brand-blue-fg",
-        size === "lg" ? "size-14 text-lg" : "size-10 text-sm",
-      )}
-    >
-      {initials(name)}
-    </span>
-  );
+export function Avatar({ name, size = "md", photoUrl }: { name: string; size?: "md" | "lg"; photoUrl?: string | null }) {
+  return <UserAvatar name={name} photoUrl={photoUrl} className={cn("rounded-sm", size === "lg" ? "size-14 text-lg" : "size-10 text-sm")} />;
 }
 
 const STATUS_STYLE: Record<EmployeeStatus, string> = {

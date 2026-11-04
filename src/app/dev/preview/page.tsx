@@ -7,7 +7,7 @@ import { DashboardSkeleton, DashboardView } from "../../(app)/dashboard/view";
 
 // Pratinjau UI tanpa login, HANYA saat development (404 di production).
 const PREVIEW_CTX: UserContext = {
-  employee: { id: "preview", code: "EMP-PREVIEW", full_name: "Tama Pratama", position: "Owner", status: "active" },
+  employee: { id: "preview", code: "EMP-PREVIEW", full_name: "Tama Pratama", position: "Owner", status: "active", photo_url: null },
   branch: { id: "preview", code: "PST", name: "Bengkel Pusat" },
   is_superuser: true,
   roles: [{ code: "owner", name: "Owner" }],

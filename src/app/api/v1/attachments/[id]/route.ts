@@ -23,7 +23,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const { id } = await params;
   if (!UUID.test(id)) return Response.json({ error: "Lampiran tidak ditemukan." }, { status: 404 });
   const supabase = await createClient();
-  const { data } = await supabase.from("attachments").select("path, file_name, mime_type").eq("id", id).maybeSingle();
+  const { data } = await supabase.from("attachments").select("path, file_name, mime_type, entity_type").eq("id", id).maybeSingle();
   if (!data) return Response.json({ error: "Lampiran tidak ditemukan." }, { status: 404 });
   const signed = await createAdminClient().storage.from("attachments").createSignedUrl(data.path as string, 60);
   if (signed.error || !signed.data) return Response.json({ error: "Berkas tidak tersedia." }, { status: 404 });
@@ -31,5 +31,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   // URL bertanda tangan dibuat terhadap alamat internal; arahkan ke alamat yang bisa dijangkau browser
   const internal = process.env.SUPABASE_INTERNAL_URL;
   const url = internal && signed.data.signedUrl.startsWith(internal) ? signed.data.signedUrl.replace(internal, base) : signed.data.signedUrl;
-  return new Response(null, { status: 302, headers: { Location: url, "Cache-Control": "private, no-store" } });
+  const cache = data.entity_type === "employee_avatar" ? "private, max-age=45" : "private, no-store";
+  return new Response(null, { status: 302, headers: { Location: url, "Cache-Control": cache } });
 }

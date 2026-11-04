@@ -41,7 +41,7 @@ export async function POST(request: Request) {
   const bytes = new Uint8Array(await file.arrayBuffer());
   const mime = sniffMime(bytes);
   if (!mime || !ALLOWED_MIMES[type].includes(mime)) {
-    return Response.json({ error: type === "item" ? "Foto barang harus berformat JPG, PNG, atau WebP." : "Berkas harus berformat JPG, PNG, WebP, atau PDF." }, { status: 415 });
+    return Response.json({ error: type === "item" || type === "employee_avatar" ? "Foto harus berformat JPG, PNG, atau WebP." : "Berkas harus berformat JPG, PNG, WebP, atau PDF." }, { status: 415 });
   }
 
   const path = `${ctx.branch.id}/${type}/${entityId}/${randomUUID()}.${EXT[mime]}`;

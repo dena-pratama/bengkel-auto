@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Bell, Search, Settings } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { SideNav, SidebarFrame, SidebarRailToggle, SidebarToggle } from "@/components/app-nav";
 import { ProfileMenu, ThemeToggle } from "@/components/topbar-controls";
@@ -90,7 +91,7 @@ export function TopbarView({ ctx }: { ctx: UserContext }) {
           <Bell className="size-5" />
           <span className="absolute top-2 right-2 size-2 rounded-full bg-brand-red ring-2 ring-background" />
         </Button>
-        <Button variant="ghost" size="icon" className="hidden sm:inline-flex" aria-label="Pengaturan" title="Pengaturan (segera)">
+        <Button variant="ghost" size="icon" className="hidden sm:inline-flex" aria-label="Pengaturan" title="Pengaturan" nativeButton={false} render={<Link href="/pengaturan" />}>
           <Settings className="size-5" />
         </Button>
         <ProfileMenu
@@ -98,7 +99,7 @@ export function TopbarView({ ctx }: { ctx: UserContext }) {
           name={ctx.employee.full_name}
           role={ctx.roles.map((r) => r.name).join(", ")}
           branch={ctx.branch.name}
-          initials={initials(ctx.employee.full_name)}
+          photoUrl={ctx.employee.photo_url}
           logout={logoutAction}
         />
       </div>

@@ -41,7 +41,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
       <PageHeader title="Detail karyawan" back={{ href: "/karyawan", label: "Karyawan" }} />
 
       <section className={cn(panel, "flex flex-wrap items-center gap-4")}>
-        <Avatar name={employee.full_name} size="lg" />
+        <Avatar name={employee.full_name} size="lg" photoUrl={employee.photo_url} />
         <div className="grid min-w-0 flex-1 gap-1.5">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="truncate text-xl font-semibold">{employee.full_name}</h2>

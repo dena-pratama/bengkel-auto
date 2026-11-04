@@ -4,7 +4,7 @@ import type { EmployeeStatus, PermissionActionKey } from "@/lib/validation/emplo
 
 // Kolom eksplisit: pin_hash tidak punya grant baca, jadi `select *` akan ditolak database.
 const EMPLOYEE_COLUMNS =
-  "id, code, full_name, nik, phone, position, hire_date, bank_name, bank_account_number, bank_account_name, status, created_at";
+  "id, code, full_name, nik, phone, position, hire_date, bank_name, bank_account_number, bank_account_name, photo_url, status, created_at";
 
 export type RoleRef = { id: string; code: string; name: string; is_superuser: boolean; is_active: boolean };
 
@@ -19,6 +19,7 @@ export type Employee = {
   bank_name: string | null;
   bank_account_number: string | null;
   bank_account_name: string | null;
+  photo_url: string | null;
   status: EmployeeStatus;
   created_at: string;
   email: string | null;
