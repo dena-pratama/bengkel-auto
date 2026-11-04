@@ -1,3 +1,12 @@
+## [0.45.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 09: Pajak
+- Mengadopsi visual token Figma page `11 · Pajak` (frame `5:11723`).
+- Banner disclaim edukatif di bagian atas untuk kepatuhan perpajakan.
+- Penataan formulir pajak dalam tata letak responsif 2 kolom: Profil Usaha & PPN di sisi kiri; Tarif PPN & Pajak Penghasilan (PPh) di sisi kanan.
+- Badge status tarif PPN yang berlaku menggunakan pill bulat penuh (`rounded-full`).
+- Menambahkan rute pratinjau `/dev/preview/pajak` untuk verifikasi visual mandiri.
+
 ## [0.44.0] - 2026-11-05
 
 ### Changed - UI/UX Redesign Module 08: Penggajian
