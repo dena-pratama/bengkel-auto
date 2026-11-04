@@ -28,7 +28,7 @@ const itemSearch: FilterFn<TableFeatures, ItemListRow> = (row, _id, value: strin
   const q = value.trim().toLowerCase();
   if (!q) return true;
   const i = row.original;
-  return [i.name, i.sku, i.brand, i.category, ...i.part_numbers].filter(Boolean).some((v) => v!.toLowerCase().includes(q));
+  return [i.name, i.sku, i.brand, i.category, ...i.part_numbers, ...i.compat].filter(Boolean).some((v) => v!.toLowerCase().includes(q));
 };
 
 const features = tableFeatures({

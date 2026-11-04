@@ -4,6 +4,29 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.26.0] 2026-11-04
+**Ringkasan:** Kompatibilitas kendaraan pada barang (PRD §4.4): catat merek, model, tahun, dan mesin yang cocok untuk tiap barang, dan cari barang dari nama kendaraan.
+
+### Added
+- Migration `20261103000028_item_compatibility.sql`: `save_item_compatibilities(item, rows)` (izin master data ubah) mengganti seluruh daftar kendaraan satu barang; merek dan model baru dibuat otomatis bila belum ada (memakai `app.resolve_vehicle_model`, tanpa duplikat); baris kembar diabaikan; tahun 1950-2100 dan tahun akhir tidak sebelum tahun awal; maksimal 200 baris; tercatat di audit log.
+- Panel "Cocok untuk kendaraan" di halaman detail barang (tambah/hapus baris, saran merek dan model dari data yang sudah ada, read-only bagi yang tidak berizin ubah).
+- Pencarian di daftar barang juga mencocokkan kendaraan (mis. ketik "Avanza" untuk barang yang cocok dengan Avanza).
+- Tes DB `supabase/tests/compat_test.sql`.
+- Pratinjau tanpa login (development saja): `/dev/preview/compat`.
+
+### Catatan
+- Kompatibilitas belum dipakai untuk menyaring atau menandai part otomatis di form estimasi dan kasir berdasarkan kendaraan yang dipilih; baru tersedia sebagai data dan pencarian.
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus. `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- Di browser (pratinjau): panel tampil dengan baris isian dan tombol.
+- **Belum diverifikasi:** halaman detail barang dengan login dan penyimpanan lewat aplikasi (fungsi simpan dites di DB).
+
+### File terdampak
+`supabase/migrations/20261103000028_item_compatibility.sql`, `supabase/tests/compat_test.sql`, `src/lib/inventory.ts`, `src/lib/validation/compat.ts`, `src/app/(app)/inventory/actions.ts`, `src/app/(app)/inventory/_components/compat-panel.tsx`, `src/app/(app)/inventory/_components/items-table.tsx`, `src/app/(app)/inventory/barang/[id]/page.tsx`, `src/app/dev/preview/compat/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.25.0] 2026-11-04
 **Ringkasan:** Reminder servis berkala (PRD §6.4): aturan per jasa (km atau bulan, mana yang lebih dulu), daftar kendaraan yang perlu dihubungi, dan tombol WhatsApp klik-ke-chat.
 

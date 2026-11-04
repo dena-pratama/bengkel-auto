@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.25.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.26.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -29,7 +29,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.25.0**
 | Modul | Fitur | Status | Versi |
 |---|---|---|---|
 | Master Data & Inventory | Barang (SKU otomatis, kategori 2 tingkat, merek, part number OEM/alternatif, garansi, PPN) | ✅ | 0.6.0 |
-| | Kompatibilitas kendaraan | 🟨 | 0.6.0 (DB) |
+| | Kompatibilitas kendaraan (daftar per barang, pencarian dari nama kendaraan) | ✅ | 0.26.0 |
 | | Lokasi Area > Rak > Bin, stok per lokasi, pindah lokasi | ✅ | 0.6.0 |
 | | QR label barang dan rak (cetak thermal 30x20/50x30 mm atau A4) | ✅ | 0.19.0 |
 | | Scan QR kamera/USB: halaman scan barang/rak, scan di pemilih barang | ✅ | 0.19.0 |

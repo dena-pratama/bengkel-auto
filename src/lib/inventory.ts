@@ -76,6 +76,8 @@ export type ItemListRow = {
   brand: string | null;
   unit: string;
   part_numbers: string[];
+  /** Kendaraan yang cocok, mis. "Toyota Avanza 2012-2018" (untuk pencarian) */
+  compat: string[];
   qty: number;
 };
 
@@ -84,18 +86,19 @@ export async function listItems(): Promise<ItemListRow[]> {
   const [items, stock, categories] = await Promise.all([
     s
       .from("items")
-      .select("id, sku, name, is_active, sell_price, min_stock, category_id, brands(name), units!items_base_unit_id_fkey(code), item_part_numbers(part_number)")
+      .select("id, sku, name, is_active, sell_price, min_stock, category_id, brands(name), units!items_base_unit_id_fkey(code), item_part_numbers(part_number), item_compatibilities(year_from, year_to, vehicle_models(name, vehicle_makes(name)))")
       .order("name"),
     s.from("v_stock_on_hand").select("item_id, qty"),
     listCategories(),
   ]);
-  type Row = Omit<ItemListRow, "category" | "brand" | "unit" | "part_numbers" | "qty"> & {
+  type Row = Omit<ItemListRow, "category" | "brand" | "unit" | "part_numbers" | "compat" | "qty"> & {
     brands: { name: string } | null;
     units: { code: string };
     item_part_numbers: { part_number: string }[];
+    item_compatibilities: { year_from: number | null; year_to: number | null; vehicle_models: { name: string; vehicle_makes: { name: string } | null } | null }[];
   };
   const qty = new Map(must(stock, "stok").map((r: { item_id: string; qty: number }) => [r.item_id, Number(r.qty)]));
-  return (must(items, "barang") as unknown as Row[]).map(({ brands, units, item_part_numbers, ...r }) => ({
+  return (must(items, "barang") as unknown as Row[]).map(({ brands, units, item_part_numbers, item_compatibilities, ...r }) => ({
     ...r,
     sell_price: Number(r.sell_price),
     min_stock: Number(r.min_stock),
@@ -103,8 +106,33 @@ export async function listItems(): Promise<ItemListRow[]> {
     brand: brands?.name ?? null,
     unit: units.code,
     part_numbers: item_part_numbers.map((p) => p.part_number),
+    compat: item_compatibilities.map((c) => compatLabel(c.vehicle_models?.vehicle_makes?.name, c.vehicle_models?.name, c.year_from, c.year_to)),
     qty: qty.get(r.id) ?? 0,
   }));
+}
+
+export const compatLabel = (make: string | null | undefined, model: string | null | undefined, from: number | null, to: number | null) =>
+  [make, model, from && to ? `${from}-${to}` : from ? `${from}+` : to ? `sampai ${to}` : null].filter(Boolean).join(" ");
+
+export type ItemCompat = { make: string; model: string; year_from: number | null; year_to: number | null; engine: string | null };
+
+/** Kendaraan yang cocok untuk satu barang */
+export async function getItemCompat(itemId: string): Promise<ItemCompat[]> {
+  const s = await db();
+  type Row = { year_from: number | null; year_to: number | null; engine: string | null; vehicle_models: { name: string; vehicle_makes: { name: string } | null } | null };
+  const rows = must(
+    await s.from("item_compatibilities").select("year_from, year_to, engine, vehicle_models(name, vehicle_makes(name))").eq("item_id", itemId).order("created_at"),
+    "kompatibilitas",
+  ) as unknown as Row[];
+  return rows.map((r) => ({ make: r.vehicle_models?.vehicle_makes?.name ?? "", model: r.vehicle_models?.name ?? "", year_from: r.year_from, year_to: r.year_to, engine: r.engine }));
+}
+
+/** Merek dan model yang sudah dikenal (saran isian) */
+export async function listVehicleModels(): Promise<{ make: string; model: string }[]> {
+  const s = await db();
+  type Row = { name: string; vehicle_makes: { name: string } | null };
+  const rows = must(await s.from("vehicle_models").select("name, vehicle_makes(name)").order("name"), "model kendaraan") as unknown as Row[];
+  return rows.map((r) => ({ make: r.vehicle_makes?.name ?? "", model: r.name })).filter((r) => r.make);
 }
 
 export type ItemDetail = {

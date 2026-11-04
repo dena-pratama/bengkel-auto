@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { dbError as toDbError, done, invalid, type ActionResult } from "@/lib/action-result";
 import { createClient } from "@/lib/supabase/server";
+import { compatListSchema, type CompatRowInput } from "@/lib/validation/compat";
 import {
   itemSchema,
   openingStockSchema,
@@ -151,5 +152,19 @@ export async function transferStockAction(itemId: string, input: TransferInput):
   });
   if (error) return dbError(error);
   refresh();
+  return done();
+}
+
+export async function saveItemCompatAction(itemId: string, rows: CompatRowInput[]): Promise<ActionResult> {
+  const parsed = compatListSchema.safeParse(rows);
+  if (!parsed.success) return invalid(parsed.error.issues);
+  if (!z.uuid().safeParse(itemId).success) return { ok: false, error: "Data tidak valid." };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("save_item_compatibilities", {
+    p_item_id: itemId,
+    p_rows: parsed.data.map((r) => ({ make: r.make, model: r.model, year_from: r.year_from || null, year_to: r.year_to || null, engine: r.engine || null })),
+  });
+  if (error) return dbError(error);
+  revalidatePath("/inventory", "layout");
   return done();
 }
