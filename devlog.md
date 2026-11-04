@@ -4,6 +4,35 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.28.0] 2026-11-04
+**Ringkasan:** Lampiran foto dan dokumen: foto barang, foto faktur supplier, dan foto bukti transaksi kas, disimpan di Supabase Storage (bucket privat).
+
+### Added
+- Migration `20261103000029_attachments.sql`:
+  - Bucket privat `attachments` (batas 5 MB; JPG, PNG, WebP, PDF).
+  - Tabel `attachments` (jenis dokumen `item`, `goods_receipt`, `cash_transaction`; path, nama berkas, tipe, ukuran; dilepas lewat `removed_at`, tidak dihapus permanen) dengan RLS, audit, dan izin mengikuti dokumen induk (`app.can_view_attachment`, `app.can_manage_attachment`).
+  - `register_attachment` (cek izin, dokumen induk milik cabang, folder berkas sesuai dokumen, maksimal 10 lampiran per dokumen) dan `remove_attachment`.
+- `POST/GET /api/v1/attachments` (unggah multipart dan daftar), `GET/DELETE /api/v1/attachments/[id]` (buka lewat URL bertanda tangan 60 detik setelah izin dicek lewat RLS, atau lepas). Server memeriksa tanda awal berkas (magic bytes) sehingga tipe yang dikirim klien tidak dipercaya, dan membatalkan catatan bila unggah ke penyimpanan gagal.
+- Komponen `AttachmentPanel` dan `AttachmentButton`: unggah (di HP, tombol Tambah membuka kamera untuk foto barang), pratinjau gambar, ikon PDF, lepas lampiran.
+- Dipasang di: detail barang ("Foto barang", hanya gambar), detail penerimaan barang ("Foto faktur supplier", gambar atau PDF), dan daftar transaksi kas (tombol "Bukti").
+- Tes DB `supabase/tests/attachments_test.sql`. Pratinjau tanpa login (development saja): `/dev/preview/lampiran`.
+
+### Catatan
+- Berkas yang dilepas tetap ada di penyimpanan (jejak audit); belum ada pembersihan berkala.
+- Foto belum ditampilkan sebagai gambar kecil di daftar barang dan hasil scan QR.
+- Foto bukti untuk jenis dokumen lain (invoice, biaya rutin) belum dipasang.
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus (termasuk lampiran: pencatatan, folder berkas, tipe dan ukuran, batas 10, izin, lepas, tidak bisa dihapus permanen, bucket privat).
+- Jalur penyimpanan diuji nyata (service role): unggah berhasil, URL bertanda tangan 200 dengan isi sama, akses publik ditolak (400), tipe GIF ditolak bucket.
+- `tsc`, `eslint`, cek tanda pisah, `next build` lolos. Tata letak panel dilihat di pratinjau.
+- **Belum diverifikasi:** unggah, tampil, dan lepas lewat aplikasi dengan login nyata (rute API butuh sesi; pembuatan akun uji untuk e2e tidak diizinkan di sesi ini).
+
+### File terdampak
+`supabase/migrations/20261103000029_attachments.sql`, `supabase/tests/attachments_test.sql`, `src/lib/validation/attachments.ts`, `src/app/api/v1/attachments/route.ts`, `src/app/api/v1/attachments/[id]/route.ts`, `src/components/attachment-panel.tsx`, `src/app/(app)/inventory/barang/[id]/page.tsx`, `src/app/(app)/pembelian/penerimaan/[id]/page.tsx`, `src/app/(app)/keuangan/page.tsx`, `src/app/dev/preview/lampiran/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.27.0] 2026-11-04
 **Ringkasan:** PDF dari server (PO, invoice, laporan keuangan) dan nota thermal 58/80 mm (PRD §19: PDF dibuat di server, CSS print untuk thermal).
 

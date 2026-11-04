@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AttachmentPanel } from "@/components/attachment-panel";
 import { NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
 import { formatDate, formatQty, formatRupiah, todayWib } from "@/lib/format";
@@ -33,6 +34,8 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
   return (
     <>
       <PageHeader title={gr.gr_no} description={`${gr.supplier} · diterima ${formatDate(gr.receipt_date)}`} back={{ href: "/pembelian/penerimaan", label: "Penerimaan barang" }} />
+
+      <AttachmentPanel entityType="goods_receipt" entityId={gr.id} title="Foto faktur supplier" hint="JPG, PNG, WebP, atau PDF, maksimal 5 MB." canEdit={can(ctx, "purchasing", "create", false) || can(ctx, "purchasing", "update", false)} />
 
       <section className={cn(panel, "grid gap-4 sm:grid-cols-2 lg:grid-cols-4")}>
         <Info label="No. faktur supplier" value={gr.invoice_no ?? "-"} />

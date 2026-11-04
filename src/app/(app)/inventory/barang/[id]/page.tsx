@@ -5,6 +5,7 @@ import { can, requireUser } from "@/lib/auth";
 import { formatDateTime, formatRupiah } from "@/lib/format";
 import { getItem, getItemCompat, getItemStock, listBrands, listCategories, listLocations, listUnits, listVehicleModels } from "@/lib/inventory";
 import { cn } from "@/lib/utils";
+import { AttachmentPanel } from "@/components/attachment-panel";
 import { CompatPanel } from "../../_components/compat-panel";
 import { ItemForm } from "../../_components/item-form";
 import { StockPanel } from "../../_components/stock-panel";
@@ -85,6 +86,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
             canOpening={ctx.is_superuser}
             canTransfer={canUpdate || can(ctx, "stock_opname_count", "update", false)}
           />
+          <AttachmentPanel entityType="item" entityId={item.id} title="Foto barang" hint="JPG, PNG, atau WebP, maksimal 5 MB. Di HP, tombol Tambah membuka kamera." canEdit={canUpdate} />
           <CompatPanel itemId={item.id} initial={compat} known={knownModels} canEdit={canUpdate} />
           <section className={cn(panel, "grid gap-3")}>
             <h3 className="text-lg font-semibold">Riwayat harga jual</h3>

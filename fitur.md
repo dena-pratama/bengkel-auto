@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.27.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.28.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -34,12 +34,12 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.27.0**
 | | QR label barang dan rak (cetak thermal 30x20/50x30 mm atau A4) | ✅ | 0.19.0 |
 | | Scan QR kamera/USB: halaman scan barang/rak, scan di pemilih barang | ✅ | 0.19.0 |
 | | Konversi satuan | ✅ | 0.6.0 |
-| | Foto barang | ⬜ | - |
+| | Foto barang | ✅ | 0.28.0 |
 | | Master jasa & paket servis (alokasi harga proporsional) | ✅ | 0.6.0 |
 | | Mutasi stok (ledger) + HPP rata-rata tertimbang + saldo awal + peringatan stok minimum | ✅ | 0.6.0 |
 | Pembelian | Supplier, PO (saran dari stok menipis), penerimaan barang (dari PO / tanpa PO), HPP rata-rata, PPN masuk HPP / PPN Masukan | ✅ | 0.7.0 |
 | | PO sebagai PDF (unduh, kirim manual lewat WhatsApp) | ✅ | 0.27.0 |
-| | Foto faktur supplier | ⬜ | - |
+| | Foto faktur supplier | ✅ | 0.28.0 |
 | | Retur ke supplier, hutang usaha (aging, jatuh tempo H-3) & pembayaran (sebagian / banyak faktur, batal) | ✅ | 0.7.0 |
 | Pelanggan | Pelanggan & kendaraan relasional, riwayat kepemilikan | ✅ | 0.9.0 |
 | | Riwayat servis per kendaraan (tanggal, km, jasa, part, mekanik, biaya, garansi) | ✅ | 0.10.0 |
@@ -67,7 +67,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.27.0**
 | | Slip gaji (cetak browser) | ✅ | 0.16.0 |
 | | Slip gaji PDF, PPh 21 & BPJS otomatis, absensi digital | ⬜ | Backlog / Fase 2 |
 | Finance | Kas/bank (banyak akun), pemasukan lain, pengeluaran, transfer, setoran modal & prive, biaya rutin bulanan | ✅ | 0.14.0 |
-| | Foto bukti transaksi | ⬜ | - |
+| | Foto bukti transaksi kas | ✅ | 0.28.0 |
 | | Chart of accounts (tambah akun), jurnal otomatis semua modul, jurnal manual + pembalik, tutup buku bulanan | ✅ | 0.14.0 |
 | | Laba rugi (banding periode lalu), neraca, arus kas, buku besar, margin per jasa/barang/WO, ekspor Excel | ✅ | 0.14.0 |
 | | Ekspor PDF laporan (laba rugi, neraca, arus kas, margin) | ✅ | 0.27.0 |

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Landmark, Repeat } from "lucide-react";
 import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
+import { AttachmentButton } from "@/components/attachment-panel";
 import { listAccounts, listCashBankBalances, listCashTransactions, listRecurringExpenses } from "@/lib/finance";
 import { formatDate, formatRupiah, todayWib } from "@/lib/format";
 import { TXN_KIND_LABEL } from "@/lib/validation/finance";
@@ -101,6 +102,7 @@ async function Content() {
                       {incoming ? "+" : t.kind === "transfer" ? "" : "-"}
                       {formatRupiah(t.amount)}
                     </span>
+                    <AttachmentButton entityType="cash_transaction" entityId={t.id} title={`Bukti ${t.txn_no}`} canEdit={can(ctx, "expenses", "create", false)} />
                     {t.status === "posted" && (can(ctx, "expenses", "void", false) || can(ctx, "journal", "void", false)) && <VoidTxnButton id={t.id} />}
                   </li>
                 );
