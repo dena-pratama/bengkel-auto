@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.24.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.25.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -42,7 +42,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.24.0**
 | | Retur ke supplier, hutang usaha (aging, jatuh tempo H-3) & pembayaran (sebagian / banyak faktur, batal) | ✅ | 0.7.0 |
 | Pelanggan | Pelanggan & kendaraan relasional, riwayat kepemilikan | ✅ | 0.9.0 |
 | | Riwayat servis per kendaraan (tanggal, km, jasa, part, mekanik, biaya, garansi) | ✅ | 0.10.0 |
-| | Reminder servis berkala (klik-ke-WA) | ⬜ | - |
+| | Reminder servis berkala (aturan km/bulan per jasa, daftar kendaraan, klik-ke-WA) | ✅ | 0.25.0 |
 | Servis | Estimasi (versi/revisi, kirim WA klik-ke-chat, persetujuan langsung/telepon/chat, masa berlaku, paket dipecah) | ✅ | 0.10.0 |
 | | Work order dari estimasi (satu klik), pekerjaan tambahan wajib persetujuan, mekanik per jasa (porsi %), minta/keluar/kembali part + jurnal | ✅ | 0.10.0 |
 | | Pengambilan part dengan scan QR (barang + rak diverifikasi, ditandai di riwayat, setelan wajib scan) | ✅ | 0.20.0 |

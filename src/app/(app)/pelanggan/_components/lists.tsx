@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Building2, Car, ChevronRight, Search, User, Users } from "lucide-react";
+import { BellRing, Building2, Car, ChevronRight, Search, User, Users } from "lucide-react";
 import { EmptyState, SectionNav, inputClass, panel } from "@/components/page-kit";
 import type { Customer, Vehicle } from "@/lib/customers";
 import { formatQty } from "@/lib/format";
@@ -11,9 +11,10 @@ import { cn } from "@/lib/utils";
 const TABS = [
   { key: "customers", href: "/pelanggan", label: "Pelanggan", icon: Users },
   { key: "vehicles", href: "/pelanggan/kendaraan", label: "Kendaraan", icon: Car },
+  { key: "reminder", href: "/pelanggan/reminder", label: "Reminder servis", icon: BellRing },
 ] as const;
 
-export function CustomersNav({ active }: { active: "customers" | "vehicles" }) {
+export function CustomersNav({ active }: { active: "customers" | "vehicles" | "reminder" }) {
   return <SectionNav tabs={TABS} active={active} label="Bagian pelanggan" />;
 }
 

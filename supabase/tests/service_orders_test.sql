@@ -408,6 +408,33 @@ reset role;
 select pg_temp.fails($q$ delete from public.work_orders where id = pg_temp.id('wo2') $q$, 'append-only', 'WO tidak bisa dihapus');
 select pg_temp.fails($q$ update public.part_issues set qty = 99 $q$, 'append-only', 'part_issues tidak bisa diubah');
 
+-- ---------------------------------------------------------------------------
+-- Reminder servis berkala
+-- ---------------------------------------------------------------------------
+reset role;
+select pg_temp.login('u_mech');
+select pg_temp.fails($q$ select public.save_reminder_rule('00000000-0000-0000-0000-000000000000', null, 3) $q$, 'tidak punya izin', 'mekanik: tidak bisa mengatur aturan reminder');
+reset role;
+select pg_temp.login('u_owner');
+select pg_temp.fails(format($q$ select public.save_reminder_rule('%s', null, null) $q$, pg_temp.id('s_oli')), 'Isi jarak tempuh', 'aturan reminder tanpa km dan bulan ditolak');
+select public.save_reminder_rule(pg_temp.id('s_oli'), null, 3);
+select pg_temp.check(jsonb_array_length(public.list_due_reminders(0)) = 0, 'reminder waktu: servis baru, belum jatuh tempo hari ini');
+select pg_temp.check((select (x ->> 'due_by') = 'waktu' and (x ->> 'plate_no') = 'B 7788 TES' and (x ->> 'days_until')::int between 85 and 95
+                      from jsonb_array_elements(public.list_due_reminders(100)) x where x ->> 'plate_no' = 'B 7788 TES'),
+  'reminder waktu: jatuh tempo 3 bulan setelah servis, dalam jendela 100 hari');
+select public.save_reminder_rule(pg_temp.id('s_oli'), 500, null);
+select pg_temp.check((select (x ->> 'due_by') = 'km' and (x ->> 'days_until')::int = 0
+                      from jsonb_array_elements(public.list_due_reminders(0)) x where x ->> 'plate_no' = 'B 7788 TES'),
+  'reminder km: km kendaraan (46.500) sudah melewati 46.000 + 500, jatuh tempo hari ini');
+select public.mark_service_reminder(pg_temp.id('v_avz'),
+  (select id from public.service_reminder_rules where service_id = pg_temp.id('s_oli')), pg_temp.id('wo'), 'contacted', 'sudah ditelepon');
+select pg_temp.check(not exists (select 1 from jsonb_array_elements(public.list_due_reminders(365)) x where x ->> 'plate_no' = 'B 7788 TES'),
+  'reminder yang sudah dihubungi tidak muncul lagi');
+select public.save_reminder_rule(pg_temp.id('s_oli'), 500, null, false);
+select pg_temp.check(jsonb_array_length(public.list_due_reminders(365)) = 0, 'aturan nonaktif tidak menghasilkan reminder');
+select pg_temp.fails(format($q$ select public.mark_service_reminder('%s', '%s', '%s', 'lainnya') $q$, pg_temp.id('v_avz'),
+  (select id from public.service_reminder_rules where service_id = pg_temp.id('s_oli')), pg_temp.id('wo')), 'tidak valid', 'status reminder tidak valid ditolak');
+
 reset role;
 rollback;
 \o

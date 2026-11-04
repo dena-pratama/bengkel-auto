@@ -4,6 +4,33 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.25.0] 2026-11-04
+**Ringkasan:** Reminder servis berkala (PRD §6.4): aturan per jasa (km atau bulan, mana yang lebih dulu), daftar kendaraan yang perlu dihubungi, dan tombol WhatsApp klik-ke-chat.
+
+### Added
+- Migration `20261103000027_service_reminders.sql`:
+  - Tabel `service_reminder_rules` (satu aturan per jasa: tiap N km dan/atau N bulan, aktif/nonaktif) dan `service_reminders` (catatan sudah dihubungi/diabaikan per kendaraan, aturan, dan servis pemicu). RLS, audit, tidak bisa dihapus.
+  - `save_reminder_rule` (izin master data ubah), `list_due_reminders(hari)` (izin pelanggan lihat), `mark_service_reminder` (izin pelanggan ubah).
+  - Perkiraan jatuh tempo: servis terakhir (diserahkan, bukan klaim garansi) per jasa; waktu = tanggal servis + N bulan; jarak tempuh = km servis + N km, diproyeksikan dengan rata-rata pemakaian kendaraan (km per hari dari riwayat servis). Bila km terakhir kendaraan sudah melewati batas, jatuh tempo hari ini. Yang dipakai adalah yang lebih dulu. Reminder yang sudah dihubungi atau diabaikan tidak muncul lagi sampai ada servis berikutnya.
+- Halaman `/pelanggan/reminder` (tab "Reminder servis"): daftar jatuh tempo dalam 7/14/30/60 hari termasuk yang sudah lewat, tombol Kirim WhatsApp (pesan template, nomor 08xx menjadi 628xx; tanpa tombol bila tidak ada nomor HP), Sudah dihubungi, Abaikan; pengelolaan aturan reminder untuk pemegang izin master data.
+- Tes DB (di `service_orders_test.sql`): jatuh tempo berdasar waktu dan km, penandaan dihubungi, aturan nonaktif, validasi, izin.
+- Pratinjau tanpa login (development saja): `/dev/preview/reminder`.
+
+### Catatan
+- Pengiriman WhatsApp otomatis lewat gateway tetap Fase 2; sekarang pengguna menekan tombol dan mengirim dari WhatsApp sendiri.
+- Km kendaraan yang dipakai adalah km terakhir yang tercatat (diperbarui work order), jadi perkiraan jatuh tempo berdasar km makin akurat bila kilometer selalu diisi saat servis.
+- Template pesan masih tetap di kode (belum bisa diubah dari layar).
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus. `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- Di browser (pratinjau): baris reminder tampil benar (terlambat, hari ini, mendatang), tautan WhatsApp dan normalisasi nomor benar, tanpa HP tanpa tombol WhatsApp.
+- **Belum diverifikasi:** halaman `/pelanggan/reminder` dengan login dan data servis nyata.
+
+### File terdampak
+`supabase/migrations/20261103000027_service_reminders.sql`, `supabase/tests/service_orders_test.sql`, `src/lib/reminders.ts`, `src/lib/validation/reminders.ts`, `src/app/(app)/pelanggan/reminder/**`, `src/app/(app)/pelanggan/_components/lists.tsx`, `src/app/dev/preview/reminder/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.24.0] 2026-11-04
 **Ringkasan:** Layar Pengaturan bengkel (PRD §18): batas diskon, batas retur, ambang opname, stok minus, dan wajib scan part bisa diubah Owner dari aplikasi, dengan validasi dan jejak audit.
 
