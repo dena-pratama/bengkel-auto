@@ -12,6 +12,7 @@ export function MarkAllRead({ disabled }: { disabled: boolean }) {
     <Button
       variant="outline"
       disabled={disabled || busy}
+      className="rounded-xl font-medium"
       onClick={async () => {
         setBusy(true);
         await fetch("/api/v1/notifications/read", { method: "POST" });

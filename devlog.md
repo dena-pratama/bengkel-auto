@@ -1,3 +1,15 @@
+## [0.51.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 15: Notifikasi
+- Mengadopsi visual token Figma page `16 · Notifikasi` (frame `8:23778`).
+- Modernisasi Popover Bel Notifikasi topbar: kontainer `rounded-2xl` dengan border halus, icon tile semantik per modul, indikator dot merah belum dibaca, dan link footer interaktif.
+- Redesain halaman utama `/notifikasi`:
+  - Pengelompokan baris notifikasi berdasarkan hari (DayHeader) seperti `HARI INI : ...` dan `KEMARIN : ...`.
+  - Icon tile semantik yang adaptif (Wrench untuk Servis, Receipt untuk Kasir, Package untuk Stok, Wallet untuk Keuangan, Octagon/Triangle untuk Alert).
+  - Badge pill bulat penuh (`rounded-full`) untuk modul dan tingkat keparahan (severity).
+  - Tampilan empty state yang bersih dan footer paginasi yang rapi.
+- Memperluas rute `/dev/preview/notifikasi` dengan showcase interaktif bel popover, banner mengambang, daftar grup notifikasi, dan toggle halaman kosong.
+
 ## [0.50.0] - 2026-11-05
 
 ### Changed - UI/UX Redesign Module 14: Pengaturan
