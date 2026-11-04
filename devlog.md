@@ -4,6 +4,20 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.28.1] 2026-11-04
+**Ringkasan:** Daftar cek halaman untuk Owner (dokumentasi).
+
+### Added
+- `cek-halaman.md`: daftar centang halaman dan alur yang perlu diverifikasi dengan login nyata, termasuk fitur baru versi 0.17 sampai 0.28.
+
+### Catatan
+- Verifikasi dengan sesi login nyata masih belum bisa dilakukan agen: percobaan membuat akun uji Owner di database lokal untuk menguji rute API ditolak pengaman otomatis, sehingga tidak ada akun yang dibuat.
+
+### File terdampak
+`cek-halaman.md`, `devlog.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.28.0] 2026-11-04
 **Ringkasan:** Lampiran foto dan dokumen: foto barang, foto faktur supplier, dan foto bukti transaksi kas, disimpan di Supabase Storage (bucket privat).
 
