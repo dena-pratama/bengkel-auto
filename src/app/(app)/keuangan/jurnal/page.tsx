@@ -1,15 +1,16 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
-import { EmptyState, NoAccess, PageHeader, Skeleton, inputClass, panel } from "@/components/page-kit";
-import { Button } from "@/components/ui/button";
+import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
 import { getLedger, listAccounts, listJournal } from "@/lib/finance";
+import { ListFilter } from "@/components/list-filter";
 import { formatDate, formatRupiah, todayWib } from "@/lib/format";
+import { describeRange, readRange } from "@/lib/list-filter";
 import { SOURCE_LABEL } from "@/lib/validation/finance";
 import { cn } from "@/lib/utils";
 import { ManualJournalDialog, ReverseJournalButton } from "../_components/dialogs";
-import { DATE, FinanceNav, UUID, monthRange } from "../_components/ui";
+import { FinanceNav, UUID } from "../_components/ui";
 
 export default function JournalPage({ searchParams }: PageProps<"/keuangan/jurnal">) {
   return (
@@ -29,9 +30,9 @@ async function Content({ searchParams }: { searchParams: Promise<Record<string, 
   if (!canReports && !can(ctx, "journal", "view", false)) return <NoAccess />;
   const sp = await searchParams;
   const today = todayWib();
-  const month = monthRange(today);
-  const from = DATE.test(pick(sp.dari) ?? "") ? pick(sp.dari)! : month.from;
-  const to = DATE.test(pick(sp.sampai) ?? "") && pick(sp.sampai)! >= from ? pick(sp.sampai)! : month.to;
+  const range = readRange(sp, today, "bulan-ini");
+  const from = range.from ?? "2000-01-01";
+  const to = range.to ?? today;
   const source = pick(sp.sumber) && SOURCE_LABEL[pick(sp.sumber)!] ? pick(sp.sumber)! : null;
   const accountId = UUID.test(pick(sp.akun) ?? "") ? pick(sp.akun)! : null;
   const accounts = await listAccounts();
@@ -43,48 +44,21 @@ async function Content({ searchParams }: { searchParams: Promise<Record<string, 
       <FinanceNav active="journal" showReports={canReports} showLedger />
       <PageHeader
         title={account ? `Buku besar ${account.code} ${account.name}` : "Jurnal umum"}
-        description={`${formatDate(from)} s/d ${formatDate(to)}`}
+        description={describeRange(range, formatDate)}
         back={account ? { href: `/keuangan/jurnal?dari=${from}&sampai=${to}`, label: "Jurnal umum" } : undefined}
         actions={canCreate && !account && <ManualJournalDialog accounts={accounts} today={today} />}
       />
 
-      <section className={cn(panel, "p-4 sm:p-5")}>
-        <form method="get" className="flex flex-wrap items-end gap-3">
-          <label className="grid gap-1.5 text-sm font-medium">
-            Dari
-            <input type="date" name="dari" defaultValue={from} className={inputClass} />
-          </label>
-          <label className="grid gap-1.5 text-sm font-medium">
-            Sampai
-            <input type="date" name="sampai" defaultValue={to} className={inputClass} />
-          </label>
-          <label className="grid gap-1.5 text-sm font-medium">
-            Akun (buku besar)
-            <select name="akun" defaultValue={accountId ?? ""} className={cn(inputClass, "min-w-56")}>
-              <option value="">Semua (jurnal umum)</option>
-              {accounts.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.code} {a.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          {!account && (
-            <label className="grid gap-1.5 text-sm font-medium">
-              Sumber
-              <select name="sumber" defaultValue={source ?? ""} className={inputClass}>
-                <option value="">Semua sumber</option>
-                {Object.entries(SOURCE_LABEL).map(([k, label]) => (
-                  <option key={k} value={k}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-          <Button type="submit">Tampilkan</Button>
-        </form>
-      </section>
+      <ListFilter
+        today={today}
+        range={range}
+        defaultRange="bulan-ini"
+        dateLabel="Tanggal jurnal"
+        selects={[
+          { name: "akun", label: "Akun (buku besar)", value: accountId && account ? accountId : null, options: accounts.map((x) => ({ value: x.id, label: `${x.code} ${x.name}` })), allLabel: "Semua (jurnal umum)" },
+          ...(account ? [] : [{ name: "sumber", label: "Sumber", value: source, options: Object.entries(SOURCE_LABEL).map(([value, label]) => ({ value, label })), allLabel: "Semua sumber" }]),
+        ]}
+      />
 
       <Suspense fallback={<Skeleton className="h-96" />}>
         {account ? <Ledger accountId={account.id} from={from} to={to} /> : <Entries from={from} to={to} source={source} canReverse={can(ctx, "journal", "void", false)} />}

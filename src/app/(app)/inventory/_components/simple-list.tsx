@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Layers, Search, Wrench } from "lucide-react";
+import { LocalFilters, uniqueOptions } from "@/components/local-filter";
 import { EmptyState, inputClass, panel } from "@/components/page-kit";
 import { cn } from "@/lib/utils";
 
@@ -14,21 +15,25 @@ export type SimpleRow = {
   meta: string[];
   value: string;
   is_active: boolean;
+  /** Kategori untuk filter (opsional) */
+  group?: string;
 };
 
 // Ikon dipilih lewat kunci: komponen (fungsi) tidak bisa dikirim dari Server ke Client Component
 const ICONS = { services: Wrench, packages: Layers };
 
 /** Daftar ringkas dengan pencarian & filter aktif (dipakai Jasa & Paket). */
-export function SimpleList({ rows, empty, searchLabel, icon }: { rows: SimpleRow[]; empty: string; searchLabel: string; icon: keyof typeof ICONS }) {
+export function SimpleList({ rows, empty, searchLabel, icon, groupLabel = "Kategori" }: { rows: SimpleRow[]; empty: string; searchLabel: string; icon: keyof typeof ICONS; groupLabel?: string }) {
   const [query, setQuery] = useState("");
   const [showInactive, setShowInactive] = useState(false);
+  const [group, setGroup] = useState("");
+  const groupOptions = useMemo(() => uniqueOptions(rows.map((r) => r.group)), [rows]);
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
     return rows.filter(
-      (r) => (showInactive || r.is_active) && (!q || [r.title, r.code, ...r.meta].some((v) => v.toLowerCase().includes(q))),
+      (r) => (showInactive || r.is_active) && (!group || r.group === group) && (!q || [r.title, r.code, ...r.meta].some((v) => v.toLowerCase().includes(q))),
     );
-  }, [rows, query, showInactive]);
+  }, [rows, query, showInactive, group]);
   const inactive = rows.filter((r) => !r.is_active).length;
 
   return (
@@ -52,6 +57,11 @@ export function SimpleList({ rows, empty, searchLabel, icon }: { rows: SimpleRow
           </label>
         )}
       </div>
+      <LocalFilters
+        selects={groupOptions.length > 0 ? [{ key: "kategori", label: groupLabel, value: group, options: groupOptions, allLabel: `Semua ${groupLabel.toLowerCase()}`, onChange: setGroup }] : []}
+        dirty={Boolean(group)}
+        onReset={() => setGroup("")}
+      />
       {shown.length === 0 ? (
         <EmptyState icon={ICONS[icon]} text={rows.length === 0 ? empty : "Tidak ada yang cocok."} />
       ) : (

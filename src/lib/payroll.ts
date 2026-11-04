@@ -27,17 +27,20 @@ export type PayrollPeriod = {
   net: number;
 };
 
-export async function listPayrollPeriods(): Promise<PayrollPeriod[]> {
+export async function listPayrollPeriods(f?: { from: string | null; to: string | null; status?: string | null; type?: string | null }): Promise<PayrollPeriod[]> {
   const s = await createClient();
   type Row = Omit<PayrollPeriod, "slips" | "gross" | "net"> & { payslips: { gross_amount: number; net_amount: number }[] };
-  const rows = must<Row[]>(
-    await s
-      .from("payroll_periods")
-      .select("id, period_no, label, period_type, start_date, end_date, status, approved_at, paid_date, void_reason, payslips(gross_amount, net_amount)")
-      .order("start_date", { ascending: false })
-      .limit(60),
-    "periode gaji",
-  );
+  let q = s
+    .from("payroll_periods")
+    .select("id, period_no, label, period_type, start_date, end_date, status, approved_at, paid_date, void_reason, payslips(gross_amount, net_amount)")
+    .order("start_date", { ascending: false })
+    .limit(200);
+  // periode ikut bila rentangnya beririsan dengan filter
+  if (f?.from) q = q.gte("end_date", f.from);
+  if (f?.to) q = q.lte("start_date", f.to);
+  if (f?.status) q = q.eq("status", f.status);
+  if (f?.type) q = q.eq("period_type", f.type);
+  const rows = must<Row[]>(await q, "periode gaji");
   return rows.map(({ payslips, ...p }) => ({
     ...p,
     slips: payslips.length,
@@ -174,9 +177,14 @@ export type Loan = {
   balance: number;
 };
 
-export async function listLoans(): Promise<Loan[]> {
+export async function listLoans(f?: { from: string | null; to: string | null; status?: string | null; employee?: string | null }): Promise<Loan[]> {
   const s = await createClient();
-  return must<Loan[]>(await s.from("v_employee_loans").select("*").order("loan_date", { ascending: false }).limit(200), "kasbon").map((l) => ({
+  let q = s.from("v_employee_loans").select("*").order("loan_date", { ascending: false }).limit(500);
+  if (f?.from) q = q.gte("loan_date", f.from);
+  if (f?.to) q = q.lte("loan_date", f.to);
+  if (f?.status) q = q.eq("status", f.status);
+  if (f?.employee) q = q.eq("employee_id", f.employee);
+  return must<Loan[]>(await q, "kasbon").map((l) => ({
     ...l,
     principal: num(l.principal),
     installment_amount: num(l.installment_amount),
@@ -199,17 +207,19 @@ export type CommissionRow = {
   sale_no: string | null;
 };
 
-export async function listCommissions(): Promise<CommissionRow[]> {
+export async function listCommissions(f?: { from: string | null; to: string | null; status?: string | null; employee?: string | null }): Promise<CommissionRow[]> {
   const s = await createClient();
   type Row = Omit<CommissionRow, "employee_name" | "sale_no"> & { employees: { full_name: string } | null; sales: { sale_no: string | null } | null };
-  return must<Row[]>(
-    await s
-      .from("commissions")
-      .select("id, employee_id, base_amount, commission_type, commission_value, share_percent, amount, status, recognized_at, created_at, employees(full_name), sales(sale_no)")
-      .order("created_at", { ascending: false })
-      .limit(300),
-    "komisi",
-  ).map(({ employees, sales, ...c }) => ({
+  let q = s
+    .from("commissions")
+    .select("id, employee_id, base_amount, commission_type, commission_value, share_percent, amount, status, recognized_at, created_at, employees(full_name), sales(sale_no)")
+    .order("created_at", { ascending: false })
+    .limit(500);
+  if (f?.from) q = q.gte("created_at", `${f.from}T00:00:00+07:00`);
+  if (f?.to) q = q.lte("created_at", `${f.to}T23:59:59.999+07:00`);
+  if (f?.status) q = q.eq("status", f.status);
+  if (f?.employee) q = q.eq("employee_id", f.employee);
+  return must<Row[]>(await q, "komisi").map(({ employees, sales, ...c }) => ({
     ...c,
     base_amount: num(c.base_amount),
     commission_value: num(c.commission_value),

@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.30.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.31.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -82,6 +82,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.30.0**
 | Sistem | Layar pengaturan bengkel (diskon, retur, opname, stok minus, wajib scan part) | ✅ | 0.24.0 |
 | | Filter daftar seragam (rentang tanggal + kategori): Kasir (penjualan, retur, shift, piutang) | ✅ | 0.29.0 |
 | | Filter daftar: Pembelian (PO, penerimaan, hutang), Stok opname, Servis (estimasi, riwayat), Kas & bank | ✅ | 0.30.0 |
+| | Filter daftar: Penggajian, Barang, Jasa, Pelanggan, Kendaraan, Karyawan; Audit log, Garansi, Jurnal disamakan | ✅ | 0.31.0 |
 | | Halaman Audit log (filter, sebelum/sesudah, panggilan AI) | ✅ | 0.18.0 |
 | | Ekspor audit log ke Excel | ✅ | 0.23.0 |
 

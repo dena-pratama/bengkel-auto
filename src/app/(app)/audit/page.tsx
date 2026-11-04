@@ -1,11 +1,13 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Download, History } from "lucide-react";
-import { EmptyState, NoAccess, PageHeader, Skeleton, inputClass, panel } from "@/components/page-kit";
+import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { Button } from "@/components/ui/button";
 import { PAGE_SIZE, listAuditActors, listAuditLogs, type AuditRow } from "@/lib/audit";
 import { can, requireUser } from "@/lib/auth";
-import { addDays, formatDate, formatDateTime, todayWib } from "@/lib/format";
+import { formatDate, formatDateTime, todayWib } from "@/lib/format";
+import { describeRange, readRange } from "@/lib/list-filter";
+import { ListFilter } from "@/components/list-filter";
 import { ACTION_LABEL, TABLE_LABEL, diffFields, showValue, tableLabel } from "@/lib/validation/audit";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +21,6 @@ export default function AuditPage({ searchParams }: PageProps<"/audit">) {
   );
 }
 
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const pick = (v: string | string[] | undefined) => (typeof v === "string" ? v : undefined);
 
@@ -36,8 +37,9 @@ async function Content({ searchParams }: { searchParams: Promise<Record<string, 
   if (!can(ctx, "audit_log", "view", false)) return <NoAccess />;
   const sp = await searchParams;
   const today = todayWib();
-  const from = DATE.test(pick(sp.dari) ?? "") ? pick(sp.dari)! : addDays(today, -6);
-  const to = DATE.test(pick(sp.sampai) ?? "") && pick(sp.sampai)! >= from ? pick(sp.sampai)! : today;
+  const range = readRange(sp, today, "7-hari");
+  const from = range.from ?? "2000-01-01";
+  const to = range.to ?? today;
   const table = pick(sp.tabel) && TABLE_LABEL[pick(sp.tabel)!] ? pick(sp.tabel)! : null;
   const action = pick(sp.aksi) && ACTION_LABEL[pick(sp.aksi)!] ? pick(sp.aksi)! : null;
   const actor = UUID.test(pick(sp.pelaku) ?? "") ? pick(sp.pelaku)! : null;
@@ -60,50 +62,26 @@ async function Content({ searchParams }: { searchParams: Promise<Record<string, 
 
   return (
     <>
-      <PageHeader title="Audit log" description={`${formatDate(from)} s/d ${formatDate(to)}. Catatan ini tidak bisa diubah atau dihapus dari aplikasi.`} />
-      <section className={cn(panel, "p-4 sm:p-5")}>
-        <form method="get" className="flex flex-wrap items-end gap-3">
-          <label className="grid gap-1.5 text-sm font-medium">
-            Dari
-            <input type="date" name="dari" defaultValue={from} className={inputClass} />
-          </label>
-          <label className="grid gap-1.5 text-sm font-medium">
-            Sampai
-            <input type="date" name="sampai" defaultValue={to} className={inputClass} />
-          </label>
-          <label className="grid gap-1.5 text-sm font-medium">
-            Data
-            <select name="tabel" defaultValue={table ?? ""} className={cn(inputClass, "min-w-44")}>
-              <option value="">Semua data</option>
-              {Object.entries(TABLE_LABEL).sort((a, b) => a[1].localeCompare(b[1], "id")).map(([k, label]) => (
-                <option key={k} value={k}>{label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1.5 text-sm font-medium">
-            Aksi
-            <select name="aksi" defaultValue={action ?? ""} className={inputClass}>
-              <option value="">Semua aksi</option>
-              {Object.entries(ACTION_LABEL).map(([k, label]) => (
-                <option key={k} value={k}>{label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1.5 text-sm font-medium">
-            Pelaku
-            <select name="pelaku" defaultValue={actor ?? ""} className={cn(inputClass, "min-w-44")}>
-              <option value="">Semua karyawan</option>
-              {actors.map((a) => (
-                <option key={a.id} value={a.id}>{a.name}</option>
-              ))}
-            </select>
-          </label>
-          <Button type="submit">Tampilkan</Button>
+      <PageHeader
+        title="Audit log"
+        description={`${describeRange(range, formatDate)}. Catatan ini tidak bisa diubah atau dihapus dari aplikasi.`}
+        actions={
           <Button variant="outline" nativeButton={false} render={<a href={exportHref} />}>
             <Download className="size-4" /> Ekspor Excel
           </Button>
-        </form>
-      </section>
+        }
+      />
+      <ListFilter
+        today={today}
+        range={range}
+        defaultRange="7-hari"
+        extraParams={["hal"]}
+        selects={[
+          { name: "tabel", label: "Data", value: table, options: Object.entries(TABLE_LABEL).sort((x, y) => x[1].localeCompare(y[1], "id")).map(([value, label]) => ({ value, label })), allLabel: "Semua data" },
+          { name: "aksi", label: "Aksi", value: action, options: Object.entries(ACTION_LABEL).map(([value, label]) => ({ value, label })), allLabel: "Semua aksi" },
+          { name: "pelaku", label: "Pelaku", value: actor, options: actors.map((x) => ({ value: x.id, label: x.name })), allLabel: "Semua karyawan" },
+        ]}
+      />
       <Suspense fallback={<Skeleton className="h-96" />}>
         <Rows filter={{ from, to, table, action, actor, page }} query={query} />
       </Suspense>

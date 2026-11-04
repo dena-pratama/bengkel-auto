@@ -3,16 +3,18 @@ import { HandCoins } from "lucide-react";
 import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
 import { formatDate, formatRupiah, todayWib } from "@/lib/format";
+import { ListFilter } from "@/components/list-filter";
+import { describeRange, readOption, readRange } from "@/lib/list-filter";
 import { listActiveEmployees, listCashAccounts, listLoans } from "@/lib/payroll";
 import { cn } from "@/lib/utils";
 import { LoanDialog, RepayDialog, VoidLoanButton } from "../_components/forms";
 import { PayrollNav } from "../_components/ui";
 
-export default function LoansPage() {
+export default function LoansPage({ searchParams }: PageProps<"/penggajian/kasbon">) {
   return (
     <div className="mx-auto grid w-full max-w-[1100px] gap-5">
       <Suspense fallback={<Skeleton className="h-96" />}>
-        <Content />
+        <Content searchParams={searchParams} />
       </Suspense>
     </div>
   );
@@ -20,22 +22,37 @@ export default function LoansPage() {
 
 const STATUS = { active: "Aktif", paid_off: "Lunas", void: "Dibatalkan" } as const;
 
-async function Content() {
+async function Content({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const ctx = await requireUser();
   if (!can(ctx, "payroll", "view")) return <NoAccess />;
   const all = can(ctx, "payroll", "view", false);
   const canCreate = can(ctx, "payroll", "create", false);
-  const [loans, employees, cash] = await Promise.all([listLoans(), canCreate ? listActiveEmployees() : Promise.resolve([]), canCreate ? listCashAccounts() : Promise.resolve([])]);
-  const outstanding = loans.filter((l) => l.status === "active").reduce((t, l) => t + l.balance, 0);
+  const sp = await searchParams;
   const today = todayWib();
+  const range = readRange(sp, today, "semua");
+  const status = readOption(sp, "status", ["active", "paid_off", "void"] as const);
+  const employees = all || canCreate ? await listActiveEmployees() : [];
+  const employee = all ? readOption(sp, "karyawan", employees.map((e) => e.id)) : null;
+  const [loans, cash] = await Promise.all([listLoans({ from: range.from, to: range.to, status, employee }), canCreate ? listCashAccounts() : Promise.resolve([])]);
+  const outstanding = loans.filter((l) => l.status === "active").reduce((t, l) => t + l.balance, 0);
 
   return (
     <>
       <PayrollNav active="loans" showAll={all} />
       <PageHeader
         title={all ? "Kasbon karyawan" : "Kasbon saya"}
-        description={`Sisa kasbon aktif ${formatRupiah(outstanding)}`}
+        description={`${describeRange(range, formatDate)} · ${loans.length} kasbon · sisa kasbon aktif ${formatRupiah(outstanding)}`}
         actions={canCreate && <LoanDialog employees={employees} cashAccounts={cash} today={today} />}
+      />
+      <ListFilter
+        today={today}
+        range={range}
+        defaultRange="semua"
+        dateLabel="Tanggal kasbon"
+        selects={[
+          { name: "status", label: "Status", value: status, options: Object.entries(STATUS).map(([value, label]) => ({ value, label })), allLabel: "Semua status" },
+          ...(all ? [{ name: "karyawan", label: "Karyawan", value: employee, options: employees.map((e) => ({ value: e.id, label: e.full_name })), allLabel: "Semua karyawan" }] : []),
+        ]}
       />
       <section className={cn(panel, "p-4 sm:p-5")}>
         {loans.length === 0 ? (

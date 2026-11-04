@@ -19,6 +19,7 @@ import {
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronRight, KeyRound, Search, UserX } from "lucide-react";
 import type { Employee } from "@/lib/employees";
+import { LocalFilters, uniqueOptions } from "@/components/local-filter";
 import { STATUS_LABEL, type EmployeeStatus } from "@/lib/validation/employee";
 import { cn } from "@/lib/utils";
 import { Avatar, RoleChips, StatusBadge, inputClass, panel } from "./ui";
@@ -89,6 +90,9 @@ export function EmployeesTable({ employees }: { employees: Employee[] }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | EmployeeStatus>("all");
+  const [role, setRole] = useState("");
+  const [hireFrom, setHireFrom] = useState("");
+  const [hireTo, setHireTo] = useState("");
   const [sorting, setSorting] = useState<SortingState>([{ id: "full_name", desc: false }]);
 
   const counts = useMemo(() => {
@@ -97,7 +101,18 @@ export function EmployeesTable({ employees }: { employees: Employee[] }) {
     return c;
   }, [employees]);
 
-  const data = useMemo(() => (status === "all" ? employees : employees.filter((e) => e.status === status)), [employees, status]);
+  const data = useMemo(
+    () =>
+      employees.filter(
+        (e) =>
+          (status === "all" || e.status === status) &&
+          (!role || e.roles.some((r) => r.name === role)) &&
+          (!hireFrom || (e.hire_date != null && e.hire_date >= hireFrom)) &&
+          (!hireTo || (e.hire_date != null && e.hire_date <= hireTo)),
+      ),
+    [employees, status, role, hireFrom, hireTo],
+  );
+  const roleOptions = useMemo(() => uniqueOptions(employees.flatMap((e) => e.roles.map((r) => r.name))), [employees]);
 
   const table = useTable({
     features,
@@ -147,6 +162,25 @@ export function EmployeesTable({ employees }: { employees: Employee[] }) {
           ))}
         </div>
       </div>
+
+      <LocalFilters
+        selects={[{ key: "peran", label: "Peran", value: role, options: roleOptions, allLabel: "Semua peran", onChange: setRole }]}
+        date={{
+          label: "Tanggal masuk",
+          from: hireFrom,
+          to: hireTo,
+          onChange: (f, t) => {
+            setHireFrom(f);
+            setHireTo(t);
+          },
+        }}
+        dirty={Boolean(role || hireFrom || hireTo)}
+        onReset={() => {
+          setRole("");
+          setHireFrom("");
+          setHireTo("");
+        }}
+      />
 
       {rows.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-10 text-center text-muted-foreground">

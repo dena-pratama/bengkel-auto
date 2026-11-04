@@ -45,6 +45,7 @@ async function Content() {
           title: s.name,
           code: s.code,
           meta: [s.category_id ? (catName.get(s.category_id) ?? "") : "", `${s.duration_minutes} menit`],
+          group: s.category_id ? (catName.get(s.category_id) ?? undefined) : undefined,
           value: formatRupiah(s.price),
           is_active: s.is_active,
         }))}

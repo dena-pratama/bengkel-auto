@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { BellRing, Building2, Car, ChevronRight, Search, User, Users } from "lucide-react";
+import { LocalFilters, uniqueOptions } from "@/components/local-filter";
 import { EmptyState, SectionNav, inputClass, panel } from "@/components/page-kit";
 import type { Customer, Vehicle } from "@/lib/customers";
 import { formatQty } from "@/lib/format";
@@ -33,6 +34,8 @@ function SearchBox({ value, onChange, placeholder }: { value: string; onChange: 
 export function CustomersList({ customers, vehicles }: { customers: Customer[]; vehicles: Vehicle[] }) {
   const [query, setQuery] = useState("");
   const [type, setType] = useState<"all" | Customer["type"]>("all");
+  const [state, setState] = useState("");
+  const [credit, setCredit] = useState("");
   const plates = useMemo(() => {
     const m = new Map<string, Vehicle[]>();
     for (const v of vehicles) if (v.customer_id) m.set(v.customer_id, [...(m.get(v.customer_id) ?? []), v]);
@@ -43,10 +46,11 @@ export function CustomersList({ customers, vehicles }: { customers: Customer[]; 
     return customers.filter(
       (c) =>
         (type === "all" || c.type === type) &&
-        (c.is_active || q) &&
+        (state === "nonaktif" ? !c.is_active : state === "aktif" ? c.is_active : c.is_active || q) &&
+        (!credit || (credit === "kredit" ? c.payment_terms_days > 0 || c.credit_limit > 0 : c.payment_terms_days === 0 && c.credit_limit === 0)) &&
         (!q || [c.name, c.code, c.phone ?? "", ...(plates.get(c.id) ?? []).map((v) => v.plate_no)].some((x) => norm(x).includes(q))),
     );
-  }, [customers, plates, query, type]);
+  }, [customers, plates, query, type, state, credit]);
 
   return (
     <section className={cn(panel, "grid gap-4 p-4 sm:p-5")}>
@@ -67,6 +71,17 @@ export function CustomersList({ customers, vehicles }: { customers: Customer[]; 
           ))}
         </div>
       </div>
+      <LocalFilters
+        selects={[
+          { key: "status", label: "Status", value: state, options: [{ value: "aktif", label: "Aktif" }, { value: "nonaktif", label: "Nonaktif" }], allLabel: "Aktif (bawaan)", onChange: setState },
+          { key: "kredit", label: "Pembayaran", value: credit, options: [{ value: "kredit", label: "Boleh tempo atau kredit" }, { value: "tunai", label: "Tunai saja" }], allLabel: "Semua", onChange: setCredit },
+        ]}
+        dirty={Boolean(state || credit)}
+        onReset={() => {
+          setState("");
+          setCredit("");
+        }}
+      />
       {shown.length === 0 ? (
         <EmptyState icon={Users} text={customers.length === 0 ? "Belum ada pelanggan." : "Tidak ada yang cocok."} />
       ) : (
@@ -109,16 +124,34 @@ export function CustomersList({ customers, vehicles }: { customers: Customer[]; 
 
 export function VehiclesList({ vehicles }: { vehicles: Vehicle[] }) {
   const [query, setQuery] = useState("");
+  const [make, setMake] = useState("");
+  const [owner, setOwner] = useState("");
+  const [year, setYear] = useState("");
+  const makeOptions = useMemo(() => uniqueOptions(vehicles.map((v) => v.make_name)), [vehicles]);
+  const yearOptions = useMemo(() => [...new Set(vehicles.map((v) => v.year).filter((y): y is number => y != null))].sort((a, b) => b - a).map((y) => ({ value: String(y), label: String(y) })), [vehicles]);
   const shown = useMemo(() => {
     const q = norm(query);
     return vehicles.filter(
-      (v) => (v.is_active || q) && (!q || [v.plate_no, v.customer_name ?? "", v.customer_phone ?? "", v.make_name ?? "", v.model_name ?? ""].some((x) => norm(x).includes(q))),
+      (v) => (v.is_active || q) && (!make || v.make_name === make) && (!year || String(v.year) === year) && (!owner || (owner === "ada" ? Boolean(v.customer_id) : !v.customer_id)) && (!q || [v.plate_no, v.customer_name ?? "", v.customer_phone ?? "", v.make_name ?? "", v.model_name ?? ""].some((x) => norm(x).includes(q))),
     );
-  }, [vehicles, query]);
+  }, [vehicles, query, make, owner, year]);
 
   return (
     <section className={cn(panel, "grid gap-4 p-4 sm:p-5")}>
       <SearchBox value={query} onChange={setQuery} placeholder="Cari nomor polisi, pemilik, atau model…" />
+      <LocalFilters
+        selects={[
+          { key: "merek", label: "Merek", value: make, options: makeOptions, allLabel: "Semua merek", onChange: setMake },
+          { key: "tahun", label: "Tahun", value: year, options: yearOptions, allLabel: "Semua tahun", onChange: setYear },
+          { key: "pemilik", label: "Pemilik", value: owner, options: [{ value: "ada", label: "Ada pemilik" }, { value: "tanpa", label: "Tanpa pemilik" }], allLabel: "Semua", onChange: setOwner },
+        ]}
+        dirty={Boolean(make || year || owner)}
+        onReset={() => {
+          setMake("");
+          setYear("");
+          setOwner("");
+        }}
+      />
       {shown.length === 0 ? (
         <EmptyState icon={Car} text={vehicles.length === 0 ? "Belum ada kendaraan." : "Tidak ada yang cocok."} />
       ) : (

@@ -2,33 +2,52 @@ import { Suspense } from "react";
 import { Medal } from "lucide-react";
 import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
-import { formatDate, formatQty, formatRupiah } from "@/lib/format";
-import { listCommissions } from "@/lib/payroll";
+import { ListFilter } from "@/components/list-filter";
+import { formatDate, formatQty, formatRupiah, todayWib } from "@/lib/format";
+import { describeRange, readOption, readRange } from "@/lib/list-filter";
+import { listActiveEmployees, listCommissions } from "@/lib/payroll";
 import { COMMISSION_LABEL } from "@/lib/validation/payroll";
 import { cn } from "@/lib/utils";
 import { PayrollNav } from "../_components/ui";
 
-export default function CommissionsPage() {
+export default function CommissionsPage({ searchParams }: PageProps<"/penggajian/komisi">) {
   return (
     <div className="mx-auto grid w-full max-w-[1100px] gap-5">
       <Suspense fallback={<Skeleton className="h-96" />}>
-        <Content />
+        <Content searchParams={searchParams} />
       </Suspense>
     </div>
   );
 }
 
-async function Content() {
+async function Content({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const ctx = await requireUser();
   const all = can(ctx, "payroll", "view", false) || can(ctx, "commissions", "view", false);
   if (!all && !can(ctx, "commissions", "view") && !can(ctx, "payroll", "view")) return <NoAccess />;
-  const rows = await listCommissions();
+  const sp = await searchParams;
+  const today = todayWib();
+  const range = readRange(sp, today, "bulan-ini");
+  const statuses = Object.keys(COMMISSION_LABEL) as (keyof typeof COMMISSION_LABEL)[];
+  const status = readOption(sp, "status", statuses);
+  const employees = can(ctx, "payroll", "view", false) ? await listActiveEmployees() : [];
+  const employee = employees.length ? readOption(sp, "karyawan", employees.map((e) => e.id)) : null;
+  const rows = await listCommissions({ from: range.from, to: range.to, status, employee });
   const sum = (st: string) => rows.filter((r) => r.status === st).reduce((t, r) => t + r.amount, 0);
 
   return (
     <>
       <PayrollNav active="commissions" showAll={can(ctx, "payroll", "view", false)} />
-      <PageHeader title={all ? "Komisi mekanik" : "Komisi saya"} description="Komisi diakui setelah invoice lunas dan dibayar bersama gaji." />
+      <PageHeader title={all ? "Komisi mekanik" : "Komisi saya"} description={`${describeRange(range, formatDate)} · ${rows.length} komisi. Diakui setelah invoice lunas dan dibayar bersama gaji.`} />
+      <ListFilter
+        today={today}
+        range={range}
+        defaultRange="bulan-ini"
+        dateLabel="Tanggal komisi"
+        selects={[
+          { name: "status", label: "Status", value: status, options: statuses.map((v) => ({ value: v, label: COMMISSION_LABEL[v] })), allLabel: "Semua status" },
+          ...(employees.length ? [{ name: "karyawan", label: "Mekanik", value: employee, options: employees.map((e) => ({ value: e.id, label: e.full_name })), allLabel: "Semua mekanik" }] : []),
+        ]}
+      />
       <section className="grid gap-4 sm:grid-cols-3">
         {[
           ["Menunggu invoice lunas", sum("pending")],

@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 import { ShieldCheck } from "lucide-react";
-import { EmptyState, NoAccess, PageHeader, Skeleton, inputClass, panel } from "@/components/page-kit";
-import { Button } from "@/components/ui/button";
+import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
+import { ListFilter } from "@/components/list-filter";
 import { formatDate, formatRupiah, todayWib } from "@/lib/format";
+import { describeRange, readRange } from "@/lib/list-filter";
 import { getWarrantyReport, type WarrantyReport } from "@/lib/service";
 import { cn } from "@/lib/utils";
 import { ServiceNav } from "../_components/ui";
@@ -18,34 +19,21 @@ export default function WarrantyReportPage({ searchParams }: PageProps<"/servis/
   );
 }
 
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
-const pick = (v: string | string[] | undefined) => (typeof v === "string" ? v : undefined);
 
 async function Content({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const ctx = await requireUser();
   if (!can(ctx, "finance_reports", "view", false)) return <NoAccess />;
   const sp = await searchParams;
   const today = todayWib();
-  const from = DATE.test(pick(sp.dari) ?? "") ? pick(sp.dari)! : `${today.slice(0, 4)}-01-01`;
-  const to = DATE.test(pick(sp.sampai) ?? "") && pick(sp.sampai)! >= from ? pick(sp.sampai)! : today;
+  const range = readRange(sp, today, "tahun-ini");
+  const from = range.from ?? "2000-01-01";
+  const to = range.to ?? today;
 
   return (
     <>
       <ServiceNav active="warranty" showEstimates={can(ctx, "service_orders", "view", false)} showWarranty />
-      <PageHeader title="Klaim garansi" description={`${formatDate(from)} s/d ${formatDate(to)}. Garansi dihitung dari tanggal invoice.`} />
-      <section className={cn(panel, "p-4 sm:p-5")}>
-        <form method="get" className="flex flex-wrap items-end gap-3">
-          <label className="grid gap-1.5 text-sm font-medium">
-            Dari
-            <input type="date" name="dari" defaultValue={from} className={inputClass} />
-          </label>
-          <label className="grid gap-1.5 text-sm font-medium">
-            Sampai
-            <input type="date" name="sampai" defaultValue={to} className={inputClass} />
-          </label>
-          <Button type="submit">Tampilkan</Button>
-        </form>
-      </section>
+      <PageHeader title="Klaim garansi" description={`${describeRange(range, formatDate)}. Garansi dihitung dari tanggal invoice.`} />
+      <ListFilter today={today} range={range} defaultRange="tahun-ini" dateLabel="Tanggal klaim" />
       <Suspense fallback={<Skeleton className="h-96" />}>
         <Report from={from} to={to} />
       </Suspense>

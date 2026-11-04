@@ -24,6 +24,11 @@ Siapkan data uji: 1 pelanggan + kendaraan, 1 barang ber-stok, 1 jasa, 1 supplier
 - [ ] **Audit log** (`/audit`): filter, klik baris untuk sebelum/sesudah, **Ekspor Excel**.
 - [ ] **Pengaturan** (menu profil > Pengaturan): ubah batas diskon, wajib scan part, simpan.
 
+## Cek filter daftar
+- [ ] Buka Penjualan, Retur, Shift, Piutang, PO, Penerimaan, Hutang, Stok opname, Estimasi, Kas & bank, Jurnal, Penggajian (periode, kasbon, komisi), Audit log, Garansi: coba pilihan cepat (7 hari, Bulan ini, Semua), tanggal bebas, kategori, lalu Atur ulang. Alamat halaman ikut berubah dan bisa dibagikan.
+- [ ] Papan servis: filter di bagian "Selesai & batal" tidak menyembunyikan kendaraan yang sedang dikerjakan.
+- [ ] Barang, Jasa, Pelanggan, Kendaraan, Karyawan: pilih kategori atau merek atau peran atau tanggal masuk, lalu Atur ulang.
+
 ## Cek hak akses (login sebagai peran lain)
 - [ ] Admin tidak melihat Penggajian, AI Analyst, Audit log.
 - [ ] Mekanik hanya melihat WO dan slip gaji miliknya.

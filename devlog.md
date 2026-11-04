@@ -4,6 +4,41 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.31.0] 2026-11-04
+**Ringkasan:** Filter rentang tanggal dan kategori di Penggajian dan daftar master (barang, jasa, pelanggan, kendaraan, karyawan), serta Audit log, Garansi, dan Jurnal disamakan dengan komponen filter bersama. Sistem filter kini mencakup semua modul yang punya daftar.
+
+### Added
+- **Penggajian**: periode gaji (rentang periode, status, jenis bulanan/mingguan; bawaan Tahun ini), kasbon (tanggal kasbon, status, karyawan), komisi (tanggal komisi, status, mekanik; bawaan Bulan ini). Pilihan karyawan hanya untuk pemegang izin penuh; mekanik dan gudang tetap hanya melihat datanya sendiri.
+- Komponen `LocalFilters` (`src/components/local-filter.tsx`) untuk daftar yang seluruh datanya sudah ada di klien, dengan tampilan sama seperti `ListFilter`:
+  - **Barang**: kategori dan merek (tab Aktif, Stok menipis, Nonaktif tetap ada).
+  - **Jasa**: kategori jasa.
+  - **Pelanggan**: status (aktif, nonaktif), pembayaran (tempo atau kredit, tunai saja), tipe tetap sebagai tab.
+  - **Kendaraan**: merek, tahun, ada atau tanpa pemilik.
+  - **Karyawan**: peran dan rentang tanggal masuk (status tetap sebagai tab).
+- Pratinjau tanpa login (development saja): `/dev/preview/filter-lokal`.
+
+### Changed
+- **Audit log**, **Klaim garansi**, dan **Jurnal umum/buku besar** memakai `ListFilter` (pilihan cepat, tanggal bebas, kategori, Atur ulang) menggantikan formulir dengan tombol Tampilkan. Parameter URL tidak berubah (`dari`, `sampai`, `tabel`, `aksi`, `pelaku`, `akun`, `sumber`), jadi tautan lama tetap bekerja.
+- Daftar periode gaji dibatasi 200, kasbon 500, komisi 500.
+
+### Cakupan filter sekarang
+Kasir (penjualan, retur, shift, piutang), Pembelian (PO, penerimaan, hutang), Servis (estimasi, riwayat selesai/batal), Kas & bank, Jurnal, Stok opname, Penggajian (periode, kasbon, komisi), Barang, Jasa, Pelanggan, Kendaraan, Karyawan, Audit log, Garansi. Sudah punya rentang tanggal sendiri dan tidak diubah: Laporan keuangan, PPN, PPh.
+
+### Belum diberi filter
+Supplier, Paket servis, dan daftar Akun (sudah dikelompokkan per tipe): tidak punya tanggal atau kategori yang berarti. Beri tahu bila ingin ditambah.
+
+### Verifikasi
+- `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- Bentuk kueri filter Penggajian dicek ke PostgREST dengan data lokal.
+- Di browser (pratinjau): `LocalFilters` memfilter, menggabungkan peran dan tanggal, dan Atur ulang memulihkan semua baris.
+- Dev server perlu dimulai ulang setelah pemindahan ekspor (cache Turbopack basi); sudah dilakukan.
+- **Belum diverifikasi:** halaman-halaman ini dengan login nyata.
+
+### File terdampak
+`src/components/local-filter.tsx`, `src/lib/payroll.ts`, `src/app/(app)/penggajian/page.tsx`, `src/app/(app)/penggajian/kasbon/page.tsx`, `src/app/(app)/penggajian/komisi/page.tsx`, `src/app/(app)/inventory/_components/items-table.tsx`, `src/app/(app)/inventory/_components/simple-list.tsx`, `src/app/(app)/inventory/jasa/page.tsx`, `src/app/(app)/pelanggan/_components/lists.tsx`, `src/app/(app)/karyawan/_components/employees-table.tsx`, `src/app/(app)/audit/page.tsx`, `src/app/(app)/servis/garansi/page.tsx`, `src/app/(app)/keuangan/jurnal/page.tsx`, `src/app/dev/preview/filter-lokal/**`, `cek-halaman.md`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.30.0] 2026-11-04
 **Ringkasan:** Filter rentang tanggal dan kategori di modul Pembelian, Stok opname, Servis, dan Kas & bank, memakai komponen filter bersama.
 

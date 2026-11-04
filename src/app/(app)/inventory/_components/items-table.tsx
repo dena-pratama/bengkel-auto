@@ -19,6 +19,7 @@ import {
   type TableFeatures,
 } from "@tanstack/react-table";
 import { AlertTriangle, ArrowUpDown, ChevronRight, PackageSearch, Search } from "lucide-react";
+import { LocalFilters, uniqueOptions } from "@/components/local-filter";
 import { EmptyState, inputClass, panel } from "@/components/page-kit";
 import type { ItemListRow } from "@/lib/inventory";
 import { formatQty, formatRupiah } from "@/lib/format";
@@ -80,6 +81,8 @@ export function ItemsTable({ items }: { items: ItemListRow[] }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("active");
+  const [category, setCategory] = useState("");
+  const [brand, setBrand] = useState("");
   const [sorting, setSorting] = useState<SortingState>([{ id: "name", desc: false }]);
 
   const counts = useMemo(
@@ -92,9 +95,17 @@ export function ItemsTable({ items }: { items: ItemListRow[] }) {
     [items],
   );
   const data = useMemo(
-    () => items.filter((i) => (filter === "all" ? true : filter === "active" ? i.is_active : filter === "low" ? isLow(i) : !i.is_active)),
-    [items, filter],
+    () =>
+      items.filter(
+        (i) =>
+          (filter === "all" ? true : filter === "active" ? i.is_active : filter === "low" ? isLow(i) : !i.is_active) &&
+          (!category || i.category === category) &&
+          (!brand || i.brand === brand),
+      ),
+    [items, filter, category, brand],
   );
+  const categoryOptions = useMemo(() => uniqueOptions(items.map((i) => i.category)), [items]);
+  const brandOptions = useMemo(() => uniqueOptions(items.map((i) => i.brand)), [items]);
 
   const table = useTable({
     features,
@@ -152,6 +163,18 @@ export function ItemsTable({ items }: { items: ItemListRow[] }) {
           ))}
         </div>
       </div>
+
+      <LocalFilters
+        selects={[
+          { key: "kategori", label: "Kategori", value: category, options: categoryOptions, allLabel: "Semua kategori", onChange: setCategory },
+          { key: "merek", label: "Merek", value: brand, options: brandOptions, allLabel: "Semua merek", onChange: setBrand },
+        ]}
+        dirty={Boolean(category || brand)}
+        onReset={() => {
+          setCategory("");
+          setBrand("");
+        }}
+      />
 
       {rows.length === 0 ? (
         <EmptyState icon={PackageSearch} text={items.length === 0 ? "Belum ada barang. Tambahkan barang pertama." : "Tidak ada barang yang cocok."} />
