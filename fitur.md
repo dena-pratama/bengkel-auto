@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.46.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.47.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -95,7 +95,8 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.46.0**
 | | Redesain UI/UX tahap 3: modul Penggajian sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.44.0 (cabang ui-ux-redesign) |
 | | Redesain UI/UX tahap 3: modul Pajak sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.45.0 (cabang ui-ux-redesign) |
 | | Redesain UI/UX tahap 3: modul Karyawan sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.46.0 (cabang ui-ux-redesign) |
-| | Redesain UI/UX tahap 3: modul AI Analyst, Audit Log, dst. | 🟨 | menyusul, lihat catatan-redesain.md |
+| | Redesain UI/UX tahap 3: modul AI Analyst sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.47.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Audit Log, Pop up form, dst. | 🟨 | menyusul, lihat catatan-redesain.md |
 | | Notifikasi per peran (izin Notifikasi di matriks peran + tersaring izin modul) | ✅ | 0.33.0 |
 | | Filter daftar seragam (rentang tanggal + kategori): Kasir (penjualan, retur, shift, piutang) | ✅ | 0.29.0 |
 | | Filter daftar: Pembelian (PO, penerimaan, hutang), Stok opname, Servis (estimasi, riwayat), Kas & bank | ✅ | 0.30.0 |

@@ -1,3 +1,12 @@
+## [0.47.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 11: AI Analyst
+- Mengadopsi visual token Figma page `12 · AI Analyst` (frame `5:13477`).
+- Kartu Skor Kesehatan Bisnis dengan skor numerik mencolok (warna hijau/kuning/merah adaptif), dot status semantik, dan badge pill bulat (`rounded-full`).
+- Tata letak responsif 2 kolom: Ringkasan Mingguan terstruktur 4 kartu (Yang membaik, Perlu perhatian, Saran, Pengingat) dan kotak interaktif Tanya AI di sisi kanan.
+- Bagian integrasi MCP Claude dan tabel riwayat pemanggilan tool yang modern dan rapi.
+- Menambahkan rute pratinjau `/dev/preview/ai` untuk verifikasi visual mandiri.
+
 ## [0.46.0] - 2026-11-05
 
 ### Changed - UI/UX Redesign Module 10: Karyawan
