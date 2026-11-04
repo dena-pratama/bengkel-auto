@@ -4,6 +4,25 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.39.0] 2026-11-05
+**Ringkasan:** Redesain UI/UX tahap 3, modul Barang & Jasa: halaman utama Barang & Suku Cadang mengikuti frame Figma "04 · Barang & Jasa" (Desktop & Mobile, Light & Dark) dengan 4 kartu ringkasan metrik (SKU aktif, estimasi nilai persediaan, stok menipis, dan stok habis), tab filter status berpenanda angka, bilah filter lokal, serta tabel katalog barang berbingkai rapi. Ditambah pratinjau `/dev/preview/inventory`.
+
+### Changed
+- `src/app/(app)/inventory/page.tsx`: penambahan 4 kartu ringkasan di atas tabel (Total SKU aktif, Nilai persediaan dengan ikon dompet hijau, Stok menipis dengan ikon peringatan kuning, dan Stok habis dengan ikon merah).
+- `src/app/(app)/inventory/_components/items-table.tsx`: tombol tab filter status (Aktif, Stok menipis, Nonaktif, Semua) diselaraskan ke gaya pil Figma dengan badge angka membulat, bilah filter kategori/merek, pembungkus tabel berbingkai border rapi dengan baris hover lembut.
+
+### Added
+- `src/app/dev/preview/inventory/page.tsx`: pratinjau tampilan katalog barang tanpa login (khusus development) dengan 6 contoh suku cadang (filter oli, kampas rem, oli mesin, busi iridium, fan belt, lampu depan) mencakup kondisi aman, menipis, dan habis.
+
+### Verifikasi
+- `tsc`, `eslint`, `check:dashes`, `next build` lolos.
+- Desain selaras dengan Figma page "04 · Barang & Jasa" (Desktop Light/Dark dan Mobile Light/Dark).
+
+### File terdampak
+`src/app/(app)/inventory/page.tsx`, `src/app/(app)/inventory/_components/items-table.tsx`, `src/app/dev/preview/inventory/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.38.0] 2026-11-05
 **Ringkasan:** Redesain UI/UX tahap 3, modul Servis: papan Kanban work order mengikuti frame Figma "02 · Servis & Work Order" (Desktop & Mobile, Light & Dark) dengan 6 kolom status berindikator warna, kartu kendaraan lengkap (plat, model, keluhan/layanan, pelanggan, bilah progres, avatar mekanik, dan penghitung durasi), serta riwayat work order selesai/batal dalam tabel bersih. Ditambah pratinjau `/dev/preview/servis`.
 
