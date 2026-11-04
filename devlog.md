@@ -4,6 +4,28 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.37.0] 2026-11-05
+**Ringkasan:** Redesain UI/UX tahap 3, modul Kasir: halaman utama Kasir mengikuti frame Figma "03 · Kasir" (Desktop & Mobile, Light & Dark) dengan kartu shift, ringkasan metode pembayaran, work order siap ditagih, transaksi terakhir, transaksi ditahan, dan aksi cepat. Ditambah halaman pratinjau `/dev/preview/kasir`.
+
+### Changed
+- `src/app/(app)/kasir/page.tsx`: tata letak kartu shift dengan indikator status terbuka hijau, 5 metrik kartu (modal awal, tunai masuk, kas keluar, kas seharusnya dengan sorotan biru, dan non-tunai) yang adaptif untuk desktop (5 kolom) dan mobile (sorotan kas seharusnya di atas, 4 metrik grid 2x2).
+- Ringkasan metode pembayaran hari ini (Tunai, QRIS, Transfer, Kartu) dengan angka real-time.
+- Tabel work order siap ditagih dengan kolom nomor WO, nomor polisi, pelanggan, jumlah item, total biaya, dan tombol aksi penagihan langsung.
+- Tabel transaksi terakhir dengan nomor invoice, pelanggan/WO, metode bayar, badge status lunas/tempo, dan nominal transaksi.
+- Kolom kanan: kartu transaksi ditahan dengan rincian item dan nominal, serta kartu aksi cepat (jual part langsung, tagih WO, terima piutang, retur penjualan).
+
+### Added
+- `src/app/dev/preview/kasir/page.tsx`: pratinjau tampilan modul Kasir tanpa login (khusus development) dengan data contoh lengkap sesuai desain Figma.
+
+### Verifikasi
+- `tsc`, `eslint`, `check:dashes`, `next build` lolos.
+- Desain selaras dengan Figma page "03 · Kasir" (Desktop Light/Dark dan Mobile Light/Dark).
+
+### File terdampak
+`src/app/(app)/kasir/page.tsx`, `src/app/dev/preview/kasir/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.36.1] 2026-11-04
 **Ringkasan:** `catatan-redesain.md` dikeluarkan dari git (catatan serah terima lokal, hanya ada di mesin developer).
 
