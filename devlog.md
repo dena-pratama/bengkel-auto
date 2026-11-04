@@ -1,3 +1,13 @@
+## [0.43.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 07: Keuangan
+- Mengadopsi visual token Figma page `10 · Keuangan` (frame `5:9661`).
+- Kartu akun kas dan bank dengan icon tile profesional (Wallet/Landmark), badge status pill, dan card tambah akun bergaris putus-putus.
+- 4 Kartu ringkasan arus kas (Uang masuk, Uang keluar, Arus kas bersih, Biaya rutin menunggu) dengan aksen warna semantik soft (hijau, merah, biru, pasir).
+- Tabel transaksi kas dengan badge tipe transaksi pill bulat penuh, highlight warna nominal masuk/keluar, dan tombol ekspor.
+- Kartu biaya rutin bulanan dengan tampilan template modern dan ringkasan total pengeluaran per bulan.
+- Menambahkan rute pratinjau `/dev/preview/keuangan` untuk pengujian visual mandiri.
+
 ## [0.42.0] - 2026-11-05
 
 ### Changed - UI/UX Redesign Module 06: Stok Opname
