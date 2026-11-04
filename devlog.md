@@ -1,3 +1,11 @@
+## [0.44.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 08: Penggajian
+- Mengadopsi visual token Figma page `09 · Penggajian` (frame `5:6910`).
+- 4 Kartu ringkasan gaji (Total periode terkini, Menunggu dibayar, Sudah dibayar tahun ini, Rata-rata per periode) dengan icon semantik dan penataan rapi.
+- Pembaruan tampilan tabel periode penggajian dengan status badge bulat (`rounded-full`), navigasi baris terintegrasi, dan pemformatan nominal/tanggal konsisten.
+- Menambahkan rute pratinjau `/dev/preview/penggajian` untuk verifikasi visual mandiri.
+
 ## [0.43.0] - 2026-11-05
 
 ### Changed - UI/UX Redesign Module 07: Keuangan
