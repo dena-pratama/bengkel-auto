@@ -1,3 +1,12 @@
+## [0.46.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 10: Karyawan
+- Mengadopsi visual token Figma page `08 · Karyawan` (frame `3:4694`).
+- 4 Kartu ringkasan metrik karyawan (Total karyawan, Aktif hari ini, Mekanik, Akun login) dengan icon semantik dan warna soft.
+- Modernisasi badge status karyawan dan chip role menggunakan pill bulat penuh (`rounded-full`).
+- Avatar karyawan modern (`rounded-full`) dengan inisial dan fallback foto profil yang konsisten.
+- Menambahkan rute pratinjau `/dev/preview/karyawan` untuk pengujian visual mandiri.
+
 ## [0.45.0] - 2026-11-05
 
 ### Changed - UI/UX Redesign Module 09: Pajak
