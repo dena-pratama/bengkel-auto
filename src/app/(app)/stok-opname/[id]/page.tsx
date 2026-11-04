@@ -18,18 +18,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-export default async function OpnameDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default function OpnameDetailPage({ params }: { params: Promise<{ id: string }> }) {
   return (
     <div className="mx-auto grid w-full max-w-[1440px] gap-5">
       <Suspense fallback={<Skeleton className="h-96" />}>
-        <Content id={id} />
+        <Content params={params} />
       </Suspense>
     </div>
   );
 }
 
-async function Content({ id }: { id: string }) {
+async function Content({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const ctx = await requireUser();
   const canView =
     can(ctx, "stock_opname_count", "view", false) ||

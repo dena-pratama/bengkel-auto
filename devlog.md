@@ -1,6 +1,6 @@
 ## [0.51.0] - 2026-11-05
 
-### Changed - UI/UX Redesign Module 15: Notifikasi
+### Changed - UI/UX Redesign Module 15: Notifikasi & Optimasi Navigasi Suspense
 - Mengadopsi visual token Figma page `16 · Notifikasi` (frame `8:23778`).
 - Modernisasi Popover Bel Notifikasi topbar: kontainer `rounded-2xl` dengan border halus, icon tile semantik per modul, indikator dot merah belum dibaca, dan link footer interaktif.
 - Redesain halaman utama `/notifikasi`:
@@ -9,6 +9,7 @@
   - Badge pill bulat penuh (`rounded-full`) untuk modul dan tingkat keparahan (severity).
   - Tampilan empty state yang bersih dan footer paginasi yang rapi.
 - Memperluas rute `/dev/preview/notifikasi` dengan showcase interaktif bel popover, banner mengambang, daftar grup notifikasi, dan toggle halaman kosong.
+- Memperbaiki pembacaan URL params agar berada di dalam boundary Suspense pada halaman detail stok opname (`src/app/(app)/stok-opname/[id]/page.tsx`) untuk mendukung navigasi instan (PPR) Next.js 16 tanpa peringatan devtools.
 
 ## [0.50.0] - 2026-11-05
 
