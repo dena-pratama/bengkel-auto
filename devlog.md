@@ -4,6 +4,30 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.24.0] 2026-11-04
+**Ringkasan:** Layar Pengaturan bengkel (PRD §18): batas diskon, batas retur, ambang opname, stok minus, dan wajib scan part bisa diubah Owner dari aplikasi, dengan validasi dan jejak audit.
+
+### Added
+- Migration `20261103000026_save_settings.sql`: `save_settings(jsonb)` (izin `settings` update) dengan daftar setelan yang diizinkan dan validasi tipe/rentang: `discount_limit_cashier`, `discount_limit_admin` (0-100%), `opname_pin_threshold` (Rp, tidak minus), `sales_return_max_days` (bilangan bulat 0-365), `allow_negative_stock`, `part_issue_require_scan`. Setelan pajak (PPN) ditolak karena dikelola modul Pajak. Perubahan tercatat lewat trigger audit tabel settings.
+- Halaman `/pengaturan` (bagian "Diskon dan retur", "Stok dan part"); karyawan tanpa izin ubah melihatnya read-only.
+- Menu profil di top bar: "Pengaturan" kini aktif (sebelumnya "Segera").
+- Tes DB `supabase/tests/settings_test.sql`.
+
+### Changed
+- `part_issue_require_scan` kini bisa diubah dari layar ini (sebelumnya hanya lewat tabel).
+
+### Catatan
+- Zona waktu dan batas idle sesi (12 jam) tetap tetap, tidak bisa diubah dari layar.
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus. `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- **Belum diverifikasi:** halaman `/pengaturan` di browser dengan login.
+
+### File terdampak
+`supabase/migrations/20261103000026_save_settings.sql`, `supabase/tests/settings_test.sql`, `src/lib/settings.ts`, `src/lib/validation/settings.ts`, `src/app/(app)/pengaturan/**`, `src/components/topbar-controls.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.23.0] 2026-11-04
 **Ringkasan:** Ekspor audit log ke Excel dari halaman Audit log, mengikuti filter yang sedang dipakai.
 

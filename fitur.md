@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.23.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.24.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -78,6 +78,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.23.0**
 | | Tanya AI di aplikasi (butuh ANTHROPIC_API_KEY) | 🟨 | 0.17.0 (belum diuji dengan kunci) |
 | | OAuth per pengguna untuk MCP, ambang skor bisa diatur, kirim ringkasan ke WhatsApp | ⬜ | Backlog / Fase 2 |
 | Audit | Audit log: pencatatan otomatis di DB (append-only) | ✅ | 0.2.0 |
+| Sistem | Layar pengaturan bengkel (diskon, retur, opname, stok minus, wajib scan part) | ✅ | 0.24.0 |
 | | Halaman Audit log (filter, sebelum/sesudah, panggilan AI) | ✅ | 0.18.0 |
 | | Ekspor audit log ke Excel | ✅ | 0.23.0 |
 

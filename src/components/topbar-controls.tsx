@@ -111,9 +111,8 @@ export function ProfileMenu({
         <DropdownMenuItem className="rounded-lg px-2 py-2" render={<Link href={`/karyawan/${employeeId}`} />}>
           <UserRound /> Profil saya
         </DropdownMenuItem>
-        <DropdownMenuItem disabled className="rounded-lg px-2 py-2">
+        <DropdownMenuItem className="rounded-lg px-2 py-2" render={<Link href="/pengaturan" />}>
           <Settings /> Pengaturan
-          <span className="ml-auto text-2xs text-muted-foreground">Segera</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
