@@ -1,3 +1,12 @@
+## [0.48.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 12: Audit Log
+- Mengadopsi visual token Figma page `13 · Audit Log` (frame `5:16256`).
+- Banner notifikasi keamanan ketat (immutable security log notice) dengan icon gembok profesional.
+- Modernisasi badge aksi audit (INSERT, UPDATE, DELETE, AI Tool) dengan warna semantik pill bulat penuh (`rounded-full`).
+- Perbaikan layout baris log dengan chevron interaktif dan panel inspeksi diff perubahan kolom (sebelum/sesudah) yang rapi.
+- Menambahkan rute pratinjau `/dev/preview/audit` untuk pengujian visual mandiri.
+
 ## [0.47.0] - 2026-11-05
 
 ### Changed - UI/UX Redesign Module 11: AI Analyst
