@@ -308,7 +308,6 @@ export type SaleReturnRow = {
   amount: number;
   ppn_amount: number;
   total: number;
-  cogs_total: number;
   reason: string;
   status: "posted" | "void";
   void_reason: string | null;
@@ -322,7 +321,6 @@ export const toSaleReturn = (r: SaleReturnRow): SaleReturnRow => ({
   amount: num(r.amount),
   ppn_amount: num(r.ppn_amount),
   total: num(r.total),
-  cogs_total: num(r.cogs_total),
   item_count: num(r.item_count),
 });
 
@@ -348,8 +346,6 @@ export type SaleReturnItemDetail = {
   qty: number;
   unit_price: number;
   line_total: number;
-  unit_cost: number;
-  cost_total: number;
 };
 
 export async function getSaleReturn(id: string) {
@@ -358,7 +354,7 @@ export async function getSaleReturn(id: string) {
     s.from("v_sale_returns").select("*").eq("id", id).maybeSingle(),
     s
       .from("sale_return_items")
-      .select("id, sale_item_id, item_id, condition, location_id, qty, unit_price, line_total, unit_cost, cost_total, items(sku, name, units:base_unit_id(code)), locations(code, name)")
+      .select("id, sale_item_id, item_id, condition, location_id, qty, unit_price, line_total, items(sku, name, units:base_unit_id(code)), locations(code, name)")
       .eq("return_id", id),
   ]);
   const row = must<SaleReturnRow | null>(ret, "retur penjualan");
@@ -372,8 +368,6 @@ export async function getSaleReturn(id: string) {
     qty: number;
     unit_price: number;
     line_total: number;
-    unit_cost: number;
-    cost_total: number;
     items: { sku: string; name: string; units: { code: string } | null } | null;
     locations: { code: string; name: string } | null;
   };
@@ -393,8 +387,6 @@ export async function getSaleReturn(id: string) {
       qty: num(i.qty),
       unit_price: num(i.unit_price),
       line_total: num(i.line_total),
-      unit_cost: num(i.unit_cost),
-      cost_total: num(i.cost_total),
     })),
   };
 }

@@ -56,6 +56,7 @@ exception when others then
   raise notice 'OK   %', p_name;
 end $$;
 
+create or replace function pg_temp.sdq(p text) returns numeric language plpgsql security definer as $$ declare v numeric; begin execute p into v; return v; end $$;
 create or replace function pg_temp.id(p_key text) returns uuid language sql as $$ select v from t_ids where k = p_key $$;
 create or replace function pg_temp.unit(p_code text) returns uuid language sql as $$ select id from public.units where code = p_code $$;
 create or replace function pg_temp.stock(p_key text) returns numeric language sql as $$
@@ -138,8 +139,8 @@ insert into t_ids select 'ret1', public.post_sale_return(pg_temp.id('sale1'),
 
 -- Verifikasi hasil retur 1:
 -- 1. Nomor dokumen berawalan RJ
-select pg_temp.check((select return_no like 'RJ-%' and status = 'posted' and amount = 100000 and total = 100000 and cogs_total = 60000
-                      from public.sale_returns where id = pg_temp.id('ret1')), 'retur: dokumen RJ tersimpan dengan nilai 100.000 dan HPP 60.000');
+select pg_temp.check((select return_no like 'RJ-%' and status = 'posted' and amount = 100000 and total = 100000
+                      from public.sale_returns where id = pg_temp.id('ret1')) and pg_temp.sdq(format('select cogs_total from public.sale_returns where id = %L', pg_temp.id('ret1'))) = 60000, 'retur: dokumen RJ tersimpan dengan nilai 100.000 dan HPP 60.000');
 
 -- 2. Stok bertambah kembali 2 pcs di rak asli (15 -> 17)
 select pg_temp.check(pg_temp.stock('i_part') = 17, 'stok busi bertambah kembali menjadi 17');

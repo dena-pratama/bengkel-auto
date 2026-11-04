@@ -4,6 +4,27 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.17.1] 2026-11-04
+**Ringkasan:** Menutup kebocoran HPP: kolom biaya pokok pada penjualan dan retur tidak lagi terbaca lewat API oleh pemegang izin penjualan (PRD §10.2).
+
+### Fixed
+- Migration `20261103000021_hide_cost_columns.sql`: hak select per kolom tanpa `sales.cogs_total`, `sale_items.cost_total`, `sale_returns.cogs_total`, `sale_return_items.unit_cost` dan `cost_total`. View `v_sale_returns` dibuat ulang tanpa `cogs_total`. Jurnal, laporan HPP/laba (fungsi security definer), dan retur tidak berubah.
+- `src/lib/cashier.ts`: tidak lagi memilih atau memetakan kolom HPP.
+
+### Changed
+- Tes `cashier_test.sql` dan `sales_returns_test.sql` membaca HPP lewat helper security definer. Tes baru `hide_cost_test.sql`.
+
+### Catatan
+- Yang sengaja tidak diubah: `goods_receipt_items.cost_total` (harga beli, dibutuhkan izin pembelian) dan nilai selisih pada stok opname (PRD §9.3 meminta nilai Rp). Kolom `select *` langsung ke tabel `sales`/`sale_items` kini ditolak; gunakan `v_sales` atau daftar kolom.
+
+### Verifikasi
+- `npm run test:db`: 14 suite lulus. `tsc`, `eslint`, cek tanda pisah lolos.
+
+### File terdampak
+`supabase/migrations/20261103000021_hide_cost_columns.sql`, `supabase/tests/hide_cost_test.sql`, `supabase/tests/cashier_test.sql`, `supabase/tests/sales_returns_test.sql`, `src/lib/cashier.ts`, `devlog.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.17.0] 2026-11-04
 **Ringkasan:** Modul AI Business Analyst (PRD §13): 11 tool analitik read-only lewat server MCP dan aplikasi, skor kesehatan bisnis 9 indikator, ringkasan mingguan, token akses per pengguna, dan log setiap panggilan AI.
 

@@ -56,6 +56,7 @@ exception when others then
   raise notice 'OK   %', p_name;
 end $$;
 
+create or replace function pg_temp.sdq(p text) returns numeric language plpgsql security definer as $$ declare v numeric; begin execute p into v; return v; end $$;
 create or replace function pg_temp.id(p_key text) returns uuid language sql as $$ select v from t_ids where k = p_key $$;
 create or replace function pg_temp.unit(p_code text) returns uuid language sql as $$ select id from public.units where code = p_code $$;
 create or replace function pg_temp.stock(p_key text) returns numeric language sql as $$
@@ -187,7 +188,7 @@ select pg_temp.check(pg_temp.stock('i_oil') = 8, 'POS: draft belum mengurangi st
 select public.post_sale(pg_temp.id('pos1'), '[{"method": "cash", "amount": 180000}]');
 select pg_temp.check((select status = 'posted' and sale_no like 'INV-%' and paid = 180000 and outstanding = 0 from public.v_sales where id = pg_temp.id('pos1')), 'POS: posting + bayar tunai');
 select pg_temp.check(pg_temp.stock('i_oil') = 5, 'POS: stok berkurang 3');
-select pg_temp.check((select cogs_total = 120000 from public.sales where id = pg_temp.id('pos1')), 'POS: HPP rata-rata 3 x 40.000');
+select pg_temp.check(pg_temp.sdq(format('select cogs_total from public.sales where id = %L', pg_temp.id('pos1'))) = 120000, 'POS: HPP rata-rata 3 x 40.000');
 reset role;
 select pg_temp.check(pg_temp.bal('inventory') = -80000 - 120000, 'jurnal POS: Persediaan berkurang 120.000 (di luar WO)');
 select pg_temp.login('u_cashier');
