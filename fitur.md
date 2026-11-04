@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.22.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.23.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -79,7 +79,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.22.0**
 | | OAuth per pengguna untuk MCP, ambang skor bisa diatur, kirim ringkasan ke WhatsApp | ⬜ | Backlog / Fase 2 |
 | Audit | Audit log: pencatatan otomatis di DB (append-only) | ✅ | 0.2.0 |
 | | Halaman Audit log (filter, sebelum/sesudah, panggilan AI) | ✅ | 0.18.0 |
-| | Ekspor audit log ke Excel | ⬜ | - |
+| | Ekspor audit log ke Excel | ✅ | 0.23.0 |
 
 ## Fase 2
 | Fitur | Status |

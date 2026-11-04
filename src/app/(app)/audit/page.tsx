@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { History } from "lucide-react";
+import { Download, History } from "lucide-react";
 import { EmptyState, NoAccess, PageHeader, Skeleton, inputClass, panel } from "@/components/page-kit";
 import { Button } from "@/components/ui/button";
 import { PAGE_SIZE, listAuditActors, listAuditLogs, type AuditRow } from "@/lib/audit";
@@ -43,6 +43,12 @@ async function Content({ searchParams }: { searchParams: Promise<Record<string, 
   const actor = UUID.test(pick(sp.pelaku) ?? "") ? pick(sp.pelaku)! : null;
   const page = Math.max(0, Math.min(500, Number(pick(sp.hal) ?? 0) || 0));
   const actors = await listAuditActors();
+
+  const exportParams = new URLSearchParams({ dari: from, sampai: to });
+  if (table) exportParams.set("tabel", table);
+  if (action) exportParams.set("aksi", action);
+  if (actor) exportParams.set("pelaku", actor);
+  const exportHref = `/api/v1/audit/export?${exportParams}`;
 
   const query = (p: number) => {
     const q = new URLSearchParams({ dari: from, sampai: to, hal: String(p) });
@@ -93,6 +99,9 @@ async function Content({ searchParams }: { searchParams: Promise<Record<string, 
             </select>
           </label>
           <Button type="submit">Tampilkan</Button>
+          <Button variant="outline" nativeButton={false} render={<a href={exportHref} />}>
+            <Download className="size-4" /> Ekspor Excel
+          </Button>
         </form>
       </section>
       <Suspense fallback={<Skeleton className="h-96" />}>

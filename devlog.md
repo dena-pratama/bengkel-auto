@@ -4,6 +4,23 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.23.0] 2026-11-04
+**Ringkasan:** Ekspor audit log ke Excel dari halaman Audit log, mengikuti filter yang sedang dipakai.
+
+### Added
+- `GET /api/v1/audit/export` (izin `audit_log`): parameter `dari`, `sampai`, `tabel`, `aksi`, `pelaku` sama dengan halaman. Satu baris Excel per kolom yang berubah (waktu WIB, pelaku, aksi, jenis data, ID data, kolom, sebelum, sesudah); panggilan AI memuat parameternya.
+- Tombol "Ekspor Excel" di halaman Audit log.
+- Maksimal 5000 catatan terbaru per ekspor (diambil per 1000 baris karena batas PostgREST); bila lebih, lembar diberi catatan agar rentang dipersempit.
+
+### Verifikasi
+- `tsc`, `eslint`, cek tanda pisah lolos; rute tanpa login dialihkan ke halaman masuk.
+- **Belum diverifikasi:** unduhan Excel dengan login nyata (isi berkas belum dibuka).
+
+### File terdampak
+`src/app/api/v1/audit/export/route.ts`, `src/lib/audit.ts`, `src/app/(app)/audit/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.22.0] 2026-11-04
 **Ringkasan:** Garansi dihitung dari tanggal invoice (PRD §7.4) dan laporan klaim garansi per mekanik, barang, dan supplier.
 
