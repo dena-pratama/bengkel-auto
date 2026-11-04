@@ -4,6 +4,31 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.36.0] 2026-11-04
+**Ringkasan:** Redesain UI/UX tahap 3, halaman pertama: Beranda mengikuti Figma dengan data nyata dari database (bukan data contoh lagi). Ditambah `catatan-redesain.md` untuk melanjutkan redesain modul lain.
+
+### Added
+- `src/lib/dashboard.ts`: pemuat data Beranda (RLS menyaring per peran, tiap blok null bila peran tidak berhak; kegagalan satu blok tidak merusak halaman).
+- Kartu angka dari data nyata: work order aktif dan yang melewati estimasi, omzet bulan ini (penjualan diposting), piutang pelanggan, barang menipis.
+- Daftar work order aktif (tautan ke detail), notifikasi terbaru (penanda belum dibaca), beban mekanik, barang menipis, kas shift saya.
+- `catatan-redesain.md`: catatan serah terima redesain.
+
+### Changed
+- Beranda ditulis ulang sesuai Figma: sapaan, empat aksi cepat bertaut ke modul, kartu angka, tabel work order aktif, panel notifikasi, kartu bawah. Kalender booking dan target omzet tidak ada (keputusan: data nyata saja).
+- Pratinjau tanpa login `/dev/preview` kini memakai data contoh dari `sampleDashboard()` dan diberi label "Data contoh".
+
+### Removed
+- `src/lib/demo/dashboard.ts` (data contoh lama).
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Di browser (pratinjau, data contoh): Desktop Light, Desktop Dark, dan Mobile 375 px tanpa scroll horizontal. Query data nyata belum dilihat dengan sesi login; periksa di browser dengan login Owner.
+
+### File terdampak
+`src/lib/dashboard.ts`, `src/app/(app)/dashboard/page.tsx`, `src/app/(app)/dashboard/view.tsx`, `src/app/(app)/dashboard/widgets.tsx`, `src/app/dev/preview/page.tsx`, `src/lib/demo/dashboard.ts` (dihapus), `catatan-redesain.md`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.35.0] 2026-11-04
 **Ringkasan:** Redesain UI/UX tahap 2 (cabang `ui-ux-redesign`): kerangka aplikasi mengikuti Figma. Sidebar terang 264 px dengan menu bergrup dan lencana, bilah atas dengan pencarian, tombol tema, bel, pengaturan, dan chip profil, serta drawer di layar kecil.
 
