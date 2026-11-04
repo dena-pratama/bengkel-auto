@@ -4,6 +4,35 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.29.0] 2026-11-04
+**Ringkasan:** Sistem filter daftar yang seragam (rentang tanggal dan kategori), dimulai dari modul Kasir.
+
+### Added
+- Komponen bersama `ListFilter` (`src/components/list-filter.tsx`): pilihan rentang cepat (Hari ini, 7 hari, 30 hari, Bulan ini, Bulan lalu, Tahun ini, Semua), tanggal Dari dan Sampai bebas, pilihan kategori (select), dan tombol Atur ulang. Perubahan langsung diterapkan, nilainya ditulis ke URL sehingga bisa dibagikan dan tahan muat ulang.
+- Pembantu `src/lib/list-filter.ts`: `readRange` (membaca rentang dengan pilihan bawaan per halaman), `readOption` (kategori tervalidasi), `presetRange`, `describeRange`.
+- Filter diterapkan di server (kueri), bukan di klien, sehingga rentang tanggal lama tetap benar walau daftar dibatasi 500 baris; bila terpotong, deskripsi halaman memberi tahu agar filter dipersempit.
+- Modul Kasir:
+  - **Penjualan**: tanggal nota (bawaan Bulan ini), status (diposting, lunas, belum lunas, draft, dibatalkan), jenis (dari work order, penjualan part).
+  - **Retur**: tanggal retur (bawaan Bulan ini), bentuk retur, status.
+  - **Shift kas**: tanggal buka shift (bawaan Bulan ini), status.
+  - **Piutang**: tanggal invoice (bawaan Semua), umur piutang; berlaku untuk daftar invoice, rekap per pelanggan tetap menampilkan seluruh piutang.
+- Pratinjau tanpa login (development saja): `/dev/preview/filter`.
+
+### Changed
+- Tab status di daftar Penjualan dan Retur diganti filter bersama (pencarian teks tetap ada).
+- Daftar penjualan, retur, dan shift kini diurutkan menurut tanggal dokumen dan dibatasi 500 (shift 200).
+
+### Verifikasi
+- `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- Di browser (pratinjau): tampilan filter, pilihan cepat, tanggal, kategori, "Semua", dan Atur ulang memperbarui URL dan deskripsi dengan benar. Pratinjau menangkap satu bug (fungsi `describeRange` di berkas klien tidak bisa dipanggil server) dan sudah diperbaiki.
+- Bentuk kueri filter kasir dicek ke PostgREST dengan data lokal (rentang, status, jenis, umur, retur, shift).
+- **Belum diverifikasi:** halaman Kasir dengan login nyata.
+
+### File terdampak
+`src/components/list-filter.tsx`, `src/lib/list-filter.ts`, `src/lib/cashier.ts`, `src/lib/validation/cashier.ts`, `src/app/(app)/kasir/penjualan/page.tsx`, `src/app/(app)/kasir/retur/page.tsx`, `src/app/(app)/kasir/shift/page.tsx`, `src/app/(app)/kasir/piutang/page.tsx`, `src/app/(app)/kasir/_components/sales-list.tsx`, `src/app/(app)/kasir/_components/returns-list.tsx`, `src/app/dev/preview/filter/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.28.1] 2026-11-04
 **Ringkasan:** Daftar cek halaman untuk Owner (dokumentasi).
 

@@ -74,6 +74,25 @@ export const SETTLEMENT_LABEL: Record<ReturnSettlement, string> = {
   refund: "Uang kembali",
 };
 
+// Opsi filter daftar kasir
+export const SALE_STATUS_FILTERS = ["posted", "paid", "unpaid", "draft", "void"] as const;
+export type SaleStatusFilter = (typeof SALE_STATUS_FILTERS)[number];
+export const SALE_STATUS_FILTER_LABEL: Record<SaleStatusFilter, string> = {
+  posted: "Diposting (semua)",
+  paid: "Lunas",
+  unpaid: "Belum lunas",
+  draft: "Draft",
+  void: "Dibatalkan",
+};
+export const SALE_SOURCE_FILTERS = ["work_order", "pos"] as const;
+export const SALE_SOURCE_FILTER_LABEL = { work_order: "Dari work order", pos: "Penjualan part" } as const;
+export const RETURN_STATUS_FILTERS = ["posted", "void"] as const;
+export const RETURN_STATUS_FILTER_LABEL = { posted: "Berlaku", void: "Dibatalkan" } as const;
+export const SHIFT_STATUS_FILTERS = ["open", "closed", "approved"] as const;
+export const SHIFT_STATUS_FILTER_LABEL = { open: "Terbuka", closed: "Menunggu persetujuan", approved: "Disetujui" } as const;
+export const AGE_FILTERS = ["0-30", "31-60", ">60"] as const;
+export const AGE_FILTER_LABEL = { "0-30": "0-30 hari", "31-60": "31-60 hari", ">60": "Lebih dari 60 hari" } as const;
+
 export const CONDITIONS = ["good", "damaged"] as const;
 export type ReturnCondition = (typeof CONDITIONS)[number];
 export const CONDITION_LABEL: Record<ReturnCondition, string> = {

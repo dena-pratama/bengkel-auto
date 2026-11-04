@@ -10,22 +10,15 @@ import { cn } from "@/lib/utils";
 import { PaidBadge, SaleStatusBadge } from "./ui";
 
 const norm = (v: string) => v.toLowerCase().replace(/[\s.-]/g, "");
-const FILTERS = [
-  { key: "all", label: "Semua" },
-  { key: "unpaid", label: "Belum lunas" },
-  { key: "void", label: "Dibatalkan" },
-] as const;
 
 export function SalesList({ sales }: { sales: SaleRow[] }) {
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("all");
   const shown = useMemo(() => {
     const q = norm(query);
     return sales.filter((s) => {
-      if (filter === "unpaid" ? !(s.status === "posted" && s.outstanding > 0) : filter === "void" ? s.status !== "void" : s.status === "void") return false;
       return !q || [s.sale_no ?? "", s.plate_no ?? "", s.customer_name ?? "", s.wo_no ?? ""].some((x) => norm(x).includes(q));
     });
-  }, [sales, query, filter]);
+  }, [sales, query]);
 
   return (
     <section className={cn(panel, "grid gap-4 p-4 sm:p-5")}>
@@ -34,20 +27,6 @@ export function SalesList({ sales }: { sales: SaleRow[] }) {
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cari nomor invoice, plat, pelanggan, WO…" aria-label="Cari penjualan" className={cn(inputClass, "pl-9")} />
         </label>
-        <div className="flex gap-1" role="tablist" aria-label="Filter">
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              role="tab"
-              aria-selected={filter === f.key}
-              onClick={() => setFilter(f.key)}
-              className={cn("rounded-sm px-3 py-2 text-sm font-medium", filter === f.key ? "bg-brand-blue-ink text-white" : "bg-muted text-muted-foreground hover:text-foreground")}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
       </div>
       {shown.length === 0 ? (
         <EmptyState icon={Receipt} text="Tidak ada transaksi yang cocok." />

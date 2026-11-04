@@ -58,9 +58,32 @@ export async function listSales(): Promise<SaleRow[]> {
   return must<SaleRow[]>(await s.from("v_sales").select("*").order("created_at", { ascending: false }).limit(300), "penjualan").map(toSale);
 }
 
-export async function listOutstandingSales(): Promise<SaleRow[]> {
+export type DateFilter = { from: string | null; to: string | null };
+export const LIST_CAP = 500;
+
+/** Daftar penjualan dengan filter tanggal nota, status, dan jenis (maksimal LIST_CAP terbaru) */
+export async function searchSales(f: DateFilter & { status: string | null; source: string | null }): Promise<{ rows: SaleRow[]; capped: boolean }> {
   const s = await createClient();
-  return must<SaleRow[]>(await s.from("v_sales").select("*").eq("status", "posted").gt("outstanding", 0).order("sale_date"), "piutang").map(toSale);
+  let q = s.from("v_sales").select("*").order("sale_date", { ascending: false }).order("created_at", { ascending: false }).limit(LIST_CAP + 1);
+  if (f.from) q = q.gte("sale_date", f.from);
+  if (f.to) q = q.lte("sale_date", f.to);
+  if (f.source) q = q.eq("source", f.source);
+  if (f.status === "posted") q = q.eq("status", "posted");
+  else if (f.status === "paid") q = q.eq("status", "posted").lte("outstanding", 0);
+  else if (f.status === "unpaid") q = q.eq("status", "posted").gt("outstanding", 0);
+  else if (f.status) q = q.eq("status", f.status);
+  const rows = must<SaleRow[]>(await q, "penjualan").map(toSale);
+  return { rows: rows.slice(0, LIST_CAP), capped: rows.length > LIST_CAP };
+}
+
+/** Invoice belum lunas, dapat difilter tanggal nota dan umur piutang */
+export async function listOutstandingSales(f?: DateFilter & { age?: string | null }): Promise<SaleRow[]> {
+  const s = await createClient();
+  let q = s.from("v_sales").select("*").eq("status", "posted").gt("outstanding", 0).order("sale_date");
+  if (f?.from) q = q.gte("sale_date", f.from);
+  if (f?.to) q = q.lte("sale_date", f.to);
+  if (f?.age) q = q.eq("age_bucket", f.age);
+  return must<SaleRow[]>(await q, "piutang").map(toSale);
 }
 
 export type SaleLine = {
@@ -163,9 +186,13 @@ export async function getMyOpenShift(employeeId: string): Promise<ShiftRow | nul
   return r ? toShift(r) : null;
 }
 
-export async function listShifts(): Promise<ShiftRow[]> {
+export async function listShifts(f?: DateFilter & { status?: string | null }): Promise<ShiftRow[]> {
   const s = await createClient();
-  return must<ShiftRow[]>(await s.from("v_cash_shifts").select("*").order("opened_at", { ascending: false }).limit(60), "shift").map(toShift);
+  let q = s.from("v_cash_shifts").select("*").order("opened_at", { ascending: false }).limit(200);
+  if (f?.from) q = q.gte("opened_at", `${f.from}T00:00:00+07:00`);
+  if (f?.to) q = q.lte("opened_at", `${f.to}T23:59:59.999+07:00`);
+  if (f?.status) q = q.eq("status", f.status);
+  return must<ShiftRow[]>(await q, "shift").map(toShift);
 }
 
 export async function getShift(id: string) {
@@ -324,12 +351,14 @@ export const toSaleReturn = (r: SaleReturnRow): SaleReturnRow => ({
   item_count: num(r.item_count),
 });
 
-export async function listSaleReturns(): Promise<SaleReturnRow[]> {
+export async function listSaleReturns(f?: DateFilter & { settlement?: string | null; status?: string | null }): Promise<SaleReturnRow[]> {
   const s = await createClient();
-  return must<SaleReturnRow[]>(
-    await s.from("v_sale_returns").select("*").order("created_at", { ascending: false }).limit(200),
-    "retur penjualan",
-  ).map(toSaleReturn);
+  let q = s.from("v_sale_returns").select("*").order("return_date", { ascending: false }).order("created_at", { ascending: false }).limit(LIST_CAP);
+  if (f?.from) q = q.gte("return_date", f.from);
+  if (f?.to) q = q.lte("return_date", f.to);
+  if (f?.settlement) q = q.eq("settlement", f.settlement);
+  if (f?.status) q = q.eq("status", f.status);
+  return must<SaleReturnRow[]>(await q, "retur penjualan").map(toSaleReturn);
 }
 
 export type SaleReturnItemDetail = {

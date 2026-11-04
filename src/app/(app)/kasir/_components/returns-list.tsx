@@ -11,20 +11,13 @@ import { cn } from "@/lib/utils";
 
 const norm = (v: string) => v.toLowerCase().replace(/[\s.-]/g, "");
 
-const FILTERS = [
-  { key: "all", label: "Semua" },
-  { key: "refund", label: "Uang kembali" },
-  { key: "debt", label: "Potong piutang" },
-] as const;
 
 export function ReturnsList({ returns }: { returns: SaleReturnRow[] }) {
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("all");
 
   const shown = useMemo(() => {
     const q = norm(query);
     return returns.filter((r) => {
-      if (filter !== "all" && r.settlement !== filter) return false;
       return (
         !q ||
         [r.return_no, r.sale_no ?? "", r.plate_no ?? "", r.customer_name ?? "", r.wo_no ?? ""].some((x) =>
@@ -32,7 +25,7 @@ export function ReturnsList({ returns }: { returns: SaleReturnRow[] }) {
         )
       );
     });
-  }, [returns, query, filter]);
+  }, [returns, query]);
 
   return (
     <section className={cn(panel, "grid gap-4 p-4 sm:p-5")}>
@@ -48,25 +41,6 @@ export function ReturnsList({ returns }: { returns: SaleReturnRow[] }) {
             className={cn(inputClass, "pl-9")}
           />
         </label>
-        <div className="flex gap-1" role="tablist" aria-label="Filter bentuk retur">
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              role="tab"
-              aria-selected={filter === f.key}
-              onClick={() => setFilter(f.key)}
-              className={cn(
-                "rounded-sm px-3 py-2 text-sm font-medium",
-                filter === f.key
-                  ? "bg-brand-blue-ink text-white"
-                  : "bg-muted text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
       </div>
 
       {shown.length === 0 ? (

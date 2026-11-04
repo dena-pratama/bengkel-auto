@@ -3,32 +3,47 @@ import Link from "next/link";
 import { ChevronRight, Wallet } from "lucide-react";
 import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
+import { ListFilter } from "@/components/list-filter";
 import { listArCustomers, listOutstandingSales } from "@/lib/cashier";
-import { formatDate, formatRupiah } from "@/lib/format";
+import { readOption, readRange, describeRange } from "@/lib/list-filter";
+import { AGE_FILTERS, AGE_FILTER_LABEL } from "@/lib/validation/cashier";
+import { formatDate, formatRupiah, todayWib } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { CashierNav, PaidBadge } from "../_components/ui";
 
-export default function ReceivablesPage() {
+export default function ReceivablesPage({ searchParams }: PageProps<"/kasir/piutang">) {
   return (
     <div className="mx-auto grid w-full max-w-[1440px] gap-5">
       <CashierNav active="ar" />
       <Suspense fallback={<Skeleton className="h-96" />}>
-        <Content />
+        <Content searchParams={searchParams} />
       </Suspense>
     </div>
   );
 }
 
-async function Content() {
+async function Content({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const ctx = await requireUser();
   if (!can(ctx, "receivables", "view", false) && !can(ctx, "sales", "view", false)) return <NoAccess />;
-  const [customers, invoices] = await Promise.all([listArCustomers(), listOutstandingSales()]);
+  const sp = await searchParams;
+  const today = todayWib();
+  const range = readRange(sp, today, "semua");
+  const age = readOption(sp, "umur", AGE_FILTERS);
+  const [customers, invoices] = await Promise.all([listArCustomers(), listOutstandingSales({ from: range.from, to: range.to, age })]);
   const total = invoices.reduce((t, i) => t + i.outstanding, 0);
   const noCustomer = invoices.filter((i) => !i.customer_id);
 
   return (
     <>
-      <PageHeader title="Piutang" description={`${invoices.length} invoice belum lunas · total ${formatRupiah(total)}`} />
+      <PageHeader title="Piutang" description={`${invoices.length} invoice belum lunas · total ${formatRupiah(total)}${range.from || range.to || age ? ` · ${describeRange(range, formatDate)}` : ""}`} />
+      <ListFilter
+        today={today}
+        range={range}
+        defaultRange="semua"
+        dateLabel="Tanggal invoice"
+        selects={[{ name: "umur", label: "Umur piutang", value: age, options: AGE_FILTERS.map((v) => ({ value: v, label: AGE_FILTER_LABEL[v] })), allLabel: "Semua umur" }]}
+      />
+      <p className="-mt-2 text-xs text-muted-foreground">Filter berlaku untuk daftar invoice di bawah. Rekap per pelanggan selalu menampilkan seluruh piutang.</p>
       <section className={cn(panel, "grid gap-3 p-4 sm:p-5")}>
         <h2 className="text-lg font-semibold">Per pelanggan</h2>
         {customers.length === 0 ? (
