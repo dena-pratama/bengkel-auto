@@ -4,6 +4,35 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.19.0] 2026-11-04
+**Ringkasan:** QR label dan scan (PRD §4.3): cetak label QR barang dan rak, halaman scan yang menampilkan stok/harga/mutasi atau isi rak, dan scan (kamera atau pemindai USB) di kotak cari barang pada pembelian, kasir, dan estimasi.
+
+### Added
+- Format QR `src/lib/qr.ts`: hanya kode, tanpa harga. `I:<SKU>` untuk barang, `L:<KODE>` untuk rak; SKU polos dari kode batang juga dikenali.
+- Halaman `/inventory/label`: pilih barang atau rak, ukuran thermal 30 x 20 mm, 50 x 30 mm, atau lembar A4, jumlah salinan, pratinjau, cetak dari browser (CSS `@page` per ukuran).
+- Halaman `/inventory/scan`: scan kamera (html5-qrcode) atau pemindai USB (ketik lalu Enter). QR barang menampilkan nama, stok total, stok per lokasi, harga jual, stok minimum, 10 mutasi terakhir, dan tautan detail/pindah lokasi. QR rak menampilkan semua barang di rak beserta stoknya.
+- Tab "Scan QR" dan "Label QR" di menu Barang & Jasa.
+- `src/components/qr-scanner.tsx` (tombol dan pop-up kamera).
+- Pemilih barang pembelian (PO, penerimaan) dan pemilih katalog kasir/estimasi: tombol Scan, dan scan QR/SKU lalu Enter langsung memilih barangnya. Pencarian stok opname menerima isi QR barang (awalan `I:` dibuang otomatis).
+- Pratinjau tanpa login (development saja): `/dev/preview/label`.
+- Dependensi: `qrcode`, `html5-qrcode`, `@types/qrcode`.
+
+### Catatan
+- Belum ada: scan QR rak untuk memulai hitung opname, scan untuk konfirmasi pengeluaran part di work order, foto barang di hasil scan (fitur foto barang belum ada), cetak label langsung ke printer label tanpa dialog browser, dan PDF label dari server.
+- Tidak ada perubahan database; hasil scan membaca data lewat RLS pengguna.
+
+### Verifikasi
+- `tsc`, `eslint`, `npm run check:dashes`, `next build` lolos.
+- Dilihat di browser (pratinjau): label QR tampil, scan USB `I:OLI-5W30` + Enter memilih barang yang benar.
+- QR hasil generate dibaca balik oleh dekoder (jsQR): `I:OLI-5W30`, `L:A-01`, `I:BUSI-NGK-01` kembali persis.
+- Bentuk query halaman scan dicek ke PostgREST dengan data lokal (barang, saldo per lokasi, mutasi, isi rak).
+- **Belum diverifikasi:** halaman `/inventory/scan` dan `/inventory/label` dengan login nyata, scan kamera di HP (Chrome Android, Safari iOS), dan hasil cetak ke printer thermal sungguhan (ukuran fisik label).
+
+### File terdampak
+`src/lib/qr.ts`, `src/lib/scan.ts`, `src/components/qr-scanner.tsx`, `src/components/item-picker.tsx`, `src/app/(app)/inventory/scan/**`, `src/app/(app)/inventory/label/**`, `src/app/(app)/inventory/_components/nav.tsx`, `src/app/(app)/servis/_components/pickers.tsx`, `src/app/(app)/stok-opname/_components/count-sheet.tsx`, `src/app/dev/preview/label/**`, `package.json`, `devlog.md`, `fitur.md`, `VERSION`
+
+---
+
 ## [0.18.0] 2026-11-04
 **Ringkasan:** Halaman Audit log (PRD §18) untuk Owner: riwayat siapa mengubah apa dan kapan, dengan filter dan perbandingan data sebelum dan sesudah. Panggilan AI ikut tampil.
 

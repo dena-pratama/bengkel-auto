@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.18.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.19.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -31,7 +31,8 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.18.0**
 | Master Data & Inventory | Barang (SKU otomatis, kategori 2 tingkat, merek, part number OEM/alternatif, garansi, PPN) | ✅ | 0.6.0 |
 | | Kompatibilitas kendaraan | 🟨 | 0.6.0 (DB) |
 | | Lokasi Area > Rak > Bin, stok per lokasi, pindah lokasi | ✅ | 0.6.0 |
-| | QR label (cetak thermal/A4) & scan kamera/USB | ⬜ | - |
+| | QR label barang dan rak (cetak thermal 30x20/50x30 mm atau A4) | ✅ | 0.19.0 |
+| | Scan QR kamera/USB: halaman scan barang/rak, scan di pemilih barang | ✅ | 0.19.0 |
 | | Konversi satuan | ✅ | 0.6.0 |
 | | Foto barang | ⬜ | - |
 | | Master jasa & paket servis (alokasi harga proporsional) | ✅ | 0.6.0 |
@@ -44,13 +45,13 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.18.0**
 | | Reminder servis berkala (klik-ke-WA) | ⬜ | - |
 | Servis | Estimasi (versi/revisi, kirim WA klik-ke-chat, persetujuan langsung/telepon/chat, masa berlaku, paket dipecah) | ✅ | 0.10.0 |
 | | Work order dari estimasi (satu klik), pekerjaan tambahan wajib persetujuan, mekanik per jasa (porsi %), minta/keluar/kembali part + jurnal | ✅ | 0.10.0 |
-| | Pengambilan part dengan scan QR | ⬜ | menunggu QR label |
+| | Pengambilan part dengan scan QR | 🟨 | 0.19.0 (scan di form estimasi; konfirmasi keluar part di WO belum) |
 | | Papan status kanban (lama di status, tanda merah lewat durasi, layar penuh TV, segar tiap 30 detik) | ✅ | 0.10.0 |
 | | Papan realtime (Supabase Realtime) | ⬜ | - |
 | | Garansi & klaim (WO garansi Rp0, biaya part ke Beban Garansi) | 🟨 | 0.10.0 (masa garansi dari tanggal diserahkan; dari invoice & laporan klaim menyusul) |
 | | WO ditutup jadi invoice (wajib sebelum kendaraan diserahkan) | ✅ | 0.11.0 |
 | Penjualan & Kas | POS part langsung (draft ditahan, pelanggan opsional), diskon per role + PIN Owner | ✅ | 0.11.0 |
-| | POS dengan scan QR | ⬜ | menunggu QR label |
+| | POS dengan scan QR | ✅ | 0.19.0 |
 | | Pembayaran fleksibel (split tunai/transfer/QRIS/EDC, DP dipotong otomatis, tempo + batas kredit) | ✅ | 0.11.0 |
 | | Nota/invoice: cetak lewat browser, kirim WA klik-ke-chat, DPP/PPN terpisah saat PPN aktif | 🟨 | 0.11.0 (thermal 58/80 mm khusus & PDF menyusul) |
 | | Buka-tutup kas shift (modal awal, kas keluar kecil, hitung per pecahan, selisih + persetujuan, rekap non-tunai) | ✅ | 0.11.0 |

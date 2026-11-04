@@ -2,6 +2,8 @@
 
 import { useId, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
+import { ScanButton } from "@/components/qr-scanner";
+import { parseQr } from "@/lib/qr";
 import { inputClass } from "@/components/page-kit";
 import { formatQty, formatRupiah } from "@/lib/format";
 import type { CatalogOption, VehicleOption } from "@/lib/service";
@@ -24,6 +26,7 @@ function SearchList<T>({
   onPick,
   placeholder,
   ariaLabel,
+  codeOf,
 }: {
   options: T[];
   match: (o: T, q: string) => boolean;
@@ -32,6 +35,8 @@ function SearchList<T>({
   onPick: (o: T) => void;
   placeholder: string;
   ariaLabel: string;
+  /** Kode unik (SKU) agar hasil scan QR/pemindai USB langsung memilih pilihan yang cocok; tanpa ini tidak ada tombol scan */
+  codeOf?: (o: T) => string;
 }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -50,8 +55,18 @@ function SearchList<T>({
     setActive(0);
   };
 
+  const pickByCode = (raw: string) => {
+    const t = codeOf && parseQr(raw);
+    if (!t || t.kind === "location") return false;
+    const hit = options.find((o) => codeOf!(o).toUpperCase() === t.code);
+    if (!hit) return false;
+    pick(hit);
+    return true;
+  };
+
   return (
-    <div className="relative">
+    <div className="flex gap-2">
+    <div className="relative min-w-0 flex-1">
       <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
       <input
         ref={inputRef}
@@ -77,6 +92,8 @@ function SearchList<T>({
           } else if (e.key === "ArrowUp") {
             e.preventDefault();
             setActive((a) => Math.max(a - 1, 0));
+          } else if (e.key === "Enter" && pickByCode(query)) {
+            e.preventDefault();
           } else if (e.key === "Enter" && open && results[active]) {
             e.preventDefault();
             pick(results[active]);
@@ -105,6 +122,8 @@ function SearchList<T>({
         </ul>
       )}
     </div>
+    {codeOf && <ScanButton onScan={(t) => { if (!pickByCode(t)) { setQuery(t.replace(/^I:/i, "")); setOpen(true); } }} className="h-11 shrink-0 rounded-[14px]" />}
+    </div>
   );
 }
 
@@ -116,6 +135,7 @@ export function CatalogPicker({ options, onPick }: { options: CatalogOption[]; o
       match={(o, q) => norm(o.name).includes(q) || norm(o.code).includes(q)}
       keyOf={(o) => o.key}
       onPick={onPick}
+      codeOf={(o) => (o.type === "part" ? o.code : "")}
       placeholder="Cari jasa, paket, atau part (nama / kode)…"
       ariaLabel="Cari jasa, paket, atau part"
       render={(o) => (

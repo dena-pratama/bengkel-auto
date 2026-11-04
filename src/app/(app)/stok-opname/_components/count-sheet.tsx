@@ -247,8 +247,8 @@ export function CountSheet({
           <input
             type="search"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari SKU atau nama barang..."
+            onChange={(e) => setSearch(e.target.value.replace(/^I:/i, ""))}
+            placeholder="Cari SKU atau nama barang (atau scan QR)..."
             className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm outline-none focus:border-primary"
           />
         </div>
