@@ -4,6 +4,34 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.34.0] 2026-11-04
+**Ringkasan:** Redesain UI/UX tahap 1 (cabang `ui-ux-redesign`): fondasi desain dari file Figma "Bengkel-App UI". Token warna Light dan Dark, font Inter, skala teks, radius, dan komponen dasar kini mengikuti Figma. Kerangka (sidebar, bilah atas) dan halaman per modul menyusul di tahap berikutnya.
+
+### Changed
+- **Token warna** (`globals.css`) diganti dengan palet Figma. Nama `brand-*` dipertahankan agar semua komponen ikut berganti:
+  - Light: latar #f5f6f8, kartu putih bergaris #e5e7eb, teks #0f172a, aksen biru #1e40af, biru lembut #eef2ff, merah #dc2626, kuning #b45309 (latar #fffbeb), hijau #15803d.
+  - Dark: latar #0b0f17, kartu #121826, garis #232b3b, teks #f1f5f9, aksen #3563e9 dan #4c7dff.
+  - Token baru `brand-green` dan `brand-green-soft` untuk status sukses.
+- **Font** Inter menggantikan Geist (Geist Mono tetap untuk kode). **Skala teks** mengikuti Figma: isi 14 px, label 11-12 px, judul halaman 26 px.
+- **Radius**: 8 px (tombol, isian), 12 px (kartu), 16 px (dialog), pil tetap untuk lencana.
+- **Komponen dasar**: tombol 8 px dengan biru #1e40af; isian h-40 px, border #e0e3e9, fokus biru; kartu (`panel`) datar bergaris tipis tanpa bayangan; tab bagian (`SectionNav`) berupa wadah bergaris dengan item aktif biru penuh; dialog 16 px; toast peringatan memakai warna kuning Figma; judul halaman 26 px.
+- Latar halaman kini solid (gradasi biru lama dihapus).
+- Pratinjau tanpa login (development saja): `/dev/preview/fondasi`.
+
+### Catatan
+- Kerangka lama (sidebar gelap membulat, bingkai) masih ada sementara dan akan tampak berbeda dengan token baru; diganti di tahap 2 (sidebar terang 264 px, bilah atas, drawer mobile, bel notifikasi).
+- Sumber desain: file Figma "Bengkel-App UI", 16 halaman (Desktop dan Mobile, Light dan Dark). Keputusan: Beranda memakai data nyata (tanpa kalender booking dan target omzet), pilihan cabang berupa label, pencarian global tampilan saja.
+- Tampilan sebelum redesain tersimpan di tag dan cabang `ui-ux-base`.
+
+### Verifikasi
+- `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- Di browser (pratinjau): judul, tab, tombol, isian, kartu, dan lencana di Light dan Dark sesuai Figma.
+
+### File terdampak
+`src/app/globals.css`, `src/app/layout.tsx`, `src/components/page-kit.tsx`, `src/components/ui/button.tsx`, `src/components/ui/input.tsx`, `src/components/form-dialog.tsx`, `src/components/app-toaster.tsx`, `src/app/dev/preview/fondasi/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.33.0] 2026-11-04
 **Ringkasan:** Pusat notifikasi: bel di top bar membuka panel yang meluncur turun, notifikasi baru muncul langsung sebagai banner dari atas, dan semua aksi penting di seluruh modul terekam otomatis. Owner mengatur per peran apakah notifikasi diizinkan.
 

@@ -40,7 +40,7 @@ export function AppToaster() {
           success: "bg-brand-rail! text-white!",
           info: "bg-brand-rail! text-white!",
           error: "bg-brand-red! text-white!",
-          warning: "bg-brand-sand! text-[#4a3d12]! ring-black/5!",
+          warning: "bg-brand-sand-soft! text-brand-sand! ring-brand-sand/30!",
           icon: "m-0! size-5! shrink-0",
           content: "min-w-0",
           title: "leading-snug",

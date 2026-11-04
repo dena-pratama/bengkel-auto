@@ -43,7 +43,7 @@ export function FormDialog({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 380, damping: 32, mass: 0.8 }}
             className={cn(
-              "pointer-events-auto flex max-h-[94svh] w-full flex-col overflow-hidden rounded-t-[28px] bg-card shadow-2xl shadow-brand-blue-deep/25 ring-1 ring-black/5 sm:max-h-[90svh] sm:rounded-[32px]",
+              "pointer-events-auto flex max-h-[94svh] w-full flex-col overflow-hidden rounded-t-2xl bg-card shadow-2xl shadow-black/20 ring-1 ring-border sm:max-h-[90svh] sm:rounded-2xl",
               SIZE[size],
             )}
           >

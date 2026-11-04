@@ -53,7 +53,7 @@ export function ScanForm({ initial }: { initial: string }) {
         </Button>
         <ScanButton
           label="Scan kamera"
-          className="h-11 rounded-[14px]"
+          className="h-11 rounded-lg"
           onScan={(t) => {
             setValue(t);
             go(t);

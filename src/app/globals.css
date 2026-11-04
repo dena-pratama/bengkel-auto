@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -51,126 +51,130 @@
   --color-brand-sand-soft: var(--brand-sand-soft);
   --color-brand-cream: var(--brand-cream);
   --color-brand-gold: var(--brand-gold);
-  /* Skala teks dinaikkan ±1px agar metrik mudah dibaca (owner/bos); proporsi tetap */
-  --text-2xs: 0.75rem;
+  --color-brand-green: var(--brand-green);
+  --color-brand-green-soft: var(--brand-green-soft);
+  /* Skala teks mengikuti desain Figma: isi 13-14 px, label 11-12 px, judul halaman 26 px */
+  --text-2xs: 0.6875rem;
   --text-2xs--line-height: 1.4;
-  --text-xs: 0.8125rem;
+  --text-xs: 0.75rem;
   --text-xs--line-height: 1.4;
-  --text-sm: 0.9375rem;
+  --text-sm: 0.875rem;
   --text-sm--line-height: 1.45;
-  --text-base: 1.0625rem;
+  --text-base: 1rem;
   --text-base--line-height: 1.5;
-  --text-lg: 1.1875rem;
+  --text-lg: 1.125rem;
   --text-lg--line-height: 1.45;
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.25rem;
+  --radius-4xl: 1.5rem;
 }
 
-/* Light mode: dominan biru & merah dari moodboard.
-   Biru #7DAACB (aksen lembut) + turunan gelapnya #3B6A8C untuk tombol/teks (kontras >= 4.5:1),
-   Merah #CE2626 (prioritas, peringatan, sorotan). Pasir #E8DBB3 & krem #FFFDEB hanya aksen kecil. */
+/* Token desain dari Figma "Bengkel-App UI" (Light dan Dark). Nama brand-* dipertahankan agar seluruh komponen
+   ikut berganti tampilan; nilainya kini palet biru indigo + slate dari desain.
+   Light: latar #f5f6f8, kartu putih bergaris #e5e7eb, aksen biru #1e40af, teks #0f172a. */
 :root {
-  --brand-red: #ce2626;
-  --brand-red-soft: #fdecec;
-  --brand-blue: #7daacb;
-  --brand-blue-ink: #3b6a8c;
-  --brand-blue-deep: #2b5675;
-  --brand-blue-soft: #eaf2f8;
-  --brand-blue-fg: #3b6a8c; /* teks biru di atas latar terang/lembut */
-  --brand-rail: #2f5878; /* bingkai & sidebar */
-  --brand-gold: #e5b947; /* turunan pasir logo, hanya untuk grafik & penanda */
-  --brand-sand: #e8dbb3;
-  --brand-sand-soft: #f6f0dd;
-  --brand-cream: #fffdeb;
+  --brand-red: #dc2626;
+  --brand-red-soft: #fef2f2;
+  --brand-blue: #3563e9; /* aksen terang: fokus, grafik */
+  --brand-blue-ink: #1e40af; /* tombol utama, tab aktif */
+  --brand-blue-deep: #1e3a8a;
+  --brand-blue-soft: #eef2ff; /* latar lembut: ikon, item aktif */
+  --brand-blue-fg: #1e40af; /* teks biru di atas latar terang */
+  --brand-rail: #1e40af; /* penanda aktif (tab, chip, toast) */
+  --brand-gold: #f0b43c;
+  --brand-sand: #b45309; /* peringatan: teks/ikon */
+  --brand-sand-soft: #fffbeb; /* peringatan: latar */
+  --brand-cream: #fffbeb;
+  --brand-green: #15803d;
+  --brand-green-soft: #f0fdf4;
 
-  /* Moodboard default: latar luar biru lembut, bingkai biru tua, panel tengah kebiruan, kartu putih */
-  --page-bg: linear-gradient(145deg, #cde3f1 0%, #a9cbe0 55%, #8fb8d4 100%);
-  --background: #dbe8f2;
-  --foreground: #172433;
+  --page-bg: var(--background);
+  --background: #f5f6f8;
+  --foreground: #0f172a;
   --card: #ffffff;
-  --card-foreground: #172433;
+  --card-foreground: #0f172a;
   --popover: #ffffff;
-  --popover-foreground: #172433;
+  --popover-foreground: #0f172a;
   --primary: var(--brand-blue-ink);
   --primary-foreground: #ffffff;
   --secondary: var(--brand-blue-soft);
-  --secondary-foreground: var(--brand-blue-deep);
-  --muted: #edf3f8;
-  --muted-foreground: #66768a;
+  --secondary-foreground: var(--brand-blue-ink);
+  --muted: #f2f4f7;
+  --muted-foreground: #667085;
   --accent: var(--brand-blue-soft);
-  --accent-foreground: var(--brand-blue-deep);
+  --accent-foreground: var(--brand-blue-ink);
   --destructive: var(--brand-red);
-  --border: #d3e0ea;
-  --input: #c9d8e4;
+  --border: #e5e7eb;
+  --input: #e0e3e9;
   --ring: var(--brand-blue);
-  --chart-1: var(--brand-blue-deep);
+  --chart-1: var(--brand-blue-ink);
   --chart-2: var(--brand-red);
   --chart-3: var(--brand-gold);
   --chart-4: var(--brand-blue);
-  --chart-5: var(--brand-sand);
-  --radius: 1rem;
-  --sidebar: var(--brand-blue-ink);
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #ffffff;
-  --sidebar-primary-foreground: var(--brand-blue-ink);
-  --sidebar-accent: rgb(255 255 255 / 0.12);
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgb(255 255 255 / 0.15);
+  --chart-5: var(--brand-green);
+  --radius: 0.5rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #475467;
+  --sidebar-primary: var(--brand-blue-ink);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--brand-blue-soft);
+  --sidebar-accent-foreground: var(--brand-blue-ink);
+  --sidebar-border: #e5e7eb;
   --sidebar-ring: var(--brand-blue);
   color-scheme: light;
 }
 
-/* Dark mode: navy gelap dengan aksen biru moodboard & merah yang sedikit dicerahkan agar kontras. */
+/* Dark: latar #0b0f17, kartu #121826, garis #232b3b, aksen biru #3563e9 / #4c7dff. */
 .dark {
-  --brand-red: #e04545;
-  --brand-red-soft: #3a1d22;
-  --brand-blue: #7daacb;
-  --brand-blue-ink: #3d6f94;
-  --brand-blue-deep: #c4dcee;
-  --brand-blue-soft: #1b3145;
-  --brand-blue-fg: #a8cbe6;
-  --brand-gold: #d1a53a;
-  --brand-rail: #1c3a53;
-  --page-bg: #070d13;
-  --brand-sand: #8a7a4c;
-  --brand-sand-soft: #2e2a1e;
-  --brand-cream: #2a2818;
+  --brand-red: #ef5a5f;
+  --brand-red-soft: #2a1416;
+  --brand-blue: #4c7dff;
+  --brand-blue-ink: #3563e9;
+  --brand-blue-deep: #93aeff;
+  --brand-blue-soft: #1a2547;
+  --brand-blue-fg: #93aeff;
+  --brand-rail: #3563e9;
+  --brand-gold: #f0b43c;
+  --brand-sand: #f7c55a;
+  --brand-sand-soft: #2a2110;
+  --brand-cream: #2a2110;
+  --brand-green: #4ade80;
+  --brand-green-soft: #12261a;
 
-  --background: #0d1721;
-  --foreground: #e5edf4;
-  --card: #15212e;
-  --card-foreground: #e5edf4;
-  --popover: #192839;
-  --popover-foreground: #e5edf4;
-  --primary: var(--brand-blue);
-  --primary-foreground: #0d1721;
+  --background: #0b0f17;
+  --foreground: #f1f5f9;
+  --card: #121826;
+  --card-foreground: #f1f5f9;
+  --popover: #161d2c;
+  --popover-foreground: #f1f5f9;
+  --primary: var(--brand-blue-ink);
+  --primary-foreground: #ffffff;
   --secondary: var(--brand-blue-soft);
-  --secondary-foreground: var(--brand-blue-deep);
-  --muted: #1a2938;
-  --muted-foreground: #8fa3b7;
+  --secondary-foreground: var(--brand-blue-fg);
+  --muted: #161d2c;
+  --muted-foreground: #a3adbd;
   --accent: var(--brand-blue-soft);
-  --accent-foreground: var(--brand-blue-deep);
+  --accent-foreground: var(--brand-blue-fg);
   --destructive: var(--brand-red);
-  --border: #233445;
-  --input: #2b3e51;
+  --border: #232b3b;
+  --input: #2a3345;
   --ring: var(--brand-blue);
   --chart-1: var(--brand-blue);
   --chart-2: var(--brand-red);
-  --chart-3: var(--brand-blue-ink);
-  --chart-4: #5d6f82;
-  --chart-5: var(--brand-sand);
-  --sidebar: var(--brand-rail);
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: var(--card);
-  --sidebar-primary-foreground: var(--brand-blue-fg);
-  --sidebar-accent: rgb(255 255 255 / 0.1);
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgb(255 255 255 / 0.1);
+  --chart-3: var(--brand-gold);
+  --chart-4: #93aeff;
+  --chart-5: var(--brand-green);
+  --sidebar: #121826;
+  --sidebar-foreground: #a3adbd;
+  --sidebar-primary: var(--brand-blue-ink);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--brand-blue-soft);
+  --sidebar-accent-foreground: var(--brand-blue-fg);
+  --sidebar-border: #232b3b;
   --sidebar-ring: var(--brand-blue);
   color-scheme: dark;
 }
@@ -179,13 +183,13 @@
   /* Select bawaan browser: panah sendiri agar rapi dan sama di semua browser */
   select {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2366768a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 1rem center;
     padding-right: 2.75rem !important;
   }
   .dark select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238fa3b7' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a3adbd' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   }
   /* Label di dalam pop-up: seragam, sedikit lebih lembut dari isian */
   [data-slot="dialog-body"] label {
