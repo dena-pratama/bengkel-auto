@@ -1,4 +1,4 @@
-import { ClipboardList, KanbanSquare } from "lucide-react";
+import { ClipboardList, KanbanSquare, ShieldCheck } from "lucide-react";
 import { SectionNav } from "@/components/page-kit";
 import { ESTIMATE_STATUS_LABEL, WO_STATUS_LABEL, type EstimateStatus, type WorkOrderStatus } from "@/lib/validation/service";
 import { cn } from "@/lib/utils";
@@ -6,10 +6,11 @@ import { cn } from "@/lib/utils";
 const TABS = [
   { key: "board", href: "/servis", label: "Papan & work order", icon: KanbanSquare },
   { key: "estimates", href: "/servis/estimasi", label: "Estimasi", icon: ClipboardList },
+  { key: "warranty", href: "/servis/garansi", label: "Klaim garansi", icon: ShieldCheck },
 ] as const;
 
-export function ServiceNav({ active, showEstimates }: { active: (typeof TABS)[number]["key"]; showEstimates: boolean }) {
-  return <SectionNav tabs={TABS.filter((t) => t.key !== "estimates" || showEstimates)} active={active} label="Bagian servis" />;
+export function ServiceNav({ active, showEstimates, showWarranty = false }: { active: (typeof TABS)[number]["key"]; showEstimates: boolean; showWarranty?: boolean }) {
+  return <SectionNav tabs={TABS.filter((t) => (t.key !== "estimates" || showEstimates) && (t.key !== "warranty" || showWarranty))} active={active} label="Bagian servis" />;
 }
 
 export const WO_STATUS_STYLE: Record<WorkOrderStatus, string> = {

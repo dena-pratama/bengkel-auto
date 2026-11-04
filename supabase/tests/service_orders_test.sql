@@ -379,6 +379,26 @@ select public.issue_work_order_part((select id from public.work_order_items wher
 reset role;
 select pg_temp.check(pg_temp.bal('warranty_expense') = 40000, 'garansi: part keluar dicatat sebagai Beban Garansi');
 
+-- Garansi dihitung dari tanggal invoice, bukan tanggal diserahkan; laporan klaim
+select pg_temp.check((select warranty_start = app.today_wib() from public.v_work_orders where id = pg_temp.id('wo')), 'garansi: tanggal mulai = tanggal invoice');
+select pg_temp.login('u_owner');
+select pg_temp.check((public.report_warranty_claims(app.today_wib() - 1, app.today_wib() + 1) ->> 'claim_orders')::int >= 1
+                     and (public.report_warranty_claims(app.today_wib() - 1, app.today_wib() + 1) ->> 'part_cost')::numeric = 40000
+                     and jsonb_array_length(public.report_warranty_claims(app.today_wib() - 1, app.today_wib() + 1) -> 'by_item') >= 1
+                     and jsonb_array_length(public.report_warranty_claims(app.today_wib() - 1, app.today_wib() + 1) -> 'claims') >= 1,
+  'laporan klaim garansi: jumlah klaim, biaya part (HPP 40.000), per barang, daftar klaim');
+select pg_temp.fails($q$ select public.report_warranty_claims(app.today_wib(), app.today_wib() - 5) $q$, 'Rentang tanggal tidak valid', 'laporan garansi: rentang terbalik ditolak');
+select pg_temp.login('u_wh');
+select pg_temp.fails($q$ select public.report_warranty_claims(app.today_wib() - 1, app.today_wib()) $q$, 'tidak punya izin', 'laporan garansi: gudang tidak boleh');
+reset role;
+-- invoice diundur 100 hari: garansi (30 hari) habis walau kendaraan baru diserahkan hari ini
+update public.sales set sale_date = app.today_wib() - 100 where work_order_id = pg_temp.id('wo');
+select pg_temp.check((select warranty_until = app.today_wib() - 70 from public.v_work_orders where id = pg_temp.id('wo')), 'garansi s/d dihitung dari tanggal invoice');
+select pg_temp.login('u_admin');
+select pg_temp.fails($q$ select public.create_warranty_work_order(pg_temp.id('wo'), array[pg_temp.line('wo', 1)], '{"complaint": "Rembes lagi"}') $q$,
+  'masa garansinya habis', 'garansi: habis bila dihitung dari tanggal invoice lama');
+reset role;
+
 -- ---------------------------------------------------------------------------
 -- Riwayat servis kendaraan, hapus permanen
 -- ---------------------------------------------------------------------------

@@ -44,6 +44,8 @@ export type WorkOrderRow = {
   parts_pending: number;
   parts_requested: number;
   warranty_until: string | null;
+  /** Tanggal mulai garansi: tanggal invoice terbit (bila belum ada invoice: tanggal diserahkan) */
+  warranty_start: string | null;
   mechanics: string;
   mechanic_ids: string[];
   minutes_in_status: number;
@@ -144,6 +146,32 @@ export async function getWorkOrder(id: string) {
   };
 }
 export type WorkOrderDetail = NonNullable<Awaited<ReturnType<typeof getWorkOrder>>>;
+
+export type WarrantyReport = {
+  period: { from: string; to: string };
+  claim_lines: number;
+  claim_orders: number;
+  part_cost: number;
+  by_mechanic: { name: string; claims: number; part_cost: number }[];
+  by_item: { code: string | null; name: string; kind: "part" | "jasa"; claims: number; part_cost: number }[];
+  by_supplier: { name: string; claims: number; part_cost: number }[];
+  claims: { wo_no: string; src_wo_no: string | null; plate_no: string; description: string; part_cost: number; created_at: string }[];
+};
+
+/** Laporan klaim garansi per mekanik, barang, dan supplier (izin laporan keuangan) */
+export async function getWarrantyReport(from: string, to: string): Promise<WarrantyReport> {
+  const s = await createClient();
+  const r = must<WarrantyReport>(await s.rpc("report_warranty_claims", { p_from: from, p_to: to }), "laporan garansi");
+  const n = (v: unknown) => Number(v ?? 0);
+  return {
+    ...r,
+    part_cost: n(r.part_cost),
+    by_mechanic: r.by_mechanic.map((x) => ({ ...x, part_cost: n(x.part_cost) })),
+    by_item: r.by_item.map((x) => ({ ...x, part_cost: n(x.part_cost) })),
+    by_supplier: r.by_supplier.map((x) => ({ ...x, part_cost: n(x.part_cost) })),
+    claims: r.claims.map((x) => ({ ...x, part_cost: n(x.part_cost) })),
+  };
+}
 
 export type Mechanic = { id: string; full_name: string };
 

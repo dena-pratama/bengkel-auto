@@ -4,6 +4,33 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.22.0] 2026-11-04
+**Ringkasan:** Garansi dihitung dari tanggal invoice (PRD §7.4) dan laporan klaim garansi per mekanik, barang, dan supplier.
+
+### Added
+- Migration `20261103000025_warranty_invoice_date.sql`:
+  - `app.wo_warranty_start(wo)`: tanggal invoice terbit (posted) untuk WO itu; bila belum ada invoice, tanggal diserahkan.
+  - `report_warranty_claims(dari, sampai)` (izin laporan keuangan): jumlah WO dan baris klaim, biaya part (HPP part keluar dikurangi yang kembali), rincian per mekanik (pengerjaan asal, memakai porsi mekanik), per barang dan jasa, per supplier (penerimaan terakhir barang itu sebelum dijual), dan 100 klaim terbaru.
+- Halaman `/servis/garansi` (tab "Klaim garansi", hanya izin laporan keuangan): filter tanggal (default awal tahun), kartu ringkasan, tiga rincian, dan daftar klaim.
+
+### Changed
+- `v_work_orders.warranty_until` dan cek klaim di `create_warranty_work_order` kini dihitung dari tanggal invoice, bukan tanggal diserahkan. Kolom baru `warranty_start` di `v_work_orders`.
+- Halaman WO menghitung baris yang masih bergaransi dari `warranty_start`.
+
+### Catatan
+- Biaya klaim hanya HPP part; biaya jasa (waktu mekanik) tidak dihitung.
+- Pengaturan "WO garansi menghasilkan komisi" (PRD §10) belum dibuat; WO garansi tetap tidak menghasilkan komisi.
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus. Tes servis menambah: tanggal mulai = tanggal invoice, invoice diundur 100 hari membuat garansi 30 hari habis dan klaim ditolak, laporan klaim (jumlah, biaya part 40.000, per barang, daftar), rentang terbalik dan peran gudang ditolak.
+- `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- **Belum diverifikasi:** halaman `/servis/garansi` dengan login dan data klaim nyata; rincian per mekanik dan per supplier dijalankan tanpa error di tes tetapi isinya belum diperiksa dengan data berisi.
+
+### File terdampak
+`supabase/migrations/20261103000025_warranty_invoice_date.sql`, `supabase/tests/service_orders_test.sql`, `src/lib/service.ts`, `src/app/(app)/servis/garansi/page.tsx`, `src/app/(app)/servis/_components/ui.tsx`, `src/app/(app)/servis/page.tsx`, `src/app/(app)/servis/estimasi/page.tsx`, `src/app/(app)/servis/[id]/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.21.0] 2026-11-04
 **Ringkasan:** Papan servis realtime (PRD §7.3): perubahan work order muncul di papan dan layar TV seketika lewat Supabase Realtime, tanpa menunggu polling.
 

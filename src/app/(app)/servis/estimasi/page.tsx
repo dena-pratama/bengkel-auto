@@ -33,7 +33,7 @@ async function Content() {
 
   return (
     <>
-      <ServiceNav active="estimates" showEstimates />
+      <ServiceNav active="estimates" showEstimates showWarranty={can(ctx, "finance_reports", "view", false)} />
       <PageHeader
         title="Estimasi"
         description={`${waiting} estimasi menunggu keputusan pelanggan`}

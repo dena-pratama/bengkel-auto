@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.21.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.22.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -48,7 +48,8 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.21.0**
 | | Pengambilan part dengan scan QR (barang + rak diverifikasi, ditandai di riwayat, setelan wajib scan) | ✅ | 0.20.0 |
 | | Papan status kanban (lama di status, tanda merah lewat durasi, layar penuh TV, segar tiap 30 detik) | ✅ | 0.10.0 |
 | | Papan realtime (Supabase Realtime, cadangan polling 30 detik) | ✅ | 0.21.0 |
-| | Garansi & klaim (WO garansi Rp0, biaya part ke Beban Garansi) | 🟨 | 0.10.0 (masa garansi dari tanggal diserahkan; dari invoice & laporan klaim menyusul) |
+| | Garansi & klaim (WO garansi Rp0, biaya part ke Beban Garansi, masa garansi dari tanggal invoice) | ✅ | 0.22.0 |
+| | Laporan klaim garansi per mekanik, barang, supplier | ✅ | 0.22.0 |
 | | WO ditutup jadi invoice (wajib sebelum kendaraan diserahkan) | ✅ | 0.11.0 |
 | Penjualan & Kas | POS part langsung (draft ditahan, pelanggan opsional), diskon per role + PIN Owner | ✅ | 0.11.0 |
 | | POS dengan scan QR | ✅ | 0.19.0 |

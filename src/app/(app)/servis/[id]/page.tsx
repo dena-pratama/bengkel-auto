@@ -65,14 +65,14 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
   const nameRecord = Object.fromEntries(names);
   const pending = additional.find((e) => e.id === wo.pending_estimate_id);
 
-  // Klaim garansi: baris yang masih dalam masa garansi (dihitung dari tanggal diserahkan)
-  const deliveredDate = wo.delivered_at ? new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta" }).format(new Date(wo.delivered_at)) : null;
+  // Klaim garansi: baris yang masih dalam masa garansi (dihitung dari tanggal invoice)
+  const warrantyStart = wo.warranty_start;
   const warrantyLines =
-    deliveredDate && wo.status === "delivered"
+    warrantyStart && wo.status === "delivered"
       ? wo.lines
           .filter((l) => !l.is_cancelled && l.warranty_days > 0)
           .map((l) => {
-            const until = new Date(`${deliveredDate}T00:00:00Z`);
+            const until = new Date(`${warrantyStart}T00:00:00Z`);
             until.setUTCDate(until.getUTCDate() + l.warranty_days);
             return { id: l.id, description: l.description, warranty_until: until.toISOString().slice(0, 10) };
           })

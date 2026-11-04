@@ -32,7 +32,7 @@ async function Content() {
 
   return (
     <>
-      <ServiceNav active="board" showEstimates={can(ctx, "service_orders", "view", false)} />
+      <ServiceNav active="board" showEstimates={can(ctx, "service_orders", "view", false)} showWarranty={can(ctx, "finance_reports", "view", false)} />
       <PageHeader
         title="Servis & work order"
         description={`${active.length} kendaraan di bengkel${overdue ? ` · ${overdue} lewat estimasi waktu` : ""}`}
