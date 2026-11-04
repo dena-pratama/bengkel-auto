@@ -4,6 +4,29 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.18.0] 2026-11-04
+**Ringkasan:** Halaman Audit log (PRD §18) untuk Owner: riwayat siapa mengubah apa dan kapan, dengan filter dan perbandingan data sebelum dan sesudah. Panggilan AI ikut tampil.
+
+### Added
+- Migration `20261103000022_audit_view.sql`: view `v_audit_logs` (audit_logs + nama pelaku + panggilan AI sebagai aksi "Panggilan AI"), trigger audit pada `stock_opnames`.
+- Halaman `/audit` (menu Audit Log, izin `audit_log`): filter tanggal (default 7 hari), jenis data, aksi, dan pelaku; 50 baris per halaman; klik baris untuk melihat kolom yang berubah (sebelum dan sesudah).
+- Tes DB `supabase/tests/audit_view_test.sql`.
+- `src/lib/audit.ts`, `src/lib/validation/audit.ts` (label Indonesia nama tabel dan aksi).
+
+### Catatan
+- Data sebelum dan sesudah memuat nilai asli baris, termasuk kolom HPP pada invoice. Karena itu halaman hanya untuk pemegang izin audit_log (Owner); izin lain tidak terbaca (dites).
+- Tabel anak yang sangat ramai (mis. `stock_opname_items`, `journal_lines`) tidak diaudit baris per baris; dokumen induknya tercatat.
+- Belum ada ekspor audit log ke Excel.
+
+### Verifikasi
+- `npm run test:db`: 15 suite lulus. `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- **Halaman `/audit` belum dilihat di browser dengan login.**
+
+### File terdampak
+`supabase/migrations/20261103000022_audit_view.sql`, `supabase/tests/audit_view_test.sql`, `src/app/(app)/audit/page.tsx`, `src/lib/audit.ts`, `src/lib/validation/audit.ts`, `src/lib/navigation.ts`, `src/components/app-nav.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.17.1] 2026-11-04
 **Ringkasan:** Menutup kebocoran HPP: kolom biaya pokok pada penjualan dan retur tidak lagi terbaca lewat API oleh pemegang izin penjualan (PRD §10.2).
 

@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import {
   Banknote,
   Bot,
+  History,
   ClipboardCheck,
   LayoutGrid,
   Menu,
@@ -39,6 +40,7 @@ const ICONS: Record<string, LucideIcon> = {
   banknote: Banknote,
   receipt: Receipt,
   bot: Bot,
+  history: History,
   settings: Settings,
 };
 

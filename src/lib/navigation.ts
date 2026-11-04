@@ -24,4 +24,5 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/keuangan", label: "Keuangan", icon: "wallet", module: "expenses", ready: true },
   { href: "/pajak", label: "Pajak", icon: "receipt", module: "tax_settings", ready: true },
   { href: "/ai", label: "AI Analyst", icon: "bot", module: "ai_analyst", ready: true },
+  { href: "/audit", label: "Audit Log", icon: "history", module: "audit_log", ready: true },
 ];
