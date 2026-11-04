@@ -209,6 +209,26 @@
     overflow-x: clip;
   }
 }
+/* Nota thermal: tersembunyi di layar, tampil hanya saat cetak dengan ukuran kertas 58 atau 80 mm */
+.thermal-only {
+  display: none;
+}
+@media print {
+  body[data-paper="58"] .thermal-only,
+  body[data-paper="80"] .thermal-only {
+    display: block;
+  }
+  body[data-paper="58"] .thermal-only {
+    width: 54mm;
+  }
+  body[data-paper="80"] .thermal-only {
+    width: 74mm;
+  }
+  body[data-paper="58"] .no-thermal,
+  body[data-paper="80"] .no-thermal {
+    display: none !important;
+  }
+}
 /* Cetak invoice / laporan shift: hanya isi halaman, tanpa sidebar & top bar */
 @media print {
   #app-sidebar,

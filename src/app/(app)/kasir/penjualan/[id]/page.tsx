@@ -9,6 +9,7 @@ import { listCashBankAccounts } from "@/lib/purchasing";
 import { METHOD_LABEL, SETTLEMENT_LABEL } from "@/lib/validation/cashier";
 import { cn } from "@/lib/utils";
 import { ReturnDialog } from "../../_components/return-dialog";
+import { ThermalReceipt } from "../../_components/thermal-receipt";
 import { PayDialog, PrintAndShare, VoidPaymentButton, VoidSaleControl } from "../../_components/sale-actions";
 import { CashierNav, PaidBadge, SaleStatusBadge, UUID } from "../../_components/ui";
 
@@ -61,11 +62,13 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <>
+      <ThermalReceipt s={s} shop={ctx.branch.name} />
+      <div className="no-thermal contents">
       <PageHeader
         title={s.sale_no ?? "Draft penjualan"}
         description={[s.source === "work_order" ? `WO ${s.wo_no ?? ""}` : "Penjualan part", s.plate_no, s.customer_name ?? "Umum", formatDate(s.sale_date)].filter(Boolean).join(" · ")}
         back={{ href: "/kasir/penjualan", label: "Penjualan" }}
-        actions={<PrintAndShare waLink={waLink(s)} />}
+        actions={<PrintAndShare waLink={waLink(s)} pdfHref={`/api/v1/kasir/penjualan/${s.id}/pdf`} />}
       />
 
       <section className={cn(panel, "grid gap-3")}>
@@ -224,6 +227,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
       {s.status === "posted" && canVoid && activePayments.length > 0 && (
         <p className="text-xs text-muted-foreground print:hidden">Untuk membatalkan invoice, batalkan dulu pembayarannya (hanya selama shift pembayaran masih terbuka).</p>
       )}
+      </div>
     </>
   );
 }

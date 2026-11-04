@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Ban, MessageCircle, Printer, Undo2 } from "lucide-react";
+import { Ban, FileText, MessageCircle, Printer, ReceiptText, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FormDialog } from "@/components/form-dialog";
 import { FormError } from "@/components/form-field";
@@ -119,12 +119,45 @@ export function VoidSaleControl({ id, posted, needsPin }: { id: string; posted: 
   );
 }
 
-export function PrintAndShare({ waLink }: { waLink: string | null }) {
+const PAPER = {
+  a4: "@page { size: A4; margin: 12mm }",
+  "80": "@page { size: 80mm auto; margin: 3mm }",
+  "58": "@page { size: 58mm auto; margin: 2mm }",
+} as const;
+
+/** Cetak invoice A4 atau nota thermal 58/80 mm (ukuran kertas diatur lewat @page sementara), unduh PDF, kirim WhatsApp. */
+function printAs(paper: keyof typeof PAPER) {
+  const style = document.createElement("style");
+  style.id = "paper-style";
+  style.textContent = `@media print { ${PAPER[paper]} }`;
+  document.head.appendChild(style);
+  if (paper !== "a4") document.body.dataset.paper = paper;
+  const done = () => {
+    style.remove();
+    delete document.body.dataset.paper;
+    window.removeEventListener("afterprint", done);
+  };
+  window.addEventListener("afterprint", done);
+  window.print();
+}
+
+export function PrintAndShare({ waLink, pdfHref }: { waLink: string | null; pdfHref?: string }) {
   return (
     <div className="flex flex-wrap gap-2 print:hidden">
-      <Button variant="outline" onClick={() => window.print()}>
-        <Printer className="size-4" /> Cetak
+      <Button variant="outline" onClick={() => printAs("a4")}>
+        <Printer className="size-4" /> Cetak A4
       </Button>
+      <Button variant="outline" onClick={() => printAs("80")}>
+        <ReceiptText className="size-4" /> Nota 80 mm
+      </Button>
+      <Button variant="outline" onClick={() => printAs("58")}>
+        <ReceiptText className="size-4" /> Nota 58 mm
+      </Button>
+      {pdfHref && (
+        <Button variant="outline" nativeButton={false} render={<a href={pdfHref} target="_blank" rel="noreferrer" />}>
+          <FileText className="size-4" /> Unduh PDF
+        </Button>
+      )}
       {waLink && (
         <Button variant="outline" nativeButton={false} render={<a href={waLink} target="_blank" rel="noreferrer" />}>
           <MessageCircle className="size-4" /> Kirim via WhatsApp

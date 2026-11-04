@@ -4,6 +4,32 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.27.0] 2026-11-04
+**Ringkasan:** PDF dari server (PO, invoice, laporan keuangan) dan nota thermal 58/80 mm (PRD §19: PDF dibuat di server, CSS print untuk thermal).
+
+### Added
+- `src/lib/pdf.ts`: penyusun PDF A4 dengan `pdf-lib` (font standar PDF tertanam, tanpa berkas font eksternal sehingga aman untuk Docker standalone): kop bengkel, judul, meta, tabel dengan pemenggalan baris dan kepala berulang antar halaman, ringkasan total, catatan, nomor halaman. Karakter di luar Latin-1 diganti tanda tanya.
+- `GET /api/v1/pembelian/po/[id]/pdf` (izin pembelian lihat): purchase order untuk dikirim ke supplier. Tombol "Unduh PDF" di halaman PO.
+- `GET /api/v1/kasir/penjualan/[id]/pdf` (izin penjualan/piutang lihat): invoice A4 dengan rincian, pembayaran, DPP/PPN, sisa tagihan. Tombol "Unduh PDF" di halaman invoice.
+- `GET /api/v1/keuangan/pdf` (izin laporan keuangan): laba rugi, neraca, arus kas, margin. Tombol "Unduh PDF" di halaman Laporan keuangan.
+- Nota thermal: tombol "Nota 80 mm" dan "Nota 58 mm" di halaman invoice. Ukuran kertas diatur lewat `@page` sementara, nota ringkas `ThermalReceipt` hanya tampil saat cetak thermal; tombol "Cetak A4" menggantikan "Cetak".
+- Dependensi: `pdf-lib`.
+- Pratinjau tanpa login (development saja): `/dev/preview/pdf` (PDF contoh) dan `/dev/preview/nota` (nota thermal).
+
+### Catatan
+- PDF kuitansi pembayaran, slip gaji, dan laporan pajak (PPN) belum tersedia; PPN tetap lewat Excel.
+- Cetak thermal memakai dialog cetak browser (matikan header/footer, skala 100%); ukuran hasil di printer thermal sungguhan belum diuji.
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus. `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- PDF contoh dirender di browser lewat pdf.js: kop, meta, tabel dengan baris panjang terpenggal rapi, kepala tabel berulang, 3 halaman, nomor halaman. Nota thermal 58 dan 80 mm dilihat di browser.
+- **Belum diverifikasi:** rute PDF dengan login dan data nyata (PO, invoice, laporan), serta hasil cetak ke printer thermal fisik.
+
+### File terdampak
+`src/lib/pdf.ts`, `src/app/api/v1/pembelian/po/[id]/pdf/route.ts`, `src/app/api/v1/kasir/penjualan/[id]/pdf/route.ts`, `src/app/api/v1/keuangan/pdf/route.ts`, `src/app/(app)/kasir/_components/thermal-receipt.tsx`, `src/app/(app)/kasir/_components/sale-actions.tsx`, `src/app/(app)/kasir/penjualan/[id]/page.tsx`, `src/app/(app)/pembelian/po/[id]/page.tsx`, `src/app/(app)/keuangan/laporan/page.tsx`, `src/app/globals.css`, `src/app/dev/preview/pdf/route.ts`, `src/app/dev/preview/nota/page.tsx`, `package.json`, `devlog.md`, `fitur.md`, `VERSION`
+
+---
+
 ## [0.26.0] 2026-11-04
 **Ringkasan:** Kompatibilitas kendaraan pada barang (PRD §4.4): catat merek, model, tahun, dan mesin yang cocok untuk tiap barang, dan cari barang dari nama kendaraan.
 

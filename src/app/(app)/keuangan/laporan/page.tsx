@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { Download } from "lucide-react";
+import { Download, FileText } from "lucide-react";
 import { NoAccess, PageHeader, Skeleton, inputClass, panel } from "@/components/page-kit";
 import { Button } from "@/components/ui/button";
 import { can, requireUser } from "@/lib/auth";
@@ -78,9 +78,16 @@ async function Content({ searchParams }: { searchParams: Promise<Record<string, 
         title="Laporan keuangan"
         description={kind === "neraca" ? `Per ${formatDate(to)}` : `${formatDate(from)} s/d ${formatDate(to)}`}
         actions={
-          <Button variant="outline" nativeButton={false} render={<a href={`/api/v1/keuangan/export${qs({})}`} />}>
-            <Download className="size-4" /> Ekspor Excel
-          </Button>
+          <>
+            <Button variant="outline" nativeButton={false} render={<a href={`/api/v1/keuangan/export${qs({})}`} />}>
+              <Download className="size-4" /> Ekspor Excel
+            </Button>
+            {["laba-rugi", "neraca", "arus-kas", "margin"].includes(kind) && (
+              <Button variant="outline" nativeButton={false} render={<a href={`/api/v1/keuangan/pdf${qs({})}`} target="_blank" rel="noreferrer" />}>
+                <FileText className="size-4" /> Unduh PDF
+              </Button>
+            )}
+          </>
         }
       />
 

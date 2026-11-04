@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import { FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { can, requireUser } from "@/lib/auth";
@@ -34,7 +36,16 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <>
-      <PageHeader title={po.po_no} description={`${po.supplier} · ${formatDate(po.order_date)}`} back={{ href: "/pembelian", label: "Purchase order" }} />
+      <PageHeader
+        title={po.po_no}
+        description={`${po.supplier} · ${formatDate(po.order_date)}`}
+        back={{ href: "/pembelian", label: "Purchase order" }}
+        actions={
+          <Button variant="outline" nativeButton={false} render={<a href={`/api/v1/pembelian/po/${po.id}/pdf`} target="_blank" rel="noreferrer" />}>
+            <FileText className="size-4" /> Unduh PDF
+          </Button>
+        }
+      />
       <section className={cn(panel, "grid gap-3")}>
         <div className="flex flex-wrap items-center gap-3">
           <PoStatusBadge status={po.status} />

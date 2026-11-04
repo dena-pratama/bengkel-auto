@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.26.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.27.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -38,7 +38,8 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.26.0**
 | | Master jasa & paket servis (alokasi harga proporsional) | ✅ | 0.6.0 |
 | | Mutasi stok (ledger) + HPP rata-rata tertimbang + saldo awal + peringatan stok minimum | ✅ | 0.6.0 |
 | Pembelian | Supplier, PO (saran dari stok menipis), penerimaan barang (dari PO / tanpa PO), HPP rata-rata, PPN masuk HPP / PPN Masukan | ✅ | 0.7.0 |
-| | Cetak / kirim PO sebagai PDF lewat WhatsApp, foto faktur | ⬜ | - |
+| | PO sebagai PDF (unduh, kirim manual lewat WhatsApp) | ✅ | 0.27.0 |
+| | Foto faktur supplier | ⬜ | - |
 | | Retur ke supplier, hutang usaha (aging, jatuh tempo H-3) & pembayaran (sebagian / banyak faktur, batal) | ✅ | 0.7.0 |
 | Pelanggan | Pelanggan & kendaraan relasional, riwayat kepemilikan | ✅ | 0.9.0 |
 | | Riwayat servis per kendaraan (tanggal, km, jasa, part, mekanik, biaya, garansi) | ✅ | 0.10.0 |
@@ -54,7 +55,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.26.0**
 | Penjualan & Kas | POS part langsung (draft ditahan, pelanggan opsional), diskon per role + PIN Owner | ✅ | 0.11.0 |
 | | POS dengan scan QR | ✅ | 0.19.0 |
 | | Pembayaran fleksibel (split tunai/transfer/QRIS/EDC, DP dipotong otomatis, tempo + batas kredit) | ✅ | 0.11.0 |
-| | Nota/invoice: cetak lewat browser, kirim WA klik-ke-chat, DPP/PPN terpisah saat PPN aktif | 🟨 | 0.11.0 (thermal 58/80 mm khusus & PDF menyusul) |
+| | Nota/invoice: cetak A4 dan nota thermal 58/80 mm, PDF, kirim WA klik-ke-chat, DPP/PPN terpisah saat PPN aktif | ✅ | 0.27.0 |
 | | Buka-tutup kas shift (modal awal, kas keluar kecil, hitung per pecahan, selisih + persetujuan, rekap non-tunai) | ✅ | 0.11.0 |
 | | Piutang: rekap per pelanggan, umur 0-30/31-60/> 60, pelunasan sebagian | ✅ | 0.11.0 |
 | | Retur penjualan | ✅ | 0.12.0 |
@@ -69,7 +70,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.26.0**
 | | Foto bukti transaksi | ⬜ | - |
 | | Chart of accounts (tambah akun), jurnal otomatis semua modul, jurnal manual + pembalik, tutup buku bulanan | ✅ | 0.14.0 |
 | | Laba rugi (banding periode lalu), neraca, arus kas, buku besar, margin per jasa/barang/WO, ekspor Excel | ✅ | 0.14.0 |
-| | Ekspor PDF laporan (saat ini cetak lewat browser) | ⬜ | - |
+| | Ekspor PDF laporan (laba rugi, neraca, arus kas, margin) | ✅ | 0.27.0 |
 | Pajak | Profil pajak (bentuk usaha, PKP, saklar PPN/PPh), tarif PPN bertanggal | ✅ | 0.15.0 |
 | | Laporan PPN (Keluaran, Masukan, selisih, daftar dokumen, setoran, ekspor Excel) | ✅ | 0.15.0 |
 | | PPh Final UMKM (omzet bebas OP, jurnal bulanan, peringatan 80%/95% batas, setor) & estimasi PPh tarif umum di laba rugi | ✅ | 0.15.0 |
