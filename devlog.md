@@ -4,6 +4,25 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.41.0] 2026-11-05
+**Ringkasan:** Redesain UI/UX tahap 3, modul Pelanggan: halaman Pelanggan mengikuti frame Figma "06 · Pelanggan" (Desktop & Mobile, Light & Dark) dengan 4 kartu metrik (total pelanggan, pelanggan fleet/perusahaan, kendaraan terdaftar, dan pelanggan boleh tempo), bilah pencarian & filter tipe pelanggan bergaya pil membulat, kartu pelanggan & kendaraan rapi dalam grid responsif dengan avatar dan lencana nomor plat mono. Ditambah pratinjau `/dev/preview/pelanggan`.
+
+### Changed
+- `src/app/(app)/pelanggan/page.tsx`: penambahan 4 kartu ringkasan (Total pelanggan berikon pengguna biru, Pelanggan fleet berikon gedung hijau, Kendaraan terdaftar berikon mobil kuning, dan Boleh tempo berikon jam merah).
+- `src/app/(app)/pelanggan/_components/lists.tsx`: tombol filter tipe pelanggan (Semua, Perorangan, Perusahaan) diselaraskan ke gaya pil Figma dengan warna `bg-brand-rail`, kartu pelanggan dan kendaraan diperbarui menjadi `rounded-xl border border-border bg-card` dengan efek hover halus dan lencana plat nomor font mono.
+
+### Added
+- `src/app/dev/preview/pelanggan/page.tsx`: pratinjau tampilan pelanggan & kendaraan tanpa login (khusus development) dengan 4 contoh pelanggan (perorangan dan armada perusahaan) dan 5 kendaraan terkait.
+
+### Verifikasi
+- `tsc`, `eslint`, `check:dashes`, `next build` lolos.
+- Desain selaras dengan Figma page "06 · Pelanggan" (Desktop Light/Dark dan Mobile Light/Dark).
+
+### File terdampak
+`src/app/(app)/pelanggan/page.tsx`, `src/app/(app)/pelanggan/_components/lists.tsx`, `src/app/dev/preview/pelanggan/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.40.0] 2026-11-05
 **Ringkasan:** Redesain UI/UX tahap 3, modul Pembelian: halaman utama Purchase Order & Pembelian mengikuti frame Figma "05 · Pembelian" (Desktop & Mobile, Light & Dark) dengan 4 kartu metrik (pembelian bulan ini, PO menunggu datang, hutang jatuh tempo, dan supplier aktif), lencana status PO membulat, bilah filter terpadu, serta tabel daftar PO berbingkai rapi. Ditambah pratinjau `/dev/preview/pembelian`.
 
