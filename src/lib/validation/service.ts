@@ -78,6 +78,8 @@ export const partMoveSchema = z.object({
   qty: z.preprocess(toNumber, z.number({ error: "Jumlah harus angka" }).gt(0, "Jumlah harus lebih dari 0")),
   location_id: z.uuid("Pilih lokasi rak"),
   note: text(200),
+  /** QR barang dan rak sama-sama diverifikasi lewat scan (hanya untuk pengeluaran) */
+  scanned: z.boolean().optional(),
 });
 export type PartMoveInput = z.input<typeof partMoveSchema>;
 

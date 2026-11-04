@@ -98,10 +98,11 @@ export type WorkOrderLine = {
   is_cancelled: boolean;
   cancel_reason: string | null;
   base_unit: string | null;
+  item_sku: string | null;
   mechanics: { employee_id: string; share_percent: number }[];
 };
 
-export type PartIssue = { id: string; work_order_item_id: string; kind: "issue" | "return"; qty: number; location: string; note: string | null; created_at: string };
+export type PartIssue = { id: string; work_order_item_id: string; kind: "issue" | "return"; qty: number; location: string; note: string | null; scanned: boolean; created_at: string };
 export type StatusLog = { id: string; from_status: WorkOrderStatus | null; to_status: WorkOrderStatus; employee_id: string | null; note: string | null; created_at: string };
 
 export async function getWorkOrder(id: string) {
@@ -111,17 +112,17 @@ export async function getWorkOrder(id: string) {
     s
       .from("work_order_items")
       .select(
-        "id, line_type, service_id, item_id, package_id, description, qty, unit_price, discount_amount, line_total, duration_minutes, warranty_days, sort_order, issued_qty, issue_requested_at, is_cancelled, cancel_reason, items(units!items_base_unit_id_fkey(code)), work_order_mechanics(employee_id, share_percent)",
+        "id, line_type, service_id, item_id, package_id, description, qty, unit_price, discount_amount, line_total, duration_minutes, warranty_days, sort_order, issued_qty, issue_requested_at, is_cancelled, cancel_reason, items(sku, units!items_base_unit_id_fkey(code)), work_order_mechanics(employee_id, share_percent)",
       )
       .eq("work_order_id", id)
       .order("sort_order"),
-    s.from("part_issues").select("id, work_order_item_id, kind, qty, note, created_at, locations(code, name)").eq("work_order_id", id).order("created_at", { ascending: false }),
+    s.from("part_issues").select("id, work_order_item_id, kind, qty, note, scanned, created_at, locations(code, name)").eq("work_order_id", id).order("created_at", { ascending: false }),
     s.from("work_order_status_logs").select("id, from_status, to_status, employee_id, note, created_at").eq("work_order_id", id).order("created_at", { ascending: false }),
   ]);
   const row = must<WorkOrderRow | null>(wo, "work order");
   if (!row) return null;
-  type LineRow = Omit<WorkOrderLine, "base_unit" | "mechanics"> & {
-    items: { units: { code: string } } | null;
+  type LineRow = Omit<WorkOrderLine, "base_unit" | "item_sku" | "mechanics"> & {
+    items: { sku: string; units: { code: string } } | null;
     work_order_mechanics: { employee_id: string; share_percent: number }[];
   };
   type IssueRow = Omit<PartIssue, "location"> & { locations: { code: string; name: string } };
@@ -135,6 +136,7 @@ export async function getWorkOrder(id: string) {
       line_total: num(l.line_total),
       issued_qty: num(l.issued_qty),
       base_unit: items?.units.code ?? null,
+      item_sku: items?.sku ?? null,
       mechanics: work_order_mechanics.map((m) => ({ employee_id: m.employee_id, share_percent: num(m.share_percent) })),
     })),
     issues: must<IssueRow[]>(issues, "pengeluaran part").map(({ locations, ...i }) => ({ ...i, qty: num(i.qty), location: `${locations.code} · ${locations.name}` })),
@@ -161,14 +163,14 @@ export async function employeeNames(ids: string[]): Promise<Map<string, string>>
 }
 
 /** Saldo stok per lokasi untuk barang di WO (pilihan rak saat mengeluarkan part) */
-export async function stockByLocation(itemIds: string[]): Promise<{ item_id: string; location_id: string; location: string; qty: number }[]> {
+export async function stockByLocation(itemIds: string[]): Promise<{ item_id: string; location_id: string; location: string; location_code: string; qty: number }[]> {
   if (itemIds.length === 0) return [];
   const s = await createClient();
   type Row = { item_id: string; location_id: string; qty: number; locations: { code: string; name: string; is_active: boolean } };
   const rows = must<Row[]>(await s.from("stock_balances").select("item_id, location_id, qty, locations(code, name, is_active)").in("item_id", itemIds), "stok per lokasi");
   return rows
     .filter((r) => r.locations.is_active)
-    .map((r) => ({ item_id: r.item_id, location_id: r.location_id, location: `${r.locations.code} · ${r.locations.name}`, qty: num(r.qty) }));
+    .map((r) => ({ item_id: r.item_id, location_id: r.location_id, location: `${r.locations.code} · ${r.locations.name}`, location_code: r.locations.code, qty: num(r.qty) }));
 }
 
 // ---------------------------------------------------------------------------- Estimasi

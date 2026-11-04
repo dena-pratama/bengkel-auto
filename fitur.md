@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.19.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.20.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -45,7 +45,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.19.0**
 | | Reminder servis berkala (klik-ke-WA) | ⬜ | - |
 | Servis | Estimasi (versi/revisi, kirim WA klik-ke-chat, persetujuan langsung/telepon/chat, masa berlaku, paket dipecah) | ✅ | 0.10.0 |
 | | Work order dari estimasi (satu klik), pekerjaan tambahan wajib persetujuan, mekanik per jasa (porsi %), minta/keluar/kembali part + jurnal | ✅ | 0.10.0 |
-| | Pengambilan part dengan scan QR | 🟨 | 0.19.0 (scan di form estimasi; konfirmasi keluar part di WO belum) |
+| | Pengambilan part dengan scan QR (barang + rak diverifikasi, ditandai di riwayat, setelan wajib scan) | ✅ | 0.20.0 |
 | | Papan status kanban (lama di status, tanda merah lewat durasi, layar penuh TV, segar tiap 30 detik) | ✅ | 0.10.0 |
 | | Papan realtime (Supabase Realtime) | ⬜ | - |
 | | Garansi & klaim (WO garansi Rp0, biaya part ke Beban Garansi) | 🟨 | 0.10.0 (masa garansi dari tanggal diserahkan; dari invoice & laporan klaim menyusul) |

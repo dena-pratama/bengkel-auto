@@ -275,6 +275,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
                       {i.kind === "issue" ? "Keluar" : "Kembali"} {formatQty(i.qty)} · {wo.lines.find((l) => l.id === i.work_order_item_id)?.description}
                     </span>
                     <span className="text-xs text-muted-foreground">
+                      {i.kind === "issue" && (i.scanned ? "scan QR · " : "manual · ")}
                       {i.location} · {formatDateTime(i.created_at)}
                     </span>
                   </li>

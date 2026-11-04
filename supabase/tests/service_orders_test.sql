@@ -288,8 +288,9 @@ select pg_temp.check((select status = 'in_progress' from public.work_orders wher
 -- ---------------------------------------------------------------------------
 reset role;
 select pg_temp.login('u_wh');
-select public.issue_work_order_part(pg_temp.line('wo', 4), 1, pg_temp.id('l_bin'));
+select public.issue_work_order_part(pg_temp.line('wo', 4), 1, pg_temp.id('l_bin'), null, true);
 select public.return_work_order_part(pg_temp.line('wo', 4), 1, pg_temp.id('l_bin'), 'Tidak jadi dipakai');
+
 select pg_temp.check((select is_cancelled and issued_qty = 0 from public.work_order_items where id = pg_temp.line('wo', 4)),
   'kembali semua: baris part batal (tidak ditagih)');
 select public.return_work_order_part(pg_temp.line('wo', 2), 1, pg_temp.id('l_bin'));
@@ -339,7 +340,17 @@ select pg_temp.fails($q$ select public.add_work_order_work(pg_temp.id('wo'),
 -- ---------------------------------------------------------------------------
 reset role;
 select pg_temp.login('u_wh');
-select public.issue_work_order_part((select id from public.work_order_items where work_order_id = pg_temp.id('wo2') and line_type = 'part'), 1, pg_temp.id('l_bin'));
+-- Pengeluaran part dengan scan QR: setelan wajib scan menolak pengeluaran manual
+reset role;
+update public.settings set value = 'true'::jsonb where key = 'part_issue_require_scan';
+select pg_temp.login('u_wh');
+select pg_temp.fails(format($q$ select public.issue_work_order_part('%s', 1, '%s') $q$, (select id from public.work_order_items where work_order_id = pg_temp.id('wo2') and line_type = 'part'), pg_temp.id('l_bin')), 'wajib scan', 'setelan wajib scan: pengeluaran manual ditolak');
+select pg_temp.fails(format($q$ select public.issue_work_order_part('%s', 1, '%s', null, false) $q$, (select id from public.work_order_items where work_order_id = pg_temp.id('wo2') and line_type = 'part'), pg_temp.id('l_bin')), 'wajib scan', 'setelan wajib scan: scanned=false ditolak');
+select public.issue_work_order_part((select id from public.work_order_items where work_order_id = pg_temp.id('wo2') and line_type = 'part'), 1, pg_temp.id('l_bin'), null, true);
+select pg_temp.check((select scanned from public.part_issues where work_order_item_id = (select id from public.work_order_items where work_order_id = pg_temp.id('wo2') and line_type = 'part') and kind = 'issue'), 'pengeluaran dengan scan diterima dan ditandai scanned');
+reset role;
+update public.settings set value = 'false'::jsonb where key = 'part_issue_require_scan';
+select pg_temp.login('u_wh');
 reset role;
 select pg_temp.login('u_admin');
 select pg_temp.fails($q$ select public.void_work_order(pg_temp.id('wo2'), 'Pelanggan batal') $q$, 'Kembalikan dulu', 'batal WO: part keluar harus kembali dulu');

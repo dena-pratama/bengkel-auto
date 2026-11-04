@@ -4,6 +4,34 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.20.0] 2026-11-04
+**Ringkasan:** Pengeluaran part untuk work order dengan scan QR barang dan rak (PRD alur servis: tidak ada part keluar tanpa scan QR). Pengeluaran yang terverifikasi scan ditandai, dan Owner bisa mewajibkan scan lewat setelan.
+
+### Added
+- Migration `20261103000023_part_issue_scan.sql`: kolom `part_issues.scanned`, setelan `part_issue_require_scan` (default false), dan `issue_work_order_part` menerima parameter `p_scanned`. Bila setelan true, pengeluaran tanpa scan ditolak dengan pesan "Pengeluaran part wajib scan QR barang dan rak".
+- Panel "Keluarkan part" di work order: tombol Scan QR barang (harus barang pada baris WO itu), Scan QR rak (harus rak yang menyimpan stok barang; otomatis memilih rak), dan kotak untuk pemindai USB (scan lalu Enter, awalan `L:` rak dan `I:` barang). Scan yang salah ditolak dengan pesan jelas. Mengubah rak lewat dropdown membatalkan status verifikasi rak.
+- Riwayat "Keluar-masuk part" menandai pengeluaran "scan QR" atau "manual".
+- Pratinjau tanpa login (development saja): `/dev/preview/part-move`.
+- Tes DB: penanda scanned, setelan wajib scan menolak pengeluaran manual dan `scanned=false`, menerima pengeluaran dengan scan.
+
+### Changed
+- `issue_work_order_part` kini punya 5 parameter (yang ke-5 `p_scanned`, default false); pemanggil lama tetap jalan.
+
+### Catatan
+- Verifikasi scan terjadi di aplikasi (barang dan rak dicocokkan dengan SKU dan kode rak); database hanya mencatat penandanya, jadi klien yang memanggil API langsung bisa mengirim `p_scanned=true`. Cukup untuk kontrol operasional, bukan jaminan anti-curang.
+- Belum ada layar pengaturan untuk mengubah `part_issue_require_scan`; sementara diubah lewat tabel `settings`.
+- Pengembalian part (return) tidak memerlukan scan.
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus. `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- Di browser (pratinjau): scan barang salah ditolak, barang benar terverifikasi, rak salah ditolak, rak benar memilih rak dan menampilkan "Barang dan rak sesuai".
+- **Belum diverifikasi:** panel ini di halaman work order dengan login nyata, kamera HP, dan pemindai USB fisik.
+
+### File terdampak
+`supabase/migrations/20261103000023_part_issue_scan.sql`, `supabase/tests/service_orders_test.sql`, `src/lib/service.ts`, `src/lib/validation/service.ts`, `src/app/(app)/servis/actions.ts`, `src/app/(app)/servis/[id]/page.tsx`, `src/app/(app)/servis/_components/wo-panels.tsx`, `src/app/dev/preview/part-move/**`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.19.0] 2026-11-04
 **Ringkasan:** QR label dan scan (PRD §4.3): cetak label QR barang dan rak, halaman scan yang menampilkan stok/harga/mutasi atau isi rak, dan scan (kamera atau pemindai USB) di kotak cari barang pada pembelian, kasir, dan estimasi.
 

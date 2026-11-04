@@ -3,7 +3,9 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowRight, PackageOpen, PackagePlus, PackageSearch, Users, XCircle } from "lucide-react";
+import { ArrowRight, CheckCircle2, PackageOpen, PackagePlus, PackageSearch, Users, XCircle } from "lucide-react";
+import { ScanButton } from "@/components/qr-scanner";
+import { parseQr } from "@/lib/qr";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-field";
 import { inputClass } from "@/components/page-kit";
@@ -130,7 +132,7 @@ export function VoidWorkOrder({ id }: { id: string }) {
   );
 }
 
-export type StockOption = { location_id: string; location: string; qty: number };
+export type StockOption = { location_id: string; location: string; location_code: string; qty: number };
 
 /** Satu baris WO: jasa (mekanik) atau part (minta, keluar, kembali), plus batal baris */
 export function WoLine({
@@ -232,6 +234,7 @@ export function WoLine({
           kind={panel}
           max={panel === "issue" ? remaining : line.issued_qty}
           unit={line.base_unit ?? ""}
+          itemSku={line.item_sku}
           stock={stock}
           pending={pending}
           onSave={(v) => run(() => movePartAction(line.id, panel, v), panel === "issue" ? "Part dikeluarkan." : "Part dikembalikan ke stok.", () => setPanel(null))}
@@ -302,10 +305,11 @@ function MechanicEditor({
   );
 }
 
-function PartMove({
+export function PartMove({
   kind,
   max,
   unit,
+  itemSku,
   stock,
   pending,
   onSave,
@@ -313,17 +317,95 @@ function PartMove({
   kind: "issue" | "return";
   max: number;
   unit: string;
+  itemSku: string | null;
   stock: StockOption[];
   pending: boolean;
-  onSave: (v: { qty: string; location_id: string; note: string }) => void;
+  onSave: (v: { qty: string; location_id: string; note: string; scanned: boolean }) => void;
 }) {
   const options = kind === "issue" ? stock.filter((s) => s.qty > 0) : stock;
   const [v, setV] = useState({ qty: String(max), location_id: options[0]?.location_id ?? "", note: "" });
+  const [itemOk, setItemOk] = useState(false);
+  const [rackOk, setRackOk] = useState(false);
+  const [scanError, setScanError] = useState("");
+
+  // Scan QR barang: harus barang yang diminta WO ini
+  const scanItem = (raw: string) => {
+    const t = parseQr(raw);
+    if (t && t.kind !== "location" && itemSku && t.code === itemSku.toUpperCase()) {
+      setItemOk(true);
+      setScanError("");
+    } else {
+      setItemOk(false);
+      setScanError(`QR ${raw.trim().slice(0, 40)} bukan barang ini (butuh ${itemSku ?? "SKU barang"}).`);
+    }
+  };
+  // Scan QR rak: harus rak yang menyimpan stok barang ini
+  const scanRack = (raw: string) => {
+    const t = parseQr(raw);
+    const hit = t && t.kind !== "item" ? options.find((o) => o.location_code.toUpperCase() === t.code) : undefined;
+    if (hit) {
+      setV((x) => ({ ...x, location_id: hit.location_id }));
+      setRackOk(true);
+      setScanError("");
+    } else {
+      setRackOk(false);
+      setScanError(`Rak ${raw.trim().slice(0, 40)} tidak menyimpan stok barang ini.`);
+    }
+  };
+  const scanned = kind === "issue" && itemOk && rackOk;
+  // Pemindai USB: kode diketik lalu Enter. Awalan L: = rak, I: = barang, tanpa awalan = coba barang lalu rak.
+  const [typed, setTyped] = useState("");
+  const submitTyped = () => {
+    const t = parseQr(typed);
+    setTyped("");
+    if (!t) return setScanError("Kode tidak dikenali.");
+    if (t.kind === "location") return scanRack(typed);
+    if (t.kind === "item" || (itemSku && t.code === itemSku.toUpperCase())) return scanItem(typed);
+    scanRack(typed);
+  };
+
   return (
     <div className="grid gap-2 rounded-sm border border-border p-3 sm:grid-cols-[1fr_110px_1fr_auto] sm:items-end">
+      {kind === "issue" && (
+        <div className="grid gap-1.5 sm:col-span-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <ScanButton label={itemOk ? "Barang terverifikasi" : "Scan QR barang"} onScan={scanItem} className="h-9" />
+            <ScanButton label={rackOk ? "Rak terverifikasi" : "Scan QR rak"} onScan={scanRack} className="h-9" />
+            {scanned ? (
+              <span className="inline-flex items-center gap-1 text-sm font-medium text-brand-blue-fg">
+                <CheckCircle2 className="size-4" /> Barang dan rak sesuai
+              </span>
+            ) : (
+              <span className="text-xs text-muted-foreground">Scan barang dan rak agar tercatat terverifikasi.</span>
+            )}
+            <input
+              value={typed}
+              onChange={(e) => setTyped(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  submitTyped();
+                }
+              }}
+              placeholder="Pemindai USB: scan di sini"
+              aria-label="Kode dari pemindai USB"
+              autoComplete="off"
+              className={cn(inputClass, "h-9 w-56 font-mono text-sm")}
+            />
+          </div>
+          {scanError && <p role="alert" className="text-sm text-destructive">{scanError}</p>}
+        </div>
+      )}
       <label className="grid gap-1.5 text-sm font-medium">
         {kind === "issue" ? "Ambil dari rak" : "Kembalikan ke rak"}
-        <select value={v.location_id} onChange={(e) => setV({ ...v, location_id: e.target.value })} className={inputClass}>
+        <select
+          value={v.location_id}
+          onChange={(e) => {
+            setV({ ...v, location_id: e.target.value });
+            setRackOk(false);
+          }}
+          className={inputClass}
+        >
           {options.length === 0 && <option value="">Stok kosong di semua rak</option>}
           {options.map((s) => (
             <option key={s.location_id} value={s.location_id}>
@@ -340,7 +422,7 @@ function PartMove({
         Catatan
         <input value={v.note} onChange={(e) => setV({ ...v, note: e.target.value })} placeholder={kind === "issue" ? "mis. hasil scan rak" : "alasan kembali"} className={inputClass} />
       </label>
-      <Button disabled={pending || !v.location_id} onClick={() => onSave(v)}>
+      <Button disabled={pending || !v.location_id} onClick={() => onSave({ ...v, scanned })}>
         {kind === "issue" ? "Keluarkan" : "Kembalikan"}
       </Button>
     </div>

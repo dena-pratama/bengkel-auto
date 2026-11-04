@@ -232,12 +232,8 @@ export async function movePartAction(itemId: string, kind: "issue" | "return", i
   if (!parsed.success) return invalid(parsed.error.issues);
   if (!isUuid(itemId)) return bad;
   const supabase = await createClient();
-  const { error } = await supabase.rpc(kind === "issue" ? "issue_work_order_part" : "return_work_order_part", {
-    p_item_id: itemId,
-    p_qty: parsed.data.qty,
-    p_location_id: parsed.data.location_id,
-    p_note: parsed.data.note || null,
-  });
+  const args = { p_item_id: itemId, p_qty: parsed.data.qty, p_location_id: parsed.data.location_id, p_note: parsed.data.note || null };
+  const { error } = kind === "issue" ? await supabase.rpc("issue_work_order_part", { ...args, p_scanned: parsed.data.scanned === true }) : await supabase.rpc("return_work_order_part", args);
   if (error) return dbError(error);
   refresh();
   revalidatePath("/inventory", "layout");
