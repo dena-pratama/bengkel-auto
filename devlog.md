@@ -4,6 +4,25 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.35.0] 2026-11-04
+**Ringkasan:** Redesain UI/UX tahap 2 (cabang `ui-ux-redesign`): kerangka aplikasi mengikuti Figma. Sidebar terang 264 px dengan menu bergrup dan lencana, bilah atas dengan pencarian, tombol tema, bel, pengaturan, dan chip profil, serta drawer di layar kecil.
+
+### Changed
+- **Sidebar** terang (264 px, bisa diciutkan ke 72 px, pilihan diingat; Ctrl+B): logo, kartu Cabang (label saja), menu bergrup Operasional, Keuangan, SDM & Sistem, Pengaturan dan Keluar di bawah. Item aktif biru lembut.
+- **Lencana menu dari data nyata**: jumlah work order aktif di Servis, jumlah barang menipis (merah) di Barang & Jasa, "Baru" di AI Analyst.
+- **Bilah atas**: pencarian global (tampilan saja, Ctrl K), tombol tema berbentuk pil dengan matahari dan bulan, bel notifikasi, tombol Pengaturan, chip profil bulat.
+- **Mobile**: sidebar menjadi drawer 300 px dengan scrim, dibuka lewat tombol menu, tutup dengan Esc.
+- Urutan menu: Beranda, Servis & Work Order, Kasir, Barang & Jasa, Pembelian, Pelanggan, Stok Opname, Keuangan, Penggajian, Pajak, Karyawan, AI Analyst, Audit Log.
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Di browser (pratinjau tanpa login): Desktop Light, Desktop Dark, dan drawer Mobile sesuai Figma. Halaman di balik login belum dilihat dengan sesi nyata.
+
+### File terdampak
+`src/lib/navigation.ts`, `src/components/app-nav.tsx`, `src/components/app-shell.tsx`, `src/components/topbar-controls.tsx`, `src/components/notification-bell.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.34.0] 2026-11-04
 **Ringkasan:** Redesain UI/UX tahap 1 (cabang `ui-ux-redesign`): fondasi desain dari file Figma "Bengkel-App UI". Token warna Light dan Dark, font Inter, skala teks, radius, dan komponen dasar kini mengikuti Figma. Kerangka (sidebar, bilah atas) dan halaman per modul menyusul di tahap berikutnya.
 

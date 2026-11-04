@@ -155,10 +155,10 @@ export function NotificationBell({ enabled }: { enabled: boolean }) {
 
   return (
     <div ref={wrap} className="relative">
-      <Button variant="ghost" size="icon" className="relative" aria-label={unread ? `Notifikasi, ${unread} belum dibaca` : "Notifikasi"} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <Bell className="size-5" />
+      <Button variant="outline" size="icon" className="relative size-10 text-muted-foreground" aria-label={unread ? `Notifikasi, ${unread} belum dibaca` : "Notifikasi"} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        <Bell className="size-[18px]" />
         {unread > 0 && (
-          <span className="absolute top-1 right-1 flex min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] leading-4 font-semibold text-white ring-2 ring-background">{unread > 99 ? "99+" : unread}</span>
+          <span className="absolute -top-1.5 -right-1.5 flex min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] leading-4 font-semibold text-white ring-2 ring-background">{unread > 99 ? "99+" : unread}</span>
         )}
       </Button>
 
@@ -168,7 +168,7 @@ export function NotificationBell({ enabled }: { enabled: boolean }) {
             {...slide}
             transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.7 }}
             style={{ transformOrigin: "top right" }}
-            className="fixed top-16 right-3 left-3 z-50 flex max-h-[min(70svh,34rem)] flex-col overflow-hidden rounded-3xl bg-card shadow-2xl shadow-brand-blue-deep/20 ring-1 ring-black/5 sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-2 sm:w-[26rem]"
+            className="fixed top-[60px] right-3 left-3 z-50 flex max-h-[min(70svh,34rem)] flex-col overflow-hidden rounded-3xl bg-card shadow-2xl shadow-brand-blue-deep/20 ring-1 ring-black/5 sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-2 sm:w-[26rem]"
             role="dialog"
             aria-label="Notifikasi"
           >

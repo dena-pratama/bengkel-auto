@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.34.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.35.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -83,7 +83,8 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.34.0**
 | | Pengaturan profil: foto profil, nomor HP, ganti password, PIN, tema | ✅ | 0.32.0 |
 | | Pusat notifikasi: bel slide-down, banner realtime, rekam aksi semua modul, riwayat berfilter | ✅ | 0.33.0 |
 | | Redesain UI/UX dari Figma, tahap 1: fondasi (token Light/Dark, Inter, komponen dasar) | ✅ | 0.34.0 (cabang ui-ux-redesign) |
-| | Redesain UI/UX tahap 2 dan 3: kerangka (sidebar, bilah atas) dan halaman per modul | 🟨 | menyusul |
+| | Redesain UI/UX tahap 2: kerangka (sidebar terang bergrup, bilah atas, drawer mobile) | ✅ | 0.35.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: halaman per modul | 🟨 | menyusul |
 | | Notifikasi per peran (izin Notifikasi di matriks peran + tersaring izin modul) | ✅ | 0.33.0 |
 | | Filter daftar seragam (rentang tanggal + kategori): Kasir (penjualan, retur, shift, piutang) | ✅ | 0.29.0 |
 | | Filter daftar: Pembelian (PO, penerimaan, hutang), Stok opname, Servis (estimasi, riwayat), Kas & bank | ✅ | 0.30.0 |
