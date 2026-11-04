@@ -25,13 +25,13 @@ const STATUS_STYLE: Record<PoStatus, string> = {
 };
 
 export function PoStatusBadge({ status }: { status: PoStatus }) {
-  return <span className={cn("inline-flex rounded-sm px-2 py-0.5 text-xs font-medium", STATUS_STYLE[status])}>{PO_STATUS_LABEL[status]}</span>;
+  return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium", STATUS_STYLE[status])}>{PO_STATUS_LABEL[status]}</span>;
 }
 
 export function DueBadge({ daysOverdue }: { daysOverdue: number }) {
-  if (daysOverdue > 0) return <span className="rounded-sm bg-brand-red px-2 py-0.5 text-xs font-medium text-white">Lewat {daysOverdue} hari</span>;
-  if (daysOverdue >= -3) return <span className="rounded-sm bg-brand-red-soft px-2 py-0.5 text-xs font-medium text-brand-red">{daysOverdue === 0 ? "Jatuh tempo hari ini" : `${-daysOverdue} hari lagi`}</span>;
-  return <span className="rounded-sm bg-muted px-2 py-0.5 text-xs text-muted-foreground">{-daysOverdue} hari lagi</span>;
+  if (daysOverdue > 0) return <span className="inline-flex items-center rounded-full bg-brand-red px-2.5 py-0.5 text-xs font-medium text-white">Lewat {daysOverdue} hari</span>;
+  if (daysOverdue >= -3) return <span className="inline-flex items-center rounded-full bg-brand-red-soft px-2.5 py-0.5 text-xs font-medium text-brand-red">{daysOverdue === 0 ? "Jatuh tempo hari ini" : `${-daysOverdue} hari lagi`}</span>;
+  return <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">{-daysOverdue} hari lagi</span>;
 }
 
 /** Label + select bawaan browser (andal di HP) */

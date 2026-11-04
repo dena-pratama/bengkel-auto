@@ -4,6 +4,25 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.40.0] 2026-11-05
+**Ringkasan:** Redesain UI/UX tahap 3, modul Pembelian: halaman utama Purchase Order & Pembelian mengikuti frame Figma "05 · Pembelian" (Desktop & Mobile, Light & Dark) dengan 4 kartu metrik (pembelian bulan ini, PO menunggu datang, hutang jatuh tempo, dan supplier aktif), lencana status PO membulat, bilah filter terpadu, serta tabel daftar PO berbingkai rapi. Ditambah pratinjau `/dev/preview/pembelian`.
+
+### Changed
+- `src/app/(app)/pembelian/page.tsx`: penambahan 4 kartu ringkasan (Pembelian bulan ini berikon paket biru, Menunggu datang berikon jam kuning, Hutang jatuh tempo berikon peringatan merah, dan Supplier aktif berikon truk hijau), serta tabel PO berbingkai dengan nomor PO, rekanan supplier, jumlah barang, tanggal, lencana status, dan total rupiah.
+- `src/app/(app)/pembelian/_components/ui.tsx`: pembaruan lencana `PoStatusBadge` dan `DueBadge` menjadi pil membulat (`rounded-full`) dengan padding dan warna token sesuai Figma.
+
+### Added
+- `src/app/dev/preview/pembelian/page.tsx`: pratinjau tampilan Purchase Order & Pembelian tanpa login (khusus development) dengan 4 contoh PO mencakup status draft, dikirim, sebagian, dan diterima.
+
+### Verifikasi
+- `tsc`, `eslint`, `check:dashes`, `next build` lolos.
+- Desain selaras dengan Figma page "05 · Pembelian" (Desktop Light/Dark dan Mobile Light/Dark).
+
+### File terdampak
+`src/app/(app)/pembelian/page.tsx`, `src/app/(app)/pembelian/_components/ui.tsx`, `src/app/dev/preview/pembelian/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.39.0] 2026-11-05
 **Ringkasan:** Redesain UI/UX tahap 3, modul Barang & Jasa: halaman utama Barang & Suku Cadang mengikuti frame Figma "04 · Barang & Jasa" (Desktop & Mobile, Light & Dark) dengan 4 kartu ringkasan metrik (SKU aktif, estimasi nilai persediaan, stok menipis, dan stok habis), tab filter status berpenanda angka, bilah filter lokal, serta tabel katalog barang berbingkai rapi. Ditambah pratinjau `/dev/preview/inventory`.
 
