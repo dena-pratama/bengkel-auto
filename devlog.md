@@ -4,6 +4,26 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.38.0] 2026-11-05
+**Ringkasan:** Redesain UI/UX tahap 3, modul Servis: papan Kanban work order mengikuti frame Figma "02 · Servis & Work Order" (Desktop & Mobile, Light & Dark) dengan 6 kolom status berindikator warna, kartu kendaraan lengkap (plat, model, keluhan/layanan, pelanggan, bilah progres, avatar mekanik, dan penghitung durasi), serta riwayat work order selesai/batal dalam tabel bersih. Ditambah pratinjau `/dev/preview/servis`.
+
+### Changed
+- `src/app/(app)/servis/_components/board.tsx`: tata letak 6 kolom status (Antri, Dikerjakan, Menunggu Part, Menunggu Persetujuan, Selesai/QC, Siap Diambil) dengan titik warna status dan lencana jumlah kartu sesuai Figma.
+- Kartu work order diperkaya: nomor WO, penanda lewat estimasi/garansi, nomor plat berlatar, nama model kendaraan tebal, layanan/keluhan, nama pelanggan berikon, peringatan part pending/requested, bilah progres pekerjaan (status Dikerjakan), info biaya penagihan (status Siap Diambil), avatar inisial mekanik atau tombol penugasan cepat, serta penghitung waktu di status.
+- Tabel riwayat work order selesai dan batal dengan kolom kendaraan, pelanggan, layanan, tanggal, badge status/garansi, dan total rupiah.
+
+### Added
+- `src/app/dev/preview/servis/page.tsx`: pratinjau tampilan papan Kanban servis tanpa login (khusus development) dengan 9 contoh kendaraan aktif mencakup seluruh status kolom.
+
+### Verifikasi
+- `tsc`, `eslint`, `check:dashes`, `next build` lolos.
+- Desain selaras dengan Figma page "02 · Servis & Work Order" (Desktop Light/Dark dan Mobile Light/Dark).
+
+### File terdampak
+`src/app/(app)/servis/_components/board.tsx`, `src/app/dev/preview/servis/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.37.0] 2026-11-05
 **Ringkasan:** Redesain UI/UX tahap 3, modul Kasir: halaman utama Kasir mengikuti frame Figma "03 · Kasir" (Desktop & Mobile, Light & Dark) dengan kartu shift, ringkasan metode pembayaran, work order siap ditagih, transaksi terakhir, transaksi ditahan, dan aksi cepat. Ditambah halaman pratinjau `/dev/preview/kasir`.
 
