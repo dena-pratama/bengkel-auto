@@ -24,6 +24,11 @@ Siapkan data uji: 1 pelanggan + kendaraan, 1 barang ber-stok, 1 jasa, 1 supplier
 - [ ] **Audit log** (`/audit`): filter, klik baris untuk sebelum/sesudah, **Ekspor Excel**.
 - [ ] **Pengaturan** (ikon gerigi atau menu profil): tab Profil saya (unggah, ganti, hapus foto; simpan nomor HP; ganti password; PIN; mode gelap) dan tab Bengkel (batas diskon, wajib scan part). Foto muncul di pojok kanan atas dan di daftar karyawan.
 
+## Cek notifikasi
+- [ ] Lakukan aksi (posting invoice, ubah status WO, terima barang) di satu tab, dan lihat tab lain (login peran lain): bel menampilkan lencana dan banner turun dari atas.
+- [ ] Klik bel: panel meluncur turun; Tandai dibaca menghapus lencana; Lihat semua membuka /notifikasi dengan filter.
+- [ ] Karyawan > Role: matikan izin Notifikasi pada satu peran; pengguna peran itu tidak lagi melihat bel. Kasir tidak melihat notifikasi gaji.
+
 ## Cek filter daftar
 - [ ] Buka Penjualan, Retur, Shift, Piutang, PO, Penerimaan, Hutang, Stok opname, Estimasi, Kas & bank, Jurnal, Penggajian (periode, kasbon, komisi), Audit log, Garansi: coba pilihan cepat (7 hari, Bulan ini, Semua), tanggal bebas, kategori, lalu Atur ulang. Alamat halaman ikut berubah dan bisa dibagikan.
 - [ ] Papan servis: filter di bagian "Selesai & batal" tidak menyembunyikan kendaraan yang sedang dikerjakan.

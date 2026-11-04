@@ -165,6 +165,10 @@ select pg_temp.check((select amount = 90000 from public.report_ppn(date '2018-06
 select pg_temp.check((select count(*) >= 0 from public.report_ppn_documents(date '2018-06-01', date '2018-06-30')), 'daftar dokumen PPN bisa dipanggil');
 
 reset role;
+-- Notifikasi dari pemicu (pusat notifikasi)
+reset role;
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'tax_paid'), 'notifikasi tax_paid tercatat oleh pemicu');
+
 rollback;
 \o
 \echo SEMUA TES PAJAK LULUS

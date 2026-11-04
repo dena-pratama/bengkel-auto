@@ -98,6 +98,10 @@ select pg_temp.login('u_owner');
 select pg_temp.fails($q$ delete from public.ai_tool_calls $q$, 'permission denied', 'log panggilan tidak bisa dihapus');
 
 reset role;
+-- Notifikasi dari pemicu (pusat notifikasi)
+reset role;
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'ai_token'), 'notifikasi ai_token tercatat oleh pemicu');
+
 rollback;
 \o
 \echo SEMUA TES AI ANALYST LULUS

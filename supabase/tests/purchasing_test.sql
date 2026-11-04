@@ -249,6 +249,12 @@ select public.set_purchase_order_status(pg_temp.id('po2'), 'cancel', 'Tidak jadi
 select pg_temp.check((select status = 'cancelled' and cancel_reason = 'Tidak jadi' from public.purchase_orders where id = pg_temp.id('po2')), 'PO: dibatalkan dengan alasan');
 
 reset role;
+-- Notifikasi dari pemicu (pusat notifikasi)
+reset role;
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'po_sent'), 'notifikasi po_sent tercatat oleh pemicu');
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'receipt_posted'), 'notifikasi receipt_posted tercatat oleh pemicu');
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'supplier_paid'), 'notifikasi supplier_paid tercatat oleh pemicu');
+
 rollback;
 \o
 \echo SEMUA TES PEMBELIAN LULUS

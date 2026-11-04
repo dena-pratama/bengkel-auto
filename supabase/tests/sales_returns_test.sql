@@ -219,4 +219,8 @@ select pg_temp.check((select count(*) = 3 from public.v_sale_returns), 'v_sale_r
 \o
 \set QUIET off
 select 'SEMUA TES RETUR PENJUALAN LULUS' as status;
+-- Notifikasi dari pemicu (pusat notifikasi)
+reset role;
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'sale_return'), 'notifikasi sale_return tercatat oleh pemicu');
+
 rollback;

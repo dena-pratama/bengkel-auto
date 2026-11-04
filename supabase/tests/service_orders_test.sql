@@ -436,6 +436,14 @@ select pg_temp.fails(format($q$ select public.mark_service_reminder('%s', '%s', 
   (select id from public.service_reminder_rules where service_id = pg_temp.id('s_oli')), pg_temp.id('wo')), 'tidak valid', 'status reminder tidak valid ditolak');
 
 reset role;
+-- Notifikasi dari pemicu (pusat notifikasi)
+reset role;
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'wo_created'), 'notifikasi wo_created tercatat oleh pemicu');
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'wo_status'), 'notifikasi wo_status tercatat oleh pemicu');
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'part_requested'), 'notifikasi part_requested tercatat oleh pemicu');
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'estimate_approved'), 'notifikasi estimate_approved tercatat oleh pemicu');
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'wo_warranty'), 'notifikasi wo_warranty tercatat oleh pemicu');
+
 rollback;
 \o
 \echo SEMUA TES SERVIS LULUS

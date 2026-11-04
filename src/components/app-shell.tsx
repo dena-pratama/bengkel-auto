@@ -1,8 +1,9 @@
 import Image from "next/image";
-import { Bell, Search, Settings } from "lucide-react";
+import { Search, Settings } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { SideNav, SidebarFrame, SidebarRailToggle, SidebarToggle } from "@/components/app-nav";
+import { NotificationBell } from "@/components/notification-bell";
 import { ProfileMenu, ThemeToggle } from "@/components/topbar-controls";
 import { can, type UserContext } from "@/lib/auth";
 import { NAV_ITEMS } from "@/lib/navigation";
@@ -87,10 +88,7 @@ export function TopbarView({ ctx }: { ctx: UserContext }) {
 
       <div className="ml-auto flex items-center gap-1 sm:gap-2">
         <ThemeToggle />
-        <Button variant="ghost" size="icon" className="relative" aria-label="Notifikasi" title="Notifikasi">
-          <Bell className="size-5" />
-          <span className="absolute top-2 right-2 size-2 rounded-full bg-brand-red ring-2 ring-background" />
-        </Button>
+        <NotificationBell enabled={can(ctx, "notifications", "view", false)} />
         <Button variant="ghost" size="icon" className="hidden sm:inline-flex" aria-label="Pengaturan" title="Pengaturan" nativeButton={false} render={<Link href="/pengaturan" />}>
           <Settings className="size-5" />
         </Button>

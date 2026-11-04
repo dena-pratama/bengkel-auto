@@ -363,4 +363,8 @@ select pg_temp.check(
 
 select 'SEMUA TES STOK OPNAME LULUS' as status;
 
+-- Notifikasi dari pemicu (pusat notifikasi)
+reset role;
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'opname_posted'), 'notifikasi opname_posted tercatat oleh pemicu');
+
 rollback;

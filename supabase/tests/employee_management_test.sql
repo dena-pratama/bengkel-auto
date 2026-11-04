@@ -221,6 +221,10 @@ select public.set_my_pin('123456');
 select pg_temp.check(public.employee_has_pin(pg_temp.id('e_owner')), 'pin: sudah diatur lewat API publik');
 
 reset role;
+-- Notifikasi dari pemicu (pusat notifikasi)
+reset role;
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'employee_created'), 'notifikasi employee_created tercatat oleh pemicu');
+
 rollback;
 \o
 \echo SEMUA TES PENGELOLAAN KARYAWAN LULUS

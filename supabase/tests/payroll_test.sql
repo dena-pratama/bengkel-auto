@@ -185,6 +185,12 @@ insert into t_ids select 'per_w', public.create_payroll_period('{"period_type": 
 select pg_temp.check((select base_amount = 1166666.67 and allowance_amount = 116666.67 from public.payslips where id = pg_temp.slip('per_w', 'e_mech')), 'periode mingguan: gaji bulanan dan tunjangan dikali 7/30');
 
 reset role;
+-- Notifikasi dari pemicu (pusat notifikasi)
+reset role;
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'payroll_created'), 'notifikasi payroll_created tercatat oleh pemicu');
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'payroll_paid'), 'notifikasi payroll_paid tercatat oleh pemicu');
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'loan_created'), 'notifikasi loan_created tercatat oleh pemicu');
+
 rollback;
 \o
 \echo SEMUA TES PENGGAJIAN LULUS

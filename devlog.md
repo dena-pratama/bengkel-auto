@@ -4,6 +4,44 @@ Catatan setiap perubahan. Entri terbaru di paling atas.
 
 ---
 
+## [0.33.0] 2026-11-04
+**Ringkasan:** Pusat notifikasi: bel di top bar membuka panel yang meluncur turun, notifikasi baru muncul langsung sebagai banner dari atas, dan semua aksi penting di seluruh modul terekam otomatis. Owner mengatur per peran apakah notifikasi diizinkan.
+
+### Added
+- Migration `20261103000031_notifications.sql`:
+  - Tabel `notifications` (jenis, modul asal, tingkat info/perlu perhatian/penting, judul, isi, tautan, pelaku; tidak bisa diubah atau dihapus) dan `notification_state` (waktu terakhir dibaca per karyawan).
+  - Pemicu `app.notify_change` di tabel kunci mencatat peristiwa dalam Bahasa Indonesia, tanpa bergantung pada halaman:
+    - **Kasir:** invoice diposting dan dibatalkan, retur dan pembatalannya, shift dibuka, ditutup (dengan selisih kas), disetujui.
+    - **Servis:** work order dibuat, klaim garansi, perubahan status (menunggu part atau persetujuan ditandai perlu perhatian), part diminta, estimasi disetujui atau ditolak, pekerjaan tambahan menunggu persetujuan.
+    - **Pembelian:** PO dikirim atau dibatalkan, barang diterima atau dibatalkan, pembayaran supplier dan pembatalannya.
+    - **Stok:** stok menipis atau habis (hanya saat melewati batas minimum), opname menunggu persetujuan dan diposting.
+    - **Keuangan:** transaksi kas dan pembatalannya, buku ditutup atau dibuka kembali (penting), setoran pajak.
+    - **Penggajian:** periode gaji dibuat dan tiap perubahan status, kasbon dicairkan.
+    - **Sistem:** karyawan baru, perubahan status karyawan, pengaturan diubah, token AI dibuat atau dicabut.
+  - Pemicu dibungkus penanganan kesalahan: kegagalan menulis notifikasi hanya jadi peringatan dan tidak pernah menggagalkan transaksi bisnis.
+  - Izin peran baru **Notifikasi** (modul `notifications`, muncul otomatis di matriks peran; bawaan: Admin, Kasir, Mekanik, Gudang boleh, Owner selalu). Visibilitas dua lapis: izin Notifikasi pada peran DAN izin modul asal peristiwa, jadi kasir tidak melihat notifikasi gaji.
+  - `mark_notifications_read`, `my_notification_summary`; `notifications` masuk publikasi Realtime.
+- Bel di top bar (`NotificationBell`): lencana jumlah belum dibaca; panel meluncur turun dari bel (ikon per tingkat, titik belum dibaca, waktu relatif, pelaku, Tandai dibaca, tautan ke dokumen terkait); banner notifikasi baru turun dari atas layar dan hilang sendiri setelah 6 detik (langsung lewat Realtime, polling 60 detik sebagai cadangan). Bel tersembunyi untuk peran yang tidak diizinkan. Menghormati pengaturan "kurangi gerakan".
+- Halaman `/notifikasi`: riwayat lengkap dengan filter tanggal (bawaan 7 hari), kategori, dan tingkat, Tandai semua dibaca, 50 per halaman.
+- API `GET /api/v1/notifications` dan `POST /api/v1/notifications/read`.
+- Tes DB `notifications_test.sql` (visibilitas dua lapis, peran tanpa izin tidak melihat apa pun, status baca, tidak bisa diubah atau ditulis langsung) dan pemeriksaan pemicu di suite kasir, servis, pembelian, opname, keuangan, penggajian, pengaturan, retur, pajak, AI, dan karyawan.
+- Pratinjau tanpa login (development saja): `/dev/preview/notifikasi`.
+
+### Catatan
+- Notifikasi tercatat atas nama pelaku (karyawan yang menjalankan aksi); mekanik dengan izin lingkup "milik sendiri" tidak menerima notifikasi servis karena akses modulnya terbatas.
+- **UI/UX Base**: versi ini ditandai sebagai tampilan dasar sebelum desain UI/UX diubah (tag `ui-ux-base`, cabang `ui-ux-base`). Kembali ke tampilan ini kapan saja dengan `git checkout ui-ux-base`.
+- Peristiwa lain bisa ditambah dengan satu cabang di `app.notify_change`. Belum ada: notifikasi jatuh tempo hutang/piutang terjadwal dan pengiriman ke WhatsApp.
+
+### Verifikasi
+- `npm run test:db`: semua suite lulus. `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- Di browser (pratinjau, data contoh): banner turun dari atas, lencana jumlah, panel slide-down berisi empat tingkat notifikasi.
+- **Belum diverifikasi:** bel dengan login nyata dan banner langsung lewat Realtime saat aksi dilakukan pengguna lain (jalur Realtime sudah terbukti di papan servis; RLS pengguna biasa belum dilihat di browser).
+
+### File terdampak
+`supabase/migrations/20261103000031_notifications.sql`, `supabase/tests/notifications_test.sql`, `supabase/tests/*_test.sql` (pemeriksaan pemicu), `src/components/notification-bell.tsx`, `src/components/app-shell.tsx`, `src/lib/notifications.ts`, `src/lib/validation/notifications.ts`, `src/app/api/v1/notifications/**`, `src/app/(app)/notifikasi/**`, `src/app/dev/preview/notifikasi/**`, `cek-halaman.md`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.32.0] 2026-11-04
 **Ringkasan:** Halaman Pengaturan yang sebenarnya dan foto profil. Ikon gerigi di top bar sebelumnya hanya bertuliskan "segera" dan tidak membuka apa pun; kini membuka Pengaturan, dan setiap karyawan bisa mengganti foto, nomor HP, password, PIN, dan tema.
 

@@ -71,6 +71,10 @@ select pg_temp.fails($q$ select public.save_settings('{"ppn_enabled": true}') $q
 select pg_temp.fails($q$ select public.save_settings('{}') $q$, 'Tidak ada pengaturan', 'payload kosong ditolak');
 
 reset role;
+-- Notifikasi dari pemicu (pusat notifikasi)
+reset role;
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'settings_changed'), 'notifikasi settings_changed tercatat oleh pemicu');
+
 rollback;
 \o
 \echo SEMUA TES PENGATURAN LULUS

@@ -253,6 +253,10 @@ select pg_temp.check(public.post_manual_journal(date '2020-01-20', 'Setelah dibu
 select pg_temp.fails($q$ select public.set_account_active(pg_temp.acc('6-1200'), false) $q$, 'masih bersaldo', 'akun yang masih bersaldo tidak bisa dinonaktifkan');
 
 reset role;
+-- Notifikasi dari pemicu (pusat notifikasi)
+reset role;
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'cash_txn'), 'notifikasi cash_txn tercatat oleh pemicu');
+
 rollback;
 \o
 \echo SEMUA TES FINANCE LULUS

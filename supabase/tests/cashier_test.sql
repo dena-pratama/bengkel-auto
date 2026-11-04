@@ -286,6 +286,12 @@ select pg_temp.fails($q$ delete from public.payments $q$, 'append-only', 'pembay
 select pg_temp.fails($q$ delete from public.sales $q$, 'append-only', 'penjualan tidak bisa dihapus');
 
 reset role;
+-- Notifikasi dari pemicu (pusat notifikasi)
+reset role;
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'sale_posted'), 'notifikasi sale_posted tercatat oleh pemicu');
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'shift_open'), 'notifikasi shift_open tercatat oleh pemicu');
+select pg_temp.check(exists (select 1 from public.notifications where kind = 'sale_void'), 'notifikasi sale_void tercatat oleh pemicu');
+
 rollback;
 \o
 \echo SEMUA TES KASIR LULUS
