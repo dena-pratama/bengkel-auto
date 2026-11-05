@@ -183,7 +183,7 @@ export function LoginExperience({ children }: { children: React.ReactNode }) {
 
       {/* Kartu login */}
       <div className="relative z-10 flex flex-1 items-center justify-center px-4 pt-24 pb-16 lg:ml-[50%] lg:px-10 lg:pt-16" aria-hidden={!onLogin} inert={!onLogin}>
-        <div className={cn("w-full max-w-[460px] rounded-3xl border border-border bg-card p-6 shadow-[0_28px_60px_-28px_rgb(15_23_42/0.28)] sm:p-9", onLogin ? "visible opacity-100" : hidden)}>
+        <div className={cn("w-full max-w-[460px] rounded-3xl border-[1.5px] border-[#d92228] bg-card p-6 shadow-[0_0_0_4px_rgb(217_34_40/0.08),0_28px_60px_-28px_rgb(15_23_42/0.28)] sm:p-9", onLogin ? "visible opacity-100" : hidden)}>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-[28px]">Selamat datang kembali</h1>
           <div className="mt-6">{children}</div>
         </div>

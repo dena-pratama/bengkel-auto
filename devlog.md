@@ -1,3 +1,8 @@
+## [0.53.3] - 2026-11-05
+
+### Changed - Outline Merah pada Kartu Login
+- `src/app/(auth)/login/login-experience.tsx`: kartu form login diberi garis tepi merah logo (#d92228, 1,5 px) dengan cincin tipis lembut di luarnya. Berlaku di Light dan Dark, Web dan Mobile.
+
 ## [0.53.2] - 2026-11-05
 
 ### Changed - Animasi Halaman Login Disamakan dengan Prototype Figma
