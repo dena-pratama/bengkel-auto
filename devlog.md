@@ -1,3 +1,16 @@
+## [0.52.2] - 2026-11-05
+
+### Refactor - Pembersihan Dead Code, Variabel, dan Placeholder Tidak Terpakai
+- Membersihkan properti tidak terpakai pada `src/lib/navigation.ts`: menghapus flag `ready: boolean` dan `badge` pada definisi `NavItem` serta menghapus deklarasi redundannya di seluruh 13 item `NAV_ITEMS`.
+- Menghapus komponen pencarian global placeholder (readOnly / belum aktif) dan icon `Search` yang tidak terpakai pada `src/components/app-shell.tsx`.
+- Menghapus fungsi tidak terpakai `initials()` pada `src/components/app-shell.tsx`.
+- Menghapus mapping redundan `settings: Settings` pada objek `ICONS` di `src/components/app-nav.tsx`.
+- Menghapus helper batas waktu `startOfDay` dan `endOfDay` yang tidak pernah diimpor pada `src/lib/list-filter.ts`.
+- Mengubah fungsi dan konstanta lokal yang tidak perlu diekspor menjadi private/internal: `rupiahShort` pada `src/app/(app)/dashboard/widgets.tsx`, `WO_STATUS_STYLE` pada `src/app/(app)/servis/_components/ui.tsx`.
+- Menghapus komponen dan helper tidak terpakai pada modul stok opname (`VarianceReasonBadge` dan `formatQty` lokal ganda) pada `src/app/(app)/stok-opname/_components/ui.tsx`.
+- Menyelaraskan pengetikan `PageProps<"/stok-opname/[id]">` pada halaman detail stok opname `src/app/(app)/stok-opname/[id]/page.tsx`.
+- Menghapus 7 berkas komponen UI boilerplate generik yang tidak digunakan oleh aplikasi (`badge.tsx`, `dialog.tsx`, `select.tsx`, `separator.tsx`, `sheet.tsx`, `table.tsx`, `tabs.tsx` di `src/components/ui/`).
+
 ## [0.52.1] - 2026-11-05
 
 ### Added - Integrasi CI/CD GitHub Actions & Playwright E2E via Browserless

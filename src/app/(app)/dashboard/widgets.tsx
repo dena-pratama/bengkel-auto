@@ -64,7 +64,7 @@ function TextLink({ href, children }: { href: string; children: React.ReactNode 
 }
 
 /** "Rp 128 jt", "Rp 24,8 jt", "Rp 1,2 M" untuk kartu ringkas */
-export function rupiahShort(n: number): string {
+function rupiahShort(n: number): string {
   const f = (v: number, unit: string) => `Rp ${new Intl.NumberFormat("id-ID", { maximumFractionDigits: v < 100 ? 1 : 0 }).format(v)} ${unit}`;
   if (n >= 1e9) return f(n / 1e9, "M");
   if (n >= 1e6) return f(n / 1e6, "jt");

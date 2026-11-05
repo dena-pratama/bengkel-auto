@@ -13,7 +13,7 @@ export function ServiceNav({ active, showEstimates, showWarranty = false }: { ac
   return <SectionNav tabs={TABS.filter((t) => (t.key !== "estimates" || showEstimates) && (t.key !== "warranty" || showWarranty))} active={active} label="Bagian servis" />;
 }
 
-export const WO_STATUS_STYLE: Record<WorkOrderStatus, string> = {
+const WO_STATUS_STYLE: Record<WorkOrderStatus, string> = {
   queued: "bg-muted text-foreground",
   in_progress: "bg-brand-blue-soft text-brand-blue-fg",
   waiting_parts: "bg-brand-sand-soft text-foreground",

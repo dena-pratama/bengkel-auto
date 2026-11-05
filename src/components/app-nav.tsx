@@ -43,7 +43,6 @@ const ICONS: Record<string, LucideIcon> = {
   receipt: Percent,
   bot: Sparkles,
   history: History,
-  settings: Settings,
 };
 
 export type NavBadge = { text: string; tone: "muted" | "red" | "blue" };

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Search, Settings, Store } from "lucide-react";
+import { Settings, Store } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LogoutButton, SettingsLink, SideNav, SidebarFrame, SidebarRailToggle, SidebarToggle, type NavBadge } from "@/components/app-nav";
@@ -23,14 +23,6 @@ export function AppShell({ rail, topbar, children }: { rail: React.ReactNode; to
 
 export function visibleNavItems(ctx: UserContext) {
   return NAV_ITEMS.filter((item) => !item.module || can(ctx, item.module, item.action ?? "view"));
-}
-
-export function initials(name: string) {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase())
-    .join("");
 }
 
 /** Lencana menu dari data nyata: work order aktif dan barang menipis (sesuai izin pengguna). */
@@ -104,13 +96,6 @@ export function TopbarView({ ctx }: { ctx: UserContext }) {
           {ctx.branch.name}
         </p>
       </div>
-
-      {/* Pencarian global: tampilan dulu, belum aktif */}
-      <label className="hidden h-10 w-full max-w-[400px] items-center gap-2 rounded-lg border border-border bg-card px-3 sm:flex" title="Pencarian global (segera)">
-        <Search className="size-4 shrink-0 text-muted-foreground" />
-        <input type="search" readOnly placeholder="Cari no. polisi, WO, barang…" aria-label="Pencarian global (segera)" className="w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
-        <kbd className="hidden shrink-0 rounded border border-border px-1.5 py-px text-2xs font-medium text-muted-foreground md:block">Ctrl K</kbd>
-      </label>
 
       <div className="ml-auto flex items-center gap-2">
         <ThemeToggle />

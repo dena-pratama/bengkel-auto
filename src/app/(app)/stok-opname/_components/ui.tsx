@@ -1,5 +1,5 @@
-import type { OpnameStatus, OpnameType, VarianceReason } from "@/lib/validation/stock-opname";
-import { OPNAME_STATUS_LABEL, OPNAME_TYPE_LABEL, VARIANCE_REASON_LABEL } from "@/lib/validation/stock-opname";
+import type { OpnameStatus, OpnameType } from "@/lib/validation/stock-opname";
+import { OPNAME_STATUS_LABEL, OPNAME_TYPE_LABEL } from "@/lib/validation/stock-opname";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLE: Record<OpnameStatus, string> = {
@@ -33,21 +33,10 @@ export function OpnameTypeBadge({ type }: { type: OpnameType }) {
   );
 }
 
-export function VarianceReasonBadge({ reason }: { reason: VarianceReason | null }) {
-  if (!reason) return <span className="text-muted-foreground">-</span>;
-  return (
-    <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground whitespace-nowrap">
-      {VARIANCE_REASON_LABEL[reason] ?? reason}
-    </span>
-  );
-}
-
 export function formatRp(amount: number): string {
   const sign = amount < 0 ? "-" : "";
   const abs = Math.abs(amount);
   return `${sign}Rp ${abs.toLocaleString("id-ID")}`;
 }
 
-export function formatQty(qty: number): string {
-  return qty.toLocaleString("id-ID", { maximumFractionDigits: 3 });
-}
+export { formatQty } from "@/lib/format";

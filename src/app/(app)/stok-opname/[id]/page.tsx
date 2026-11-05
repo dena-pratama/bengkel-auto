@@ -11,14 +11,14 @@ import { ReviewPanel } from "../_components/review-panel";
 import { OpnameStatusBadge, OpnameTypeBadge } from "../_components/ui";
 import { VoidOpnameDialog } from "../_components/void-dialog";
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+export async function generateMetadata({ params }: PageProps<"/stok-opname/[id]">) {
   const { id } = await params;
   return {
     title: `Sesi Opname ${id.slice(0, 8)}`,
   };
 }
 
-export default function OpnameDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function OpnameDetailPage({ params }: PageProps<"/stok-opname/[id]">) {
   return (
     <div className="mx-auto grid w-full max-w-[1440px] gap-5">
       <Suspense fallback={<Skeleton className="h-96" />}>
