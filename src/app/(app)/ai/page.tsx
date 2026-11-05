@@ -11,7 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { EmptyState, NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
-import { aiChatConfigured } from "@/lib/ai/chat";
+import { configuredProviders } from "@/lib/ai/providers";
 import { listAiCalls, listAiTokens, latestAiInsight } from "@/lib/ai/read";
 import { runToolAsUser } from "@/lib/ai/run";
 import type { HealthScore, Indicator } from "@/lib/ai/weekly";
@@ -227,7 +227,7 @@ async function Content() {
                 <p className="text-xs text-muted-foreground">Tanyakan pertanyaan seputar tren servis, pelanggan, dan keuangan</p>
               </div>
             </div>
-            <AskBox enabled={aiChatConfigured() && canManage} />
+            <AskBox providers={canManage ? configuredProviders() : []} />
           </section>
         </div>
       </div>

@@ -1,3 +1,25 @@
+## [0.54.0] - 2026-11-05
+
+### Added - Pilihan Penyedia AI untuk "Tanya AI"
+- Tanya AI di halaman AI Analyst kini bisa memakai beberapa penyedia: Anthropic (Claude), OpenAI (GPT), Google Gemini, dan OpenRouter. Pengguna memilih penyedia lewat daftar di samping tombol Tanya AI.
+- `src/lib/ai/providers.ts`: daftar penyedia dan model bawaannya. Hanya penyedia yang kuncinya sudah diisi di environment server yang tampil. Kunci tidak pernah dikirim ke browser.
+- `src/lib/ai/chat.ts`: loop tool yang sama untuk semua penyedia, dengan adaptor untuk format API Anthropic (Messages), OpenAI-compatible (GPT dan OpenRouter), dan Gemini (generateContent). Tool tetap read-only dan dijalankan sebagai pengguna yang login.
+- Jawaban menampilkan penyedia dan model yang dipakai.
+- `.env.example`: variabel `OPENAI_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY` dengan model masing-masing (`OPENAI_MODEL`, `GEMINI_MODEL`, `OPENROUTER_MODEL`).
+
+### Changed
+- `src/app/(app)/ai/_components/client.tsx` dan `actions.ts`: `askAction` menerima parameter penyedia (divalidasi terhadap penyedia yang terkonfigurasi di server).
+- `src/app/(app)/ai/page.tsx`: `aiChatConfigured` diganti `configuredProviders`.
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Belum diuji dengan kunci penyedia sungguhan. Perlu dicoba dengan minimal satu kunci per penyedia sebelum dipakai.
+
+### File terdampak
+`src/lib/ai/providers.ts` (baru), `src/lib/ai/chat.ts`, `src/app/(app)/ai/actions.ts`, `src/app/(app)/ai/page.tsx`, `src/app/(app)/ai/_components/client.tsx`, `.env.example`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.53.6] - 2026-11-05
 
 ### Changed - Efek Pointer Dihapus, Diganti Bayangan Latar Bergeser Pelan

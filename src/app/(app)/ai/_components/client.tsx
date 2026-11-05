@@ -31,19 +31,21 @@ export function GenerateWeeklyButton() {
   );
 }
 
-export function AskBox({ enabled }: { enabled: boolean }) {
+export function AskBox({ providers }: { providers: { id: string; label: string; model: string }[] }) {
   const router = useRouter();
   const [q, setQ] = useState("");
-  const [answer, setAnswer] = useState<{ text: string; tools: string[] } | null>(null);
+  const [provider, setProvider] = useState(providers[0]?.id ?? "");
+  const enabled = providers.length > 0;
+  const [answer, setAnswer] = useState<{ text: string; tools: string[]; label: string } | null>(null);
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
 
   const submit = () =>
     start(async () => {
       setError("");
-      const r = await askAction(q);
+      const r = await askAction(q, provider);
       if (!r.ok) return setError(r.error);
-      setAnswer({ text: r.data.answer, tools: r.data.tools });
+      setAnswer({ text: r.data.answer, tools: r.data.tools, label: `${r.data.provider} · ${r.data.model}` });
       router.refresh();
     });
 
@@ -51,15 +53,29 @@ export function AskBox({ enabled }: { enabled: boolean }) {
     <div className="grid gap-3">
       <Textarea value={q} onChange={(e) => setQ(e.target.value)} rows={2} maxLength={500} disabled={!enabled || pending} placeholder="Contoh: Kenapa laba bulan ini turun dibanding bulan lalu?" />
       <div className="flex flex-wrap items-center gap-3">
+        {enabled && (
+          <select
+            aria-label="Pilih penyedia AI"
+            value={provider}
+            onChange={(e) => setProvider(e.target.value)}
+            disabled={pending || providers.length < 2}
+            className="h-10 rounded-lg border border-input bg-card px-3 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/30 disabled:opacity-70"
+          >
+            {providers.map((p) => (
+              <option key={p.id} value={p.id}>{p.label}</option>
+            ))}
+          </select>
+        )}
         <Button onClick={submit} disabled={!enabled || pending || q.trim().length < 5}>
           <Send className="size-4" /> {pending ? "AI sedang menganalisis..." : "Tanya AI"}
         </Button>
-        {!enabled && <p className="text-sm text-muted-foreground">Belum aktif: isi ANTHROPIC_API_KEY di environment server.</p>}
+        {!enabled && <p className="text-sm text-muted-foreground">Belum aktif: isi kunci salah satu penyedia (ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, OPENROUTER_API_KEY) di environment server.</p>}
       </div>
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
       {answer && (
         <div className="grid gap-2 rounded-2xl bg-muted/60 p-4">
           <p className="text-sm leading-relaxed whitespace-pre-wrap">{answer.text}</p>
+          <p className="text-xs text-muted-foreground">Dijawab oleh {answer.label}</p>
           {answer.tools.length > 0 && <p className="text-xs text-muted-foreground">Sumber data: {[...new Set(answer.tools)].join(", ")}</p>}
         </div>
       )}
