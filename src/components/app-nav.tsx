@@ -147,7 +147,7 @@ export function SidebarFrame({ sidebar, topbar, children }: { sidebar: React.Rea
           data-collapsed={collapsed}
           className={cn(
             "group/sb z-50 flex flex-col gap-3 border-r border-sidebar-border bg-sidebar text-sidebar-foreground",
-            "max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:w-[300px] max-lg:max-w-[85vw] max-lg:overflow-y-auto max-lg:p-4",
+            "max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:w-[300px] max-lg:max-w-[85vw] max-lg:overflow-y-auto max-lg:[scrollbar-width:none] max-lg:[&::-webkit-scrollbar]:hidden max-lg:p-4",
             "lg:sticky lg:top-0 lg:h-svh lg:shrink-0",
             ready && "transition-[width,translate] duration-200 ease-out",
             drawerOpen ? "max-lg:translate-x-0 max-lg:shadow-2xl" : "max-lg:-translate-x-full",

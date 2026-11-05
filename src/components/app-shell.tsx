@@ -68,7 +68,7 @@ export async function RailView({ ctx }: { ctx: UserContext }) {
         </span>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden [scrollbar-width:thin] group-data-[collapsed=true]/sb:[scrollbar-width:none] group-data-[collapsed=true]/sb:[&::-webkit-scrollbar]:hidden">
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none]">
         <SideNav items={visibleNavItems(ctx)} badges={badges} />
       </div>
 

@@ -1,3 +1,9 @@
+## [0.52.3] - 2026-11-05
+
+### Changed - Scrollbar Minimalis Global & Sembunyikan Scrollbar Sidebar
+- Mengatur scrollbar navigasi sidebar menjadi tersembunyi secara visual (`scrollbar-width: none; &::-webkit-scrollbar { display: none }`) pada `src/components/app-shell.tsx` dan `src/components/app-nav.tsx` tanpa menghilangkan fungsionalitas scroll halus via roda mouse atau trackpad.
+- Menerapkan penataan scrollbar modern dan minimalis di seluruh aplikasi pada `src/app/globals.css`: lebar ramping 6px, latar transparan, dan thumb membulat dengan warna halus yang adaptif terhadap tema terang dan gelap.
+
 ## [0.52.2] - 2026-11-05
 
 ### Refactor - Pembersihan Dead Code, Variabel, dan Placeholder Tidak Terpakai
