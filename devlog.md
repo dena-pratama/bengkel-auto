@@ -1,3 +1,9 @@
+## [0.53.4] - 2026-11-05
+
+### Added - Cahaya Biru dan Merah Mengikuti Pointer di Halaman Login
+- `src/app/(auth)/login/login-experience.tsx`: dua cahaya lembut (biru dan merah, seperti cahaya latar tachometer) mengikuti pointer mouse dengan gerak halus; merah sedikit tertinggal sehingga terlihat berpisah saat pointer bergerak. Terletak di belakang konten, lebih terang di mode gelap.
+- Dimatikan di layar sentuh, layar kecil, dan saat `prefers-reduced-motion`. Animasi hanya berjalan saat pointer bergerak (tanpa loop terus-menerus).
+
 ## [0.53.3] - 2026-11-05
 
 ### Changed - Outline Merah pada Kartu Login
