@@ -1,3 +1,8 @@
+## [0.53.1] - 2026-11-05
+
+### Fixed - Galat "Blocking Route / Date.now()" di halaman login
+- `src/app/(auth)/login/page.tsx`: `LoginContent` kini memanggil `await connection()` sebelum memakai klien Supabase (yang memakai `Date.now()` untuk cek sesi), sehingga tidak lagi dipra-render dan overlay galat Next.js hilang.
+
 ## [0.53.0] - 2026-11-05
 
 ### Added - Halaman Masuk Bergaya Start Mesin (Figma "login UI anima")

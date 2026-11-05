@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { LoginExperience } from "./login-experience";
 import { LoginForm } from "./login-form";
@@ -19,6 +20,8 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
 }
 
 async function LoginContent({ searchParams }: Pick<PageProps<"/login">, "searchParams">) {
+  // Data per request: Supabase memakai Date.now() untuk cek sesi, jadi jangan di-prerender
+  await connection();
   const supabase = await createClient();
   const { data: needsSetup } = await supabase.rpc("needs_setup");
   if (needsSetup) redirect("/setup");
