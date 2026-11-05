@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main, ui-ux-redesign]
+  pull_request:
+    branches: [main, ui-ux-redesign]
+
+jobs:
+  quality-check:
+    name: Code Quality & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install Dependencies
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+        run: npm ci
+
+      - name: Check Dashes Compliance
+        run: npm run check:dashes
+
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Next.js Production Build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_anon_key
+          SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_service_key
+        run: npm run build
+
+  e2e-playwright:
+    name: E2E Playwright with Browserless
+    runs-on: ubuntu-latest
+    services:
+      browserless:
+        image: ghcr.io/browserless/chromium:latest
+        ports:
+          - 3003:3000
+        env:
+          TOKEN: OwLKBycPOkV3ruAoItR871NfQnBauY9w
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install Dependencies
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+        run: npm ci
+
+      - name: Run Playwright E2E via Browserless CDP
+        env:
+          PLAYWRIGHT_SERVICE_URL: ws://localhost:3003?token=OwLKBycPOkV3ruAoItR871NfQnBauY9w
+        run: npm run test:e2e

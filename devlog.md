@@ -1,3 +1,11 @@
+## [0.52.1] - 2026-11-05
+
+### Added - Integrasi CI/CD GitHub Actions & Playwright E2E via Browserless
+- Menambahkan pipeline otomatis GitHub Actions pada `.github/workflows/ci.yml`.
+- Job `quality-check`: Menjalankan verifikasi bebas dash panjang (`npm run check:dashes`), linter ESLint, dan build produksi Next.js.
+- Job `e2e-playwright`: Menjalankan container service Browserless Chromium di dalam runner CI dan menghubungkan Playwright client (`playwright-core`) via protokol CDP WebSocket.
+- Menambahkan skrip uji Playwright di `scripts/test-playwright.mjs` dan shortcut `npm run test:e2e`.
+
 ## [0.52.0] - 2026-11-05
 
 ### Fixed - Tata Letak Sidebar Saat Diciutkan (Rail Mode) dan Tooltip Floating

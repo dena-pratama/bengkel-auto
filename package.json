@@ -1,6 +1,6 @@
 {
   "name": "bengkel-app",
-  "version": "0.52.0",
+  "version": "0.52.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:db": "node scripts/test-db.mjs",
+    "test:e2e": "node scripts/test-playwright.mjs",
     "check:dashes": "node scripts/check-dashes.mjs"
   },
   "dependencies": {
@@ -42,6 +43,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.4",
+    "playwright-core": "^1.64.1",
     "supabase": "^3.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
