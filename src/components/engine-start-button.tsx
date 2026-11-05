@@ -9,12 +9,16 @@ export function EngineStartButton({
   lit,
   onClick,
   autoFocus,
+  label = "Start mesin untuk masuk",
+  id,
   className,
 }: {
   size: number;
   lit: boolean;
   onClick?: () => void;
   autoFocus?: boolean;
+  label?: string;
+  id?: string;
   className?: string;
 }) {
   const body = (
@@ -59,9 +63,10 @@ export function EngineStartButton({
   return (
     <button
       type="button"
+      id={id}
       onClick={onClick}
       autoFocus={autoFocus}
-      aria-label="Start mesin untuk masuk"
+      aria-label={label}
       className={cn("relative inline-block shrink-0 rounded-full outline-none transition-transform duration-150 focus-visible:ring-4 focus-visible:ring-brand-blue/40 active:scale-[0.97]", className)}
       style={style}
     >

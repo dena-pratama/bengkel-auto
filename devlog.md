@@ -1,3 +1,13 @@
+## [0.53.2] - 2026-11-05
+
+### Changed - Animasi Halaman Login Disamakan dengan Prototype Figma
+- `src/app/(auth)/login/login-experience.tsx` ditulis ulang: logo, tachometer, dan tombol START kini satu elemen yang berpindah posisi (Smart Animate lewat View Transitions API) seperti prototype: START ditekan, jarum naik ke 8.0 selama 0,9 dtk (ease in-out), tahan 0,3 dtk, lalu bergeser ke posisi login selama 1,1 dtk sementara jarum turun ke 0.8 dan kartu muncul.
+- Tombol START kecil di pojok kanan atas kini berfungsi: mematikan mesin dan kembali ke tahap awal (0,6 dtk), sesuai prototype.
+- `src/app/globals.css`: gaya transisi `login-vt` dan `login-vt-fast`. Browser tanpa View Transitions (mis. Firefox lama) berpindah tanpa animasi gerak; `prefers-reduced-motion` melewati animasi.
+
+### Fixed
+- `src/components/tachometer.tsx`: cahaya merah di busur tidak lagi terpotong kotak (filter CSS drop-shadow diganti busur blur di dalam SVG dengan `overflow-visible`).
+
 ## [0.53.1] - 2026-11-05
 
 ### Fixed - Galat "Blocking Route / Date.now()" di halaman login

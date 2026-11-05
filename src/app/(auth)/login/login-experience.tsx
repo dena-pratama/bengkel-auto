@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import Image from "next/image";
 import { EngineStartButton } from "@/components/engine-start-button";
 import { Tachometer } from "@/components/tachometer";
@@ -12,7 +13,15 @@ type Step = "off" | "ignition" | "login";
 const IDLE_RPM = 0.8;
 const REV_RPM = 8;
 
-/** Animasi angka 0..8 dengan easing; mengembalikan nilai berjalan dan fungsi `to(target, ms)` */
+// Waktu mengikuti prototype Figma (Smart Animate, ease in-out)
+const SWEEP_MS = 900; // START ditekan: jarum naik ke 8.0
+const HOLD_MS = 300; // jeda di Ignition
+const MORPH_MS = 1100; // Ignition ke Login
+const STOP_MS = 600; // tombol START kecil: kembali ke mesin mati
+
+const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+
+/** Animasi angka 0..8 dengan easing in-out; mengembalikan nilai berjalan dan fungsi `to(target, ms)` */
 function useTween(initial: number) {
   const [value, setValue] = useState(initial);
   const current = useRef(initial);
@@ -23,7 +32,7 @@ function useTween(initial: number) {
     const t0 = performance.now();
     const tick = (now: number) => {
       const p = Math.min(1, (now - t0) / ms);
-      const next = from + (target - from) * (1 - Math.pow(1 - p, 3));
+      const next = from + (target - from) * easeInOut(p);
       current.current = next;
       setValue(next);
       if (p < 1) raf.current = requestAnimationFrame(tick);
@@ -34,9 +43,29 @@ function useTween(initial: number) {
   return [value, to] as const;
 }
 
+type VtDocument = Document & { startViewTransition?: (cb: () => void) => { finished: Promise<unknown> } };
+
+/** Ganti tampilan dengan transisi "smart animate" (View Transitions); tanpa dukungan browser: langsung ganti */
+function morph(update: () => void, fast = false) {
+  const doc = document as VtDocument;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!doc.startViewTransition || reduce) {
+    update();
+    return;
+  }
+  const root = document.documentElement;
+  const cls = fast ? "login-vt-fast" : "login-vt";
+  root.classList.add(cls);
+  const t = doc.startViewTransition(() => flushSync(update));
+  const done = () => root.classList.remove(cls);
+  t.finished.then(done, done);
+}
+
 /**
- * Halaman masuk bergaya "start mesin" (Figma "login UI anima"):
- * 1. Mesin mati, tekan START. 2. Ignition: jarum naik ke 8.0. 3. Mesin nyala, form login.
+ * Halaman masuk bergaya "start mesin" (Figma "login UI anima"), mengikuti prototype:
+ * 1. Mesin mati, tekan START. 2. Ignition: jarum naik ke 8.0 (0,9 dtk), tahan 0,3 dtk.
+ * 3. Logo, tachometer, dan tombol bergeser ke posisi login (1,1 dtk) dan kartu muncul.
+ * Tombol START kecil di pojok kanan atas mematikan mesin kembali (0,6 dtk).
  * Kartu `children` berisi form; selalu ter-mount agar pengelola password bekerja normal.
  */
 export function LoginExperience({ children }: { children: React.ReactNode }) {
@@ -52,34 +81,44 @@ export function LoginExperience({ children }: { children: React.ReactNode }) {
   const start = useCallback(() => {
     if (step !== "off") return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const later = (ms: number, fn: () => void) => timers.current.push(window.setTimeout(fn, ms));
-    const focusEmail = () => document.getElementById("email")?.focus({ preventScroll: true });
+    const wait = (ms: number, fn: () => void) => timers.current.push(window.setTimeout(fn, ms));
+    const focus = () => document.getElementById("email")?.focus({ preventScroll: true });
     if (reduce) {
       tweenTo(IDLE_RPM, 1);
       setStep("login");
-      later(50, focusEmail);
+      wait(50, focus);
       return;
     }
     setStep("ignition");
-    tweenTo(REV_RPM, 1200);
-    later(1650, () => {
-      setStep("login");
-      tweenTo(IDLE_RPM, 1000);
+    tweenTo(REV_RPM, SWEEP_MS);
+    wait(SWEEP_MS + HOLD_MS, () => {
+      morph(() => setStep("login"));
+      tweenTo(IDLE_RPM, MORPH_MS);
     });
-    later(2300, focusEmail);
+    wait(SWEEP_MS + HOLD_MS + MORPH_MS, focus);
+  }, [step, tweenTo]);
+
+  const stop = useCallback(() => {
+    if (step !== "login") return;
+    morph(() => setStep("off"), true);
+    tweenTo(0, STOP_MS);
+    timers.current.push(window.setTimeout(() => document.getElementById("engine-start")?.focus({ preventScroll: true }), STOP_MS + 50));
   }, [step, tweenTo]);
 
   const onLogin = step === "login";
   const igniting = step === "ignition";
-  const stageHidden = onLogin;
+  const hidden = "invisible opacity-0";
 
   return (
-    <div className="relative isolate flex min-h-svh flex-1 flex-col overflow-hidden bg-background">
+    <div
+      className="relative isolate flex min-h-[max(100svh,760px)] flex-1 flex-col overflow-hidden bg-background"
+      style={{ "--st": "max(4.5rem, calc(50svh - 340px))", "--lt": "max(5.5rem, calc(50svh - 300px))" } as React.CSSProperties}
+    >
       {/* Cahaya latar: merah saat ignition, biru saat login */}
       <div
         aria-hidden
         className={cn("pointer-events-none absolute inset-0 -z-10 transition-opacity duration-700", igniting ? "opacity-100" : "opacity-0")}
-        style={{ background: "radial-gradient(ellipse 55% 50% at 50% 74%, color-mix(in oklab, #e0262b 34%, transparent), transparent 70%)" }}
+        style={{ background: "radial-gradient(ellipse 55% 45% at 50% 70%, color-mix(in oklab, #e0262b 30%, transparent), transparent 72%)" }}
       />
       <div
         aria-hidden
@@ -87,59 +126,67 @@ export function LoginExperience({ children }: { children: React.ReactNode }) {
         style={{ background: "radial-gradient(ellipse 50% 55% at 25% 60%, color-mix(in oklab, #1e6fd9 22%, transparent), transparent 70%)" }}
       />
 
-      {/* Bilah atas: logo kecil di layar kecil saat login, toggle tema, indikator START */}
-      <header className="absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-3 p-5 sm:p-6">
-        <span className={cn("transition-opacity duration-700 lg:hidden", onLogin ? "opacity-100" : "opacity-0")}>
-          <Image src="/brand/automobi-logo.png" alt="AutoMobi" width={671} height={335} className="h-12 w-auto dark:hidden" priority />
-          <Image src="/brand/automobi-logo-dark.png" alt="AutoMobi" width={671} height={335} className="hidden h-12 w-auto dark:block" priority />
-        </span>
-        <div className="ml-auto flex items-center gap-3">
-          <ThemeToggle />
-          <span className={cn("transition-[opacity,max-width,margin] duration-700", onLogin ? "max-w-[60px] opacity-100" : "-ml-3 max-w-0 opacity-0")}>
-            <EngineStartButton size={60} lit />
-          </span>
+      {/* Toggle mode terang/gelap */}
+      <div className={cn("absolute top-8 z-20 [view-transition-name:login-toggle] sm:top-9", onLogin ? "right-[88px] sm:right-[92px]" : "right-5 sm:right-6")}>
+        <ThemeToggle />
+      </div>
+
+      {/* Logo */}
+      <div
+        className={cn(
+          "absolute z-10 [view-transition-name:login-logo]",
+          onLogin ? "top-5 left-5 w-28 lg:top-[var(--lt)] lg:left-1/4 lg:w-80 lg:-translate-x-1/2" : "top-[var(--st)] left-1/2 w-60 -translate-x-1/2",
+        )}
+      >
+        <Image src="/brand/automobi-logo.png" alt="AutoMobi" width={671} height={335} className="h-auto w-full dark:hidden" priority />
+        <Image src="/brand/automobi-logo-dark.png" alt="AutoMobi" width={671} height={335} className="hidden h-auto w-full dark:block" priority />
+      </div>
+
+      {/* Tagline (hanya layar lebar saat login) */}
+      <p className={cn("absolute top-[calc(var(--lt)+165px)] left-1/4 z-10 hidden -translate-x-1/2 text-base whitespace-nowrap text-muted-foreground transition-opacity duration-700 lg:block", onLogin ? "opacity-100" : hidden)}>
+        Bengkel &amp; servis mobil, dalam satu genggaman.
+      </p>
+
+      {/* Tachometer */}
+      <div
+        className={cn(
+          "absolute z-10 -translate-x-1/2 [view-transition-name:login-gauge]",
+          onLogin ? "top-[calc(var(--lt)+217px)] left-1/4 w-[270px] max-lg:hidden" : "top-[calc(var(--st)+140px)] left-1/2 w-[300px] max-w-[calc(100vw-2rem)]",
+        )}
+      >
+        <Tachometer value={rpm} />
+      </div>
+
+      {/* Tombol START: besar di tengah, kecil di pojok kanan atas saat login */}
+      <div className={cn("absolute z-20 [view-transition-name:login-button]", onLogin ? "top-5 right-5 sm:top-6 sm:right-6" : "top-[calc(var(--st)+446px)] left-1/2 -translate-x-1/2")}>
+        <EngineStartButton
+          size={onLogin ? 60 : 160}
+          lit={onLogin || igniting}
+          onClick={onLogin ? stop : start}
+          autoFocus
+          label={onLogin ? "Matikan mesin" : "Start mesin untuk masuk"}
+          id="engine-start"
+        />
+      </div>
+
+      {/* Petunjuk */}
+      <p
+        aria-live="polite"
+        className={cn(
+          "absolute top-[calc(var(--st)+446px+160px+28px)] left-1/2 z-10 -translate-x-1/2 text-[15px] whitespace-nowrap transition-[opacity,color] duration-500",
+          onLogin ? hidden : "opacity-100",
+          igniting ? "font-medium text-[#e0262b]" : "text-muted-foreground",
+        )}
+      >
+        {igniting ? "Menyalakan mesin..." : "Injak rem & tekan START untuk masuk"}
+      </p>
+
+      {/* Kartu login */}
+      <div className="relative z-10 flex flex-1 items-center justify-center px-4 pt-24 pb-16 lg:ml-[50%] lg:px-10 lg:pt-16" aria-hidden={!onLogin} inert={!onLogin}>
+        <div className={cn("w-full max-w-[460px] rounded-3xl border border-border bg-card p-6 shadow-[0_28px_60px_-28px_rgb(15_23_42/0.28)] sm:p-9", onLogin ? "visible opacity-100" : hidden)}>
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-[28px]">Selamat datang kembali</h1>
+          <div className="mt-6">{children}</div>
         </div>
-      </header>
-
-      <div className="grid flex-1 place-items-center">
-        {/* Tahap 1 dan 2: logo, tachometer, tombol START */}
-        <section
-          aria-hidden={stageHidden}
-          inert={stageHidden}
-          className={cn(
-            "col-start-1 row-start-1 flex w-full flex-col items-center px-4 pt-20 pb-16 transition-[opacity,scale,visibility] duration-700 motion-reduce:transition-none",
-            stageHidden ? "invisible scale-95 opacity-0" : "visible scale-100 opacity-100",
-          )}
-        >
-          <Image src="/brand/automobi-logo.png" alt="AutoMobi" width={671} height={335} className="h-auto w-56 dark:hidden sm:w-60" priority />
-          <Image src="/brand/automobi-logo-dark.png" alt="AutoMobi" width={671} height={335} className="hidden h-auto w-56 sm:w-60 dark:block" priority />
-          <Tachometer value={rpm} className="mt-5 w-[300px] max-w-full" />
-          <EngineStartButton size={160} lit={igniting} onClick={start} autoFocus className="mt-8" />
-          <p className={cn("mt-8 text-[15px] transition-colors duration-500", igniting ? "font-medium text-[#e0262b]" : "text-muted-foreground")} aria-live="polite">
-            {igniting ? "Menyalakan mesin..." : "Injak rem & tekan START untuk masuk"}
-          </p>
-        </section>
-
-        {/* Tahap 3: merek dan tachometer di kiri (layar lebar), kartu login di kanan */}
-        <section
-          aria-hidden={!onLogin}
-          inert={!onLogin}
-          className={cn(
-            "col-start-1 row-start-1 grid w-full items-center gap-10 px-4 pt-24 pb-16 transition-[opacity,scale,visibility] duration-700 motion-reduce:transition-none lg:min-h-svh lg:grid-cols-2 lg:px-10 lg:pt-16",
-            onLogin ? "visible scale-100 opacity-100 delay-300 motion-reduce:delay-0" : "invisible scale-105 opacity-0",
-          )}
-        >
-          <div className="hidden flex-col items-center gap-3 lg:flex">
-            <Image src="/brand/automobi-logo.png" alt="" width={671} height={335} className="h-auto w-80 dark:hidden" priority />
-            <Image src="/brand/automobi-logo-dark.png" alt="" width={671} height={335} className="hidden h-auto w-80 dark:block" priority />
-            <p className="text-base text-muted-foreground">Bengkel &amp; servis mobil, dalam satu genggaman.</p>
-            <Tachometer value={rpm} className="mt-6 w-[270px]" />
-          </div>
-          <div className="mx-auto w-full max-w-[460px] rounded-3xl border border-border bg-card p-6 shadow-[0_28px_60px_-28px_rgb(15_23_42/0.28)] sm:p-9">
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-[28px]">Selamat datang kembali</h1>
-            <div className="mt-6">{children}</div>
-          </div>
-        </section>
       </div>
 
       <footer className="pointer-events-none absolute inset-x-0 bottom-5 text-center text-xs text-muted-foreground">&copy; 2026 AutoMobi</footer>

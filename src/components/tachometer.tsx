@@ -24,7 +24,7 @@ export function Tachometer({ value, className }: { value: number; className?: st
   const on = v > 0.05;
   const lit = (v / MAX) * ARC_LEN;
   return (
-    <svg viewBox="0 0 300 270" role="img" aria-label={`Tachometer ${v.toFixed(1)} x1000 r/min`} className={cn("block h-auto w-full select-none", className)}>
+    <svg viewBox="0 0 300 270" role="img" aria-label={`Tachometer ${v.toFixed(1)} x1000 r/min`} className={cn("block h-auto w-full overflow-visible select-none", className)}>
       <defs>
         <linearGradient id="tacho-arc" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="300" y2="0">
           <stop offset="0.1" stopColor="#2b6fdc" />
@@ -35,6 +35,9 @@ export function Tachometer({ value, className }: { value: number; className?: st
           <stop offset="0" stopColor="#e0262b" />
           <stop offset="1" stopColor="#ff5a3d" />
         </linearGradient>
+        <filter id="tacho-glow" filterUnits="userSpaceOnUse" x="-60" y="-60" width="420" height="420">
+          <feGaussianBlur stdDeviation="7" />
+        </filter>
       </defs>
 
       {/* Jalur dan busur menyala */}
@@ -43,10 +46,20 @@ export function Tachometer({ value, className }: { value: number; className?: st
         <path
           d={ARC_PATH}
           fill="none"
+          stroke="#e0262b"
+          strokeWidth={10}
+          strokeDasharray={`${lit.toFixed(2)} ${ARC_LEN.toFixed(2)}`}
+          opacity={Math.min(0.5, v / 12)}
+          filter="url(#tacho-glow)"
+        />
+      )}
+      {on && (
+        <path
+          d={ARC_PATH}
+          fill="none"
           stroke="url(#tacho-arc)"
           strokeWidth={10}
           strokeDasharray={`${lit.toFixed(2)} ${ARC_LEN.toFixed(2)}`}
-          style={{ filter: `drop-shadow(0 0 ${Math.min(10, v * 1.4).toFixed(1)}px rgba(224,38,43,${Math.min(0.55, v / 14).toFixed(2)}))` }}
         />
       )}
 
@@ -76,7 +89,7 @@ export function Tachometer({ value, className }: { value: number; className?: st
       </text>
 
       {/* Jarum dan poros */}
-      <g transform={`rotate(${degFor(v).toFixed(2)} ${CX} ${CY})`} style={on ? { filter: "drop-shadow(0 0 4px rgba(224,38,43,0.5))" } : undefined}>
+      <g transform={`rotate(${degFor(v).toFixed(2)} ${CX} ${CY})`}>
         <line x1={CX} y1={CY} x2={CX} y2={CY - 108} stroke="url(#tacho-needle)" strokeWidth={4} strokeLinecap="round" />
       </g>
       <circle cx={CX} cy={CY} r={9} strokeWidth={3} className="fill-card stroke-[#e0262b]" />
