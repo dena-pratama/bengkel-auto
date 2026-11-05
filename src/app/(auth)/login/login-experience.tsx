@@ -105,47 +105,6 @@ export function LoginExperience({ children }: { children: React.ReactNode }) {
     timers.current.push(window.setTimeout(() => document.getElementById("engine-start")?.focus({ preventScroll: true }), STOP_MS + 50));
   }, [step, tweenTo]);
 
-  // Cahaya biru dan merah mengikuti pointer mouse (lerp halus; merah lebih lambat). Dimatikan di layar sentuh dan gerak-dikurangi.
-  const blueRef = useRef<HTMLDivElement>(null);
-  const redRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const blue = blueRef.current;
-    const red = redRef.current;
-    if (!blue || !red) return;
-    const half = 120; // setengah ukuran cahaya (240 px)
-    const target = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    const b = { ...target };
-    const r = { ...target };
-    let raf = 0;
-    const place = () => {
-      blue.style.transform = `translate3d(${b.x - half - 30}px, ${b.y - half - 18}px, 0)`;
-      red.style.transform = `translate3d(${r.x - half + 30}px, ${r.y - half + 18}px, 0)`;
-    };
-    const loop = () => {
-      b.x += (target.x - b.x) * 0.16;
-      b.y += (target.y - b.y) * 0.16;
-      r.x += (target.x - r.x) * 0.07;
-      r.y += (target.y - r.y) * 0.07;
-      place();
-      const moving = Math.abs(target.x - r.x) + Math.abs(target.y - r.y) > 0.6;
-      raf = moving ? requestAnimationFrame(loop) : 0;
-    };
-    const move = (e: PointerEvent) => {
-      target.x = e.pageX;
-      target.y = e.pageY;
-      blue.style.opacity = "1";
-      red.style.opacity = "1";
-      if (!raf) raf = requestAnimationFrame(loop);
-    };
-    place();
-    window.addEventListener("pointermove", move, { passive: true });
-    return () => {
-      window.removeEventListener("pointermove", move);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-
   const onLogin = step === "login";
   const igniting = step === "ignition";
   const hidden = "invisible opacity-0";
@@ -167,18 +126,16 @@ export function LoginExperience({ children }: { children: React.ReactNode }) {
         style={{ background: "radial-gradient(ellipse 50% 55% at 25% 60%, color-mix(in oklab, #1e6fd9 22%, transparent), transparent 70%)" }}
       />
 
-      {/* Cahaya pengikut pointer */}
+      {/* Bayangan biru dan merah (warna logo) yang bergeser pelan */}
       <div
-        ref={blueRef}
         aria-hidden
-        className="pointer-events-none absolute top-0 left-0 -z-10 size-[240px] rounded-full opacity-0 transition-opacity duration-700 will-change-transform max-lg:hidden"
-        style={{ background: "radial-gradient(circle, color-mix(in oklab, #1e6fd9 var(--glow-a, 26%), transparent), transparent 66%)" }}
+        className="login-drift-a pointer-events-none absolute -top-32 -left-32 -z-10 size-[560px] rounded-full motion-reduce:animate-none"
+        style={{ background: "radial-gradient(circle, color-mix(in oklab, #1f5fbf var(--glow-a, 26%), transparent), transparent 68%)" }}
       />
       <div
-        ref={redRef}
         aria-hidden
-        className="pointer-events-none absolute top-0 left-0 -z-10 size-[240px] rounded-full opacity-0 transition-opacity duration-700 will-change-transform max-lg:hidden"
-        style={{ background: "radial-gradient(circle, color-mix(in oklab, #e0262b var(--glow-a, 22%), transparent), transparent 66%)" }}
+        className="login-drift-b pointer-events-none absolute -right-32 -bottom-32 -z-10 size-[600px] rounded-full motion-reduce:animate-none"
+        style={{ background: "radial-gradient(circle, color-mix(in oklab, #d92228 var(--glow-a, 22%), transparent), transparent 68%)" }}
       />
 
       {/* Toggle mode terang/gelap */}

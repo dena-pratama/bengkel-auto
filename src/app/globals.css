@@ -302,3 +302,21 @@ html.login-vt-fast::view-transition-new(login-button),
 html.login-vt-fast::view-transition-new(login-toggle) {
   animation: none;
 }
+
+/* Halaman login: bayangan latar biru dan merah yang bergeser pelan */
+@keyframes login-drift-a {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(34vw, 16vh, 0) scale(1.15); }
+  100% { transform: translate3d(8vw, 38vh, 0) scale(0.95); }
+}
+@keyframes login-drift-b {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-32vw, -18vh, 0) scale(1.12); }
+  100% { transform: translate3d(-6vw, -40vh, 0) scale(0.96); }
+}
+.login-drift-a {
+  animation: login-drift-a 26s ease-in-out infinite alternate;
+}
+.login-drift-b {
+  animation: login-drift-b 32s ease-in-out infinite alternate;
+}

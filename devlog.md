@@ -1,3 +1,9 @@
+## [0.53.6] - 2026-11-05
+
+### Changed - Efek Pointer Dihapus, Diganti Bayangan Latar Bergeser Pelan
+- `src/app/(auth)/login/login-experience.tsx`: cahaya pengikut pointer mouse dihapus.
+- Sebagai gantinya dua bayangan lembut berwarna logo (biru #1f5fbf dan merah #d92228) bergeser pelan di latar secara otomatis (siklus 26 dan 32 detik, tanpa JavaScript). Gaya di `src/app/globals.css` (`login-drift-a`, `login-drift-b`). Mati saat `prefers-reduced-motion`.
+
 ## [0.53.5] - 2026-11-05
 
 ### Changed - Ukuran Cahaya Pointer di Halaman Login Diperkecil
