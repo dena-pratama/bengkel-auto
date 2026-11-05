@@ -1,3 +1,8 @@
+## [0.53.5] - 2026-11-05
+
+### Changed - Ukuran Cahaya Pointer di Halaman Login Diperkecil
+- `src/app/(auth)/login/login-experience.tsx`: cahaya biru dan merah pengikut pointer diperkecil dari 560 px menjadi 240 px (selisih posisi biru-merah ikut disesuaikan).
+
 ## [0.53.4] - 2026-11-05
 
 ### Added - Cahaya Biru dan Merah Mengikuti Pointer di Halaman Login

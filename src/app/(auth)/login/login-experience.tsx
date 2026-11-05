@@ -113,14 +113,14 @@ export function LoginExperience({ children }: { children: React.ReactNode }) {
     const blue = blueRef.current;
     const red = redRef.current;
     if (!blue || !red) return;
-    const half = 280; // setengah ukuran cahaya (560 px)
+    const half = 120; // setengah ukuran cahaya (240 px)
     const target = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     const b = { ...target };
     const r = { ...target };
     let raf = 0;
     const place = () => {
-      blue.style.transform = `translate3d(${b.x - half - 70}px, ${b.y - half - 40}px, 0)`;
-      red.style.transform = `translate3d(${r.x - half + 70}px, ${r.y - half + 40}px, 0)`;
+      blue.style.transform = `translate3d(${b.x - half - 30}px, ${b.y - half - 18}px, 0)`;
+      red.style.transform = `translate3d(${r.x - half + 30}px, ${r.y - half + 18}px, 0)`;
     };
     const loop = () => {
       b.x += (target.x - b.x) * 0.16;
@@ -171,13 +171,13 @@ export function LoginExperience({ children }: { children: React.ReactNode }) {
       <div
         ref={blueRef}
         aria-hidden
-        className="pointer-events-none absolute top-0 left-0 -z-10 size-[560px] rounded-full opacity-0 transition-opacity duration-700 will-change-transform max-lg:hidden"
+        className="pointer-events-none absolute top-0 left-0 -z-10 size-[240px] rounded-full opacity-0 transition-opacity duration-700 will-change-transform max-lg:hidden"
         style={{ background: "radial-gradient(circle, color-mix(in oklab, #1e6fd9 var(--glow-a, 26%), transparent), transparent 66%)" }}
       />
       <div
         ref={redRef}
         aria-hidden
-        className="pointer-events-none absolute top-0 left-0 -z-10 size-[560px] rounded-full opacity-0 transition-opacity duration-700 will-change-transform max-lg:hidden"
+        className="pointer-events-none absolute top-0 left-0 -z-10 size-[240px] rounded-full opacity-0 transition-opacity duration-700 will-change-transform max-lg:hidden"
         style={{ background: "radial-gradient(circle, color-mix(in oklab, #e0262b var(--glow-a, 22%), transparent), transparent 66%)" }}
       />
 

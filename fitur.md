@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.53.4**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.53.5**
 
 ## Fondasi
 | Fitur | Status | Versi |
