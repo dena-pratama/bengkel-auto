@@ -47,3 +47,6 @@ next-env.d.ts
 
 # Catatan serah terima lokal
 catatan-redesain.md
+
+# test outputs
+scripts/hasil-uji-*

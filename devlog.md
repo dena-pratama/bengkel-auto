@@ -5,6 +5,8 @@
 - Job `quality-check`: Menjalankan verifikasi bebas dash panjang (`npm run check:dashes`), linter ESLint, dan build produksi Next.js.
 - Job `e2e-playwright`: Menjalankan container service Browserless Chromium di dalam runner CI dan menghubungkan Playwright client (`playwright-core`) via protokol CDP WebSocket.
 - Menambahkan skrip uji Playwright di `scripts/test-playwright.mjs` dan shortcut `npm run test:e2e`.
+- Menambahkan skrip uji performa dan audit memori Chrome DevTools Protocol (CDP) di `scripts/uji-performa-cdp.mjs` dan shortcut `npm run test:perf`.
+- Menambahkan skrip uji menyeluruh Browserless di `scripts/uji-lengkap-browserless.mjs`.
 
 ## [0.52.0] - 2026-11-05
 
