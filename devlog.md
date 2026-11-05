@@ -1,3 +1,12 @@
+## [0.52.5] - 2026-11-05
+
+### Performance - Optimasi Kecepatan Dashboard & Responsivitas Navigasi Global
+- Menghapus pemuatan eager 15+ query database (katalog barang, jasa, paket, stok, kendaraan, 1000 work order) dari SSR awal halaman dashboard di `src/app/(app)/dashboard/page.tsx`, mengembalikan performa render awal dashboard menjadi instan.
+- Menambahkan server action `loadQuickActionDataAction` di `src/app/(app)/dashboard/actions.ts` untuk memuat data modal Quick Actions secara on-demand / latar belakang (idle time prefetch).
+- Menerapkan cache data dan prefetch otomatis saat mouse mengarah (hover/focus) ke kartu Quick Action di `src/app/(app)/dashboard/_components/quick-actions.tsx`, sehingga formulir siap terbuka tanpa jeda saat diklik.
+- Menambahkan komponen navigasi progress bar ramping di `src/components/navigation-progress.tsx` yang dipasang pada `src/app/(app)/layout.tsx` untuk memberikan umpan balik visual instan (<16ms) pada setiap klik tautan menu dan rute.
+- Menambahkan kerangka loading transisi App Router di `src/app/(app)/loading.tsx` agar perpindahan antar-halaman tidak mengalami jeda kosong.
+
 ## [0.52.4] - 2026-11-05
 
 ### Added - Pop-up Isian Langsung untuk Kartu Quick Action Dashboard
