@@ -1,3 +1,17 @@
+## [0.52.4] - 2026-11-05
+
+### Added - Pop-up Isian Langsung untuk Kartu Quick Action Dashboard
+- Mengubah 4 kartu Quick Action pada dashboard agar langsung membuka dialog form pop-up isian interaktif di tempat tanpa navigasi halaman:
+  1. Work order baru: Membuka modal pop-up Estimasi & Work Order baru (NewEstimateDialog).
+  2. Check-in kendaraan: Menggantikan pintasan papan servis dengan formulir registrasi dan penerimaan kendaraan masuk baru (NewVehicleDialog).
+  3. Kasir cepat: Membuka modal POS penjualan langsung dan penerimaan pembayaran multi-metode (SaleDialog).
+  4. Cek stok: Membuka modal scan QR/barcode barang, pencarian SKU/nama cepat, status stok fisik, lokasi rak, dan riwayat mutasi (CheckStockDialog).
+- Menambahkan server action `checkStockAction` pada `src/app/(app)/inventory/actions.ts` yang memanggil `resolveScan` untuk mendukung pencarian dan validasi live.
+- Menambahkan komponen modal baru `CheckStockDialog` pada `src/app/(app)/inventory/_components/check-stock-dialog.tsx` dengan fitur input SKU realtime, kamera pemindai barcode, detail stok, dan rak.
+- Menambahkan properti `trigger?: (open: () => void) => React.ReactNode` opsional pada dialog form yang ada (`NewEstimateDialog`, `NewVehicleDialog`, `SaleDialog`) untuk fleksibilitas pemanggilan dari berbagai pemicu UI.
+- Memperbarui tombol "+ Work order" pada bilah atas dashboard agar terintegrasi langsung dengan dialog pembukaan estimasi baru bagi pengguna yang memiliki hak akses.
+- Mengatasi Runtime AbortError pada pemindai kamera (html5-qrcode) di `src/components/qr-scanner.tsx` saat dialog ditutup cepat atau hot-reload, dengan menangkap dan menetralkan unhandled rejection video.play() serta pembersihan stream kamera yang aman.
+
 ## [0.52.3] - 2026-11-05
 
 ### Changed - Scrollbar Minimalis Global & Sembunyikan Scrollbar Sidebar

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { dbError as toDbError, done, invalid, type ActionResult } from "@/lib/action-result";
 import { createClient } from "@/lib/supabase/server";
+import { resolveScan, type ScanResult } from "@/lib/scan";
 import { compatListSchema, type CompatRowInput } from "@/lib/validation/compat";
 import {
   itemSchema,
@@ -167,4 +168,13 @@ export async function saveItemCompatAction(itemId: string, rows: CompatRowInput[
   if (error) return dbError(error);
   revalidatePath("/inventory", "layout");
   return done();
+}
+
+export async function checkStockAction(code: string): Promise<ActionResult<ScanResult>> {
+  try {
+    const res = await resolveScan(code);
+    return done(res);
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Gagal memuat data stok" };
+  }
 }

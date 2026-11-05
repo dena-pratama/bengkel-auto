@@ -25,18 +25,24 @@ export function NewVehicleDialog({
   models,
   fixedOwner,
   variant = "default",
+  trigger,
 }: {
   customers: Pick<Customer, "id" | "name" | "phone" | "is_active">[];
   models: { make: string; model: string }[];
   fixedOwner?: { id: string; name: string };
   variant?: "default" | "outline";
+  trigger?: (open: () => void) => React.ReactNode;
 }) {
   const d = useCreateDialog({ message: "Kendaraan ditambahkan.", detailHref: (id) => `/pelanggan/kendaraan/${id}` });
   return (
     <>
-      <Button variant={variant} onClick={() => d.setOpen(true)}>
-        <Car className="size-4" /> Tambah kendaraan
-      </Button>
+      {trigger ? (
+        trigger(() => d.setOpen(true))
+      ) : (
+        <Button variant={variant} onClick={() => d.setOpen(true)}>
+          <Car className="size-4" /> Tambah kendaraan
+        </Button>
+      )}
       <FormDialog
         open={d.open}
         onOpenChange={d.setOpen}

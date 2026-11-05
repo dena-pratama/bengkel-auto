@@ -2,11 +2,8 @@ import Link from "next/link";
 import {
   AlertTriangle,
   ArrowRight,
-  ChevronRight,
   ClipboardList,
   Info,
-  Plus,
-  QrCode,
   ReceiptText,
   Wallet,
   Wrench,
@@ -82,41 +79,6 @@ export function Hero({ firstName }: { firstName: string }) {
   );
 }
 
-/* ================================================================ Aksi cepat */
-const QUICK: { href: string; title: string; desc: string; icon: LucideIcon; primary?: boolean }[] = [
-  { href: "/servis/estimasi", title: "Work order baru", desc: "Mulai dari estimasi", icon: Plus, primary: true },
-  { href: "/servis", title: "Papan servis", desc: "Status kendaraan di bengkel", icon: ClipboardList },
-  { href: "/kasir", title: "Kasir cepat", desc: "Jual part dan terima bayar", icon: ReceiptText },
-  { href: "/inventory/scan", title: "Cek stok", desc: "Scan QR barang dan rak", icon: QrCode },
-];
-
-export function QuickActions({ allowed }: { allowed: (href: string) => boolean }) {
-  const items = QUICK.filter((q) => allowed(q.href));
-  if (items.length === 0) return null;
-  return (
-    <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      {items.map(({ href, title, desc, icon: Icon, primary }) => (
-        <Link
-          key={href}
-          href={href}
-          className={cn(
-            "group flex items-center gap-3 rounded-xl border p-4 transition-colors hover:border-brand-blue/60",
-            primary ? "border-dashed border-brand-blue/60 bg-brand-blue-soft/40" : "border-border bg-card",
-          )}
-        >
-          <span className={cn("flex size-10 shrink-0 items-center justify-center rounded-lg", primary ? "bg-brand-rail text-white" : "bg-brand-blue-soft text-brand-blue-fg")}>
-            <Icon className="size-5" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-semibold">{title}</span>
-            <span className="block truncate text-xs text-muted-foreground">{desc}</span>
-          </span>
-          <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-        </Link>
-      ))}
-    </section>
-  );
-}
 
 /* ================================================================ Kartu angka */
 function StatTile({ eyebrow, tone, title, value, foot, href, cta, icon: Icon }: { eyebrow: string; tone: Tone; title: string; value: string; foot: string; href: string; cta: string; icon: LucideIcon }) {

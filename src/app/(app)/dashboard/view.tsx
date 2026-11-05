@@ -1,9 +1,13 @@
 import { BarChart3, LayoutGrid, Plus, Workflow } from "lucide-react";
 import Link from "next/link";
 import { can, type UserContext } from "@/lib/auth";
+import type { Customer } from "@/lib/customers";
 import type { DashboardData } from "@/lib/dashboard";
+import { addDays, todayWib } from "@/lib/format";
+import type { CatalogOption, VehicleOption } from "@/lib/service";
 import { cn } from "@/lib/utils";
-import { ActiveWorkOrders, Hero, LowStockPanel, MechanicLoad, NotificationsPanel, QuickActions, ShiftPanel, StatTiles } from "./widgets";
+import { NewWorkOrderButton, QuickActions } from "./_components/quick-actions";
+import { ActiveWorkOrders, Hero, LowStockPanel, MechanicLoad, NotificationsPanel, ShiftPanel, StatTiles } from "./widgets";
 
 const TABS = [
   { label: "Dashboard", icon: LayoutGrid, active: true },
@@ -19,7 +23,21 @@ const ACTION_MODULE: Record<string, [string, "view" | "create"]> = {
   "/inventory/scan": ["master_data", "view"],
 };
 
-export function DashboardView({ ctx, data }: { ctx: UserContext; data: DashboardData }) {
+export function DashboardView({
+  ctx,
+  data,
+  vehicles = [],
+  catalog = [],
+  customers = [],
+  models = [],
+}: {
+  ctx: UserContext;
+  data: DashboardData;
+  vehicles?: VehicleOption[];
+  catalog?: CatalogOption[];
+  customers?: Pick<Customer, "id" | "name" | "phone" | "is_active">[];
+  models?: { make: string; model: string }[];
+}) {
   const firstName = ctx.employee.full_name.split(" ")[0];
   const allowed = (href: string) => {
     const rule = ACTION_MODULE[href];
@@ -27,6 +45,11 @@ export function DashboardView({ ctx, data }: { ctx: UserContext; data: Dashboard
   };
   const tabs = TABS.filter((t) => !t.href || allowed(t.href));
   const hasBody = data.workOrders || data.notifications || data.lowStock || data.shift !== undefined;
+  const validUntil = addDays(todayWib(), 7);
+  const canCreateWO = can(ctx, "service_orders", "create");
+  const canCreateVehicle = can(ctx, "customers", "create");
+  const canCreateSale = can(ctx, "sales", "create");
+  const canViewStock = can(ctx, "master_data", "view");
 
   return (
     <div className="mx-auto grid max-w-[1440px] gap-5">
@@ -52,15 +75,32 @@ export function DashboardView({ ctx, data }: { ctx: UserContext; data: Dashboard
           })}
         </nav>
         {data.sample && <span className="rounded-full bg-brand-sand-soft px-2.5 py-1 text-2xs font-medium text-brand-sand">Data contoh</span>}
-        {allowed("/servis/estimasi") && (
-          <Link href="/servis/estimasi" className="ml-auto inline-flex h-10 items-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+        {canCreateWO ? (
+          <NewWorkOrderButton
+            vehicles={vehicles}
+            catalog={catalog}
+            validUntil={validUntil}
+          />
+        ) : allowed("/servis/estimasi") ? (
+          <Link href="/servis/estimasi" className="ml-auto inline-flex h-10 items-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90" >
             <Plus className="size-4" /> Work order
           </Link>
-        )}
+        ) : null}
       </div>
 
       <Hero firstName={firstName} />
-      <QuickActions allowed={allowed} />
+      <QuickActions
+        canCreateWO={canCreateWO}
+        canCreateVehicle={canCreateVehicle}
+        canCreateSale={canCreateSale}
+        canViewStock={canViewStock}
+        vehicles={vehicles}
+        catalog={catalog}
+        customers={customers}
+        models={models}
+        shiftOpen={Boolean(data.shift)}
+        validUntil={validUntil}
+      />
       <StatTiles data={data} />
 
       {hasBody ? (
