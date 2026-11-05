@@ -1,3 +1,20 @@
+## [0.53.0] - 2026-11-05
+
+### Added - Halaman Masuk Bergaya Start Mesin (Figma "login UI anima")
+- Alur 3 tahap beranimasi di `src/app/(auth)/login/login-experience.tsx`: (1) mesin mati dengan tachometer 0.0 dan tombol ENGINE START STOP, (2) ignition: jarum naik ke 8.0, busur biru ke merah, cahaya merah di latar, teks "Menyalakan mesin...", (3) mesin nyala: tachometer turun ke 0.8, logo dan tachometer di kiri, kartu "Selamat datang kembali" di kanan (Web) atau kartu di tengah dengan logo kecil (Mobile).
+- Komponen baru `src/components/tachometer.tsx` (SVG, sapuan 270 derajat, 0 sampai 8 x1000 r/min) dan `src/components/engine-start-button.tsx`.
+- Toggle mode terang/gelap di pojok kanan atas halaman masuk (memakai `ThemeToggle` yang sama dengan bilah atas aplikasi, pilihan tersimpan).
+- Tombol "Lihat/Sembunyi" untuk password dan kotak "Ingat email saya" (hanya email yang disimpan di browser, tidak pernah password).
+- Mode gerak dikurangi (`prefers-reduced-motion`): ignition dilewati, langsung ke form.
+
+### Changed
+- `src/app/(auth)/layout.tsx` kini hanya pembungkus; tata letak logo lama dipindah ke `src/app/(auth)/setup/layout.tsx` agar halaman Setup tidak berubah.
+- `src/app/(auth)/login/login-form.tsx` dan `page.tsx` memakai gaya Figma (isian 50 px, tombol Masuk gradien biru). Logika `loginAction`, validasi, pengalihan setup, dan pesan sesi berakhir tidak berubah.
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Di browser: Web Light, Web Dark, dan Mobile Dark (375 px) sesuai Figma, urutan START ke ignition ke login berjalan, validasi form tampil, tanpa scroll horizontal. Login dengan akun nyata belum dicoba (tanpa kredensial).
+
 ## [0.52.5] - 2026-11-05
 
 ### Performance - Optimasi Kecepatan Dashboard & Responsivitas Navigasi Global
