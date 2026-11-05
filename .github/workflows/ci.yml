@@ -23,7 +23,7 @@ jobs:
       - name: Install Dependencies
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-        run: npm ci
+        run: npm install
 
       - name: Check Dashes Compliance
         run: npm run check:dashes
@@ -61,7 +61,7 @@ jobs:
       - name: Install Dependencies
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-        run: npm ci
+        run: npm install
 
       - name: Run Playwright E2E via Browserless CDP
         env:
