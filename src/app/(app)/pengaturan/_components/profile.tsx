@@ -71,7 +71,7 @@ export function AvatarEditor({ employeeId, name, photoUrl }: { employeeId: strin
 
   return (
     <div className="flex flex-wrap items-center gap-5">
-      <UserAvatar name={name} photoUrl={photoUrl} className="size-24 rounded-3xl text-3xl" />
+      <UserAvatar name={name} photoUrl={photoUrl} className="size-20 rounded-full text-2xl ring-4 ring-background shadow-md" />
       <div className="grid gap-2">
         <div className="flex flex-wrap gap-2">
           <input
@@ -86,11 +86,11 @@ export function AvatarEditor({ employeeId, name, photoUrl }: { employeeId: strin
               if (f) void upload(f);
             }}
           />
-          <Button type="button" disabled={busy} onClick={() => input.current?.click()}>
+          <Button type="button" disabled={busy} onClick={() => input.current?.click()} className="rounded-xl">
             <Camera className="size-4" /> {busy ? "Memproses..." : photoUrl ? "Ganti foto" : "Unggah foto"}
           </Button>
           {photoUrl && (
-            <Button type="button" variant="outline" disabled={busy} onClick={() => void remove()}>
+            <Button type="button" variant="outline" disabled={busy} onClick={() => void remove()} className="rounded-xl text-destructive hover:bg-destructive/10">
               <Trash2 className="size-4" /> Hapus foto
             </Button>
           )}
@@ -127,7 +127,7 @@ export function PhoneForm({ initial }: { initial: string }) {
       </label>
       <FormError message={error} />
       <div>
-        <Button disabled={pending || value.trim() === initial} onClick={submit}>
+        <Button disabled={pending || value.trim() === initial} onClick={submit} className="rounded-xl">
           {pending ? "Menyimpan..." : "Simpan nomor"}
         </Button>
       </div>
@@ -160,7 +160,7 @@ export function PasswordForm() {
       {field("confirm_password", "Ulangi password baru", "new-password")}
       <FormError message={error} />
       <div>
-        <Button disabled={pending || !v.current_password || !v.password} onClick={submit}>
+        <Button disabled={pending || !v.current_password || !v.password} onClick={submit} className="rounded-xl">
           {pending ? "Menyimpan..." : "Ganti password"}
         </Button>
       </div>

@@ -48,15 +48,14 @@ export function ThemeToggle() {
       aria-label={label}
       aria-pressed={dark}
       title={label}
-      className="relative flex h-9 w-16 shrink-0 items-center rounded-full border border-border bg-card p-1 shadow-sm transition-colors hover:border-brand-blue/60"
+      className="relative flex h-9 w-[66px] shrink-0 items-center gap-0.5 rounded-full border border-border bg-muted p-[3px] transition-colors"
     >
-      <span
-        className={cn(
-          "flex size-7 items-center justify-center rounded-full shadow-sm transition-[translate,background-color] duration-300",
-          dark ? "translate-x-7 bg-brand-blue-ink text-white" : "translate-x-0 bg-brand-red text-white",
-        )}
-      >
-        {dark ? <Moon className="size-4" /> : <Sun className="size-4" />}
+      <span className={cn("absolute top-[3px] left-[3px] size-7 rounded-full bg-card shadow-sm ring-1 ring-border transition-transform duration-200", dark && "translate-x-[30px]")} />
+      <span className="relative z-10 flex size-7 items-center justify-center">
+        <Sun className={cn("size-[15px]", dark ? "text-muted-foreground" : "text-brand-gold")} />
+      </span>
+      <span className="relative z-10 flex size-7 items-center justify-center">
+        <Moon className={cn("size-[15px]", dark ? "text-brand-blue-fg" : "text-muted-foreground")} />
       </span>
     </button>
   );
@@ -83,15 +82,15 @@ export function ProfileMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="ml-1 flex items-center gap-2.5 rounded-xl border border-border bg-card py-1 pr-2 pl-1 shadow-sm transition-colors outline-none hover:border-brand-blue/60 focus-visible:ring-2 focus-visible:ring-ring data-popup-open:border-brand-blue/60"
+        className="flex items-center gap-2.5 rounded-full border border-border bg-card py-1 pr-2 pl-1 transition-colors outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-popup-open:bg-muted lg:pr-3"
         aria-label={`Menu profil ${name}`}
       >
-        <UserAvatar name={name} photoUrl={photoUrl} className="size-8 rounded-lg text-xs" />
+        <UserAvatar name={name} photoUrl={photoUrl} className="size-8 rounded-full text-xs" />
         <span className="hidden text-left leading-tight lg:block">
-          <span className="block text-sm font-medium">{name}</span>
+          <span className="block text-[13px] font-semibold">{name}</span>
           <span className="block text-2xs text-muted-foreground">{role}</span>
         </span>
-        <ChevronDown className="size-4 text-muted-foreground" />
+        <ChevronDown className="hidden size-4 text-muted-foreground lg:block" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" sideOffset={8} className="w-60 rounded-2xl p-1.5">

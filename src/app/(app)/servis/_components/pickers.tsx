@@ -122,7 +122,7 @@ function SearchList<T>({
         </ul>
       )}
     </div>
-    {codeOf && <ScanButton onScan={(t) => { if (!pickByCode(t)) { setQuery(t.replace(/^I:/i, "")); setOpen(true); } }} className="h-11 shrink-0 rounded-[14px]" />}
+    {codeOf && <ScanButton onScan={(t) => { if (!pickByCode(t)) { setQuery(t.replace(/^I:/i, "")); setOpen(true); } }} className="h-11 shrink-0 rounded-lg" />}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import type { Html5Qrcode } from "html5-qrcode";
 import { ScanLine } from "lucide-react";
 import { FormDialog } from "@/components/form-dialog";
 import { Button } from "@/components/ui/button";
@@ -15,37 +16,91 @@ function CameraView({ onScan }: { onScan: (text: string) => void }) {
     cb.current = onScan;
   });
 
+  // Cegah unhandled rejection AbortError saat video element dilepas dari DOM
   useEffect(() => {
-    let stop: (() => Promise<void>) | null = null;
-    let cancelled = false;
+    const handleRejection = (e: PromiseRejectionEvent) => {
+      const reason = e.reason as { name?: string; message?: string } | undefined;
+      const isAbort =
+        reason?.name === "AbortError" ||
+        (typeof reason?.message === "string" &&
+          (reason.message.includes("play()") || reason.message.includes("interrupted")));
+      if (isAbort) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("unhandledrejection", handleRejection);
+    return () => {
+      window.removeEventListener("unhandledrejection", handleRejection);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    let scannerInstance: Html5Qrcode | null = null;
+    let startPromise: Promise<null> | null = null;
+
     (async () => {
       try {
         const { Html5Qrcode } = await import("html5-qrcode");
+        if (!isMounted) return;
+
         const scanner = new Html5Qrcode(id);
-        await scanner.start(
+        scannerInstance = scanner;
+
+        startPromise = scanner.start(
           { facingMode: "environment" },
           { fps: 10, qrbox: { width: 240, height: 240 } },
           (text) => {
-            if (done.current) return;
+            if (done.current || !isMounted) return;
             done.current = true;
             cb.current(text);
           },
           () => {},
         );
-        stop = async () => {
+
+        await startPromise;
+
+        if (!isMounted) {
           try {
-            await scanner.stop();
+            if (scanner.isScanning) {
+              await scanner.stop();
+            }
             scanner.clear();
           } catch {}
-        };
-        if (cancelled) await stop();
-      } catch {
+        }
+      } catch (err: unknown) {
+        if (!isMounted) return;
+        const errObj = err as { name?: string; message?: string } | undefined;
+        if (
+          errObj?.name === "AbortError" ||
+          (typeof errObj?.message === "string" &&
+            (errObj.message.includes("play()") || errObj.message.includes("interrupted")))
+        ) {
+          return;
+        }
         setError("Kamera tidak bisa dibuka. Izinkan akses kamera di browser, atau ketik kodenya manual.");
       }
     })();
+
     return () => {
-      cancelled = true;
-      void stop?.();
+      isMounted = false;
+      if (scannerInstance) {
+        const scanner = scannerInstance;
+        const cleanup = async () => {
+          try {
+            if (startPromise) {
+              try {
+                await startPromise;
+              } catch {}
+            }
+            if (scanner.isScanning) {
+              await scanner.stop();
+            }
+            scanner.clear();
+          } catch {}
+        };
+        void cleanup();
+      }
     };
   }, [id]);
 

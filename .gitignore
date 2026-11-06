@@ -44,3 +44,9 @@ next-env.d.ts
 !.env.example
 ~$*
 *.log
+
+# Catatan serah terima lokal
+catatan-redesain.md
+
+# test outputs
+scripts/hasil-uji-*

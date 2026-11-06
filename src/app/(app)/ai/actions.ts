@@ -40,10 +40,10 @@ export async function generateWeeklyAction(): Promise<ActionResult> {
   return done();
 }
 
-export async function askAction(question: string): Promise<ActionResult<{ answer: string; tools: string[] }>> {
+export async function askAction(question: string, provider: string): Promise<ActionResult<{ answer: string; tools: string[]; provider: string; model: string }>> {
   const parsed = z.string().trim().min(5, "Tulis pertanyaan minimal 5 karakter").max(500, "Pertanyaan maksimal 500 karakter").safeParse(question);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
-  const res = await askAnalyst(parsed.data);
+  const res = await askAnalyst(parsed.data, provider);
   revalidatePath("/ai");
-  return res.ok ? done({ answer: res.answer, tools: res.tools }) : { ok: false, error: res.error };
+  return res.ok ? done({ answer: res.answer, tools: res.tools, provider: res.provider, model: res.model }) : { ok: false, error: res.error };
 }

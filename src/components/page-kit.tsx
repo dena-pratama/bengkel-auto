@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 
 /** Komponen halaman modul yang dipakai bersama (kartu, header, tab bagian, tanpa akses). */
 
-export const panel = "min-w-0 rounded-[28px] bg-card p-5 shadow-[0_1px_2px_rgb(23_36_51/0.04),0_10px_28px_-14px_rgb(23_36_51/0.14)] sm:p-6 in-data-[slot=dialog-body]:rounded-3xl in-data-[slot=dialog-body]:bg-muted/60 in-data-[slot=dialog-body]:p-4 in-data-[slot=dialog-body]:shadow-none sm:in-data-[slot=dialog-body]:p-5";
+export const panel = "min-w-0 rounded-xl border border-border bg-card p-5 in-data-[slot=dialog-body]:border-transparent in-data-[slot=dialog-body]:bg-muted in-data-[slot=dialog-body]:p-4 sm:in-data-[slot=dialog-body]:p-5";
 // text-base (≥16px) di HP: Safari iOS otomatis zoom pada input bertekstur < 16px, halaman jadi bisa digeser
 export const inputClass =
-  "h-11 w-full min-w-0 rounded-[14px] border border-input bg-card px-4 text-base text-foreground shadow-xs outline-none transition-[color,box-shadow,border-color] placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/25 aria-invalid:border-destructive aria-invalid:ring-4 aria-invalid:ring-destructive/15 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-70 sm:text-sm";
+  "h-10 w-full min-w-0 rounded-lg border border-input bg-card px-3 text-base text-foreground outline-none transition-[color,box-shadow,border-color] placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/15 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-70 sm:text-sm";
 
 export function PageHeader({
   title,
@@ -28,7 +28,7 @@ export function PageHeader({
             <ChevronLeft className="size-4" /> {back.label}
           </Link>
         )}
-        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+        <h1 className="text-[26px] leading-tight font-semibold tracking-tight">{title}</h1>
         {description && <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
@@ -41,15 +41,15 @@ export type SectionTab = { key: string; href: string; label: string; icon: Lucid
 /** Navigasi antarbagian dalam satu modul */
 export function SectionNav({ tabs, active, label }: { tabs: readonly SectionTab[]; active: string; label: string }) {
   return (
-    <nav className="-mx-1 flex gap-1 overflow-x-auto px-1 [scrollbar-width:none]" aria-label={label}>
+    <nav className="flex w-fit max-w-full gap-1 overflow-x-auto rounded-xl border border-border bg-card p-1 [scrollbar-width:none]" aria-label={label}>
       {tabs.map(({ key, href, label, icon: Icon }) => (
         <Link
           key={key}
           href={href}
           aria-current={active === key ? "page" : undefined}
           className={cn(
-            "flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors",
-            active === key ? "bg-brand-rail text-white shadow-sm" : "text-muted-foreground hover:bg-card/70 hover:text-foreground",
+            "flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
+            active === key ? "bg-brand-rail text-white" : "text-muted-foreground hover:bg-muted hover:text-foreground",
           )}
         >
           <Icon className="size-4" />

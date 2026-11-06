@@ -1,5 +1,6 @@
 import { Suspense } from "react";
-import { NoAccess, PageHeader, Skeleton } from "@/components/page-kit";
+import { AlertCircle, AlertTriangle, CheckCircle2, ClipboardList } from "lucide-react";
+import { NoAccess, PageHeader, Skeleton, panel } from "@/components/page-kit";
 import { ListFilter } from "@/components/list-filter";
 import { can, requireUser } from "@/lib/auth";
 import { formatDate, todayWib } from "@/lib/format";
@@ -11,8 +12,10 @@ import {
   listOpnameLocations,
   listStockOpnames,
 } from "@/lib/stock-opname";
+import { cn } from "@/lib/utils";
 import { CreateOpnameDialog } from "./_components/create-dialog";
 import { OpnameList } from "./_components/opname-list";
+import { formatRp } from "./_components/ui";
 
 export const metadata = {
   title: "Stok Opname",
@@ -53,6 +56,15 @@ async function Content({ searchParams }: { searchParams: Promise<Record<string, 
     listOpnameEmployees(),
   ]);
 
+  const inProgressCount = opnames.filter((o) => o.status === "in_progress").length;
+  const reviewCount = opnames.filter((o) => o.status === "review").length;
+  const postedOpnames = opnames.filter((o) => o.status === "posted");
+  const avgAccuracy =
+    postedOpnames.length > 0
+      ? `${(postedOpnames.reduce((sum, o) => sum + o.accuracy_pct, 0) / postedOpnames.length).toFixed(1)}%`
+      : "-";
+  const totalVariance = opnames.reduce((sum, o) => sum + o.total_variance_amount, 0);
+
   return (
     <>
       <PageHeader
@@ -68,6 +80,58 @@ async function Content({ searchParams }: { searchParams: Promise<Record<string, 
           ) : null
         }
       />
+
+      {/* Summary 4 cards */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {/* Sesi bulan ini */}
+        <section className={cn(panel, "flex items-center gap-3.5 p-4")}>
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-brand-blue-soft">
+            <ClipboardList className="size-5 text-brand-blue-fg" strokeWidth={1.75} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs text-muted-foreground">Sesi tercatat</p>
+            <p className="text-xl font-semibold leading-tight tabular-nums">{opnames.length}</p>
+            <p className="text-[11px] text-muted-foreground">{inProgressCount} sedang berjalan</p>
+          </div>
+        </section>
+
+        {/* Akurasi rata-rata */}
+        <section className={cn(panel, "flex items-center gap-3.5 p-4")}>
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-brand-green-soft">
+            <CheckCircle2 className="size-5 text-brand-green" strokeWidth={1.75} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs text-muted-foreground">Akurasi rata-rata</p>
+            <p className="text-xl font-semibold leading-tight tabular-nums">{avgAccuracy}</p>
+            <p className="text-[11px] text-muted-foreground">dari {postedOpnames.length} sesi selesai</p>
+          </div>
+        </section>
+
+        {/* Menunggu peninjauan */}
+        <section className={cn(panel, "flex items-center gap-3.5 p-4")}>
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-brand-sand-soft">
+            <AlertTriangle className="size-5 text-brand-sand" strokeWidth={1.75} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs text-muted-foreground">Menunggu tinjauan</p>
+            <p className="text-xl font-semibold leading-tight tabular-nums">{reviewCount} sesi</p>
+            <p className="text-[11px] text-muted-foreground">perlu persetujuan</p>
+          </div>
+        </section>
+
+        {/* Selisih nilai */}
+        <section className={cn(panel, "flex items-center gap-3.5 p-4")}>
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-brand-red-soft">
+            <AlertCircle className="size-5 text-brand-red" strokeWidth={1.75} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs text-muted-foreground">Selisih nilai</p>
+            <p className="text-xl font-semibold leading-tight tabular-nums">{formatRp(totalVariance)}</p>
+            <p className="text-[11px] text-muted-foreground">dari sesi di filter</p>
+          </div>
+        </section>
+      </div>
+
       <ListFilter
         today={today}
         range={range}

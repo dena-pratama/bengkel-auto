@@ -149,16 +149,16 @@ export function ItemsTable({ items }: { items: ItemListRow[] }) {
               aria-selected={filter === f.key}
               onClick={() => setFilter(f.key)}
               className={cn(
-                "flex shrink-0 items-center gap-1.5 rounded-sm px-3 py-2 text-sm font-medium transition-colors",
+                "flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
                 filter === f.key
                   ? f.key === "low"
                     ? "bg-brand-red text-white"
-                    : "bg-brand-blue-ink text-white"
+                    : "bg-brand-rail text-white"
                   : "bg-muted text-muted-foreground hover:text-foreground",
               )}
             >
               {f.label}
-              <span className={cn("rounded-sm px-1.5 text-xs tabular-nums", filter === f.key ? "bg-white/20" : "bg-card")}>{counts[f.key]}</span>
+              <span className={cn("rounded-full px-1.5 py-0.5 text-[11px] tabular-nums", filter === f.key ? "bg-white/20 text-white" : "bg-card text-muted-foreground")}>{counts[f.key]}</span>
             </button>
           ))}
         </div>
@@ -180,13 +180,13 @@ export function ItemsTable({ items }: { items: ItemListRow[] }) {
         <EmptyState icon={PackageSearch} text={items.length === 0 ? "Belum ada barang. Tambahkan barang pertama." : "Tidak ada barang yang cocok."} />
       ) : (
         <>
-          <div className="hidden overflow-x-auto md:block">
+          <div className="hidden overflow-x-auto rounded-lg border border-border md:block">
             <table className="w-full text-sm">
               <thead>
                 {table.getHeaderGroups().map((hg) => (
-                  <tr key={hg.id} className="border-b border-border text-left text-xs text-muted-foreground">
+                  <tr key={hg.id} className="border-b border-border bg-muted/50 text-left text-xs font-medium text-muted-foreground">
                     {hg.headers.map((h) => (
-                      <th key={h.id} className={cn("px-3 py-2 font-medium", ["qty", "sell_price"].includes(h.column.id) && "text-right")}>
+                      <th key={h.id} className={cn("px-3 py-2.5 font-medium", ["qty", "sell_price"].includes(h.column.id) && "text-right")}>
                         <button type="button" onClick={h.column.getToggleSortingHandler()} className="inline-flex items-center gap-1 hover:text-foreground">
                           <table.FlexRender header={h} />
                           <ArrowUpDown className="size-3" />
@@ -197,12 +197,12 @@ export function ItemsTable({ items }: { items: ItemListRow[] }) {
                   </tr>
                 ))}
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-border">
                 {rows.map((row) => (
                   <tr
                     key={row.id}
                     onClick={() => router.push(`/inventory/barang/${row.original.id}`)}
-                    className="cursor-pointer border-b border-border/60 transition-colors last:border-0 hover:bg-muted/60"
+                    className="cursor-pointer transition-colors hover:bg-muted/30"
                   >
                     {row.getAllCells().map((cell) => (
                       <td key={cell.id} className={cn("max-w-72 px-3 py-3", ["qty", "sell_price"].includes(cell.column.id) && "text-right")}>

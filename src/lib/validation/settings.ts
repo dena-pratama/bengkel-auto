@@ -21,3 +21,20 @@ export const settingsSchema = z.object({
 });
 export type SettingsInput = z.input<typeof settingsSchema>;
 export type SettingsValues = z.output<typeof settingsSchema>;
+
+/** Pengaturan Tanya AI: penyedia aktif dan nama model. Kunci API tidak diisi di sini (lihat env server). */
+export const AI_PROVIDER_VALUES = ["", "anthropic", "openai", "gemini", "openrouter"] as const;
+const aiModel = z
+  .string()
+  .trim()
+  .max(120, "Nama model maksimal 120 karakter")
+  .regex(/^[A-Za-z0-9._/:-]*$/, "Nama model hanya huruf, angka, titik, garis miring, titik dua, atau minus");
+export const aiSettingsSchema = z.object({
+  ai_provider: z.enum(AI_PROVIDER_VALUES, { error: "Penyedia tidak dikenal" }),
+  ai_model_anthropic: aiModel,
+  ai_model_openai: aiModel,
+  ai_model_gemini: aiModel,
+  ai_model_openrouter: aiModel,
+});
+export type AiSettingsInput = z.input<typeof aiSettingsSchema>;
+export type AiSettingsValues = z.output<typeof aiSettingsSchema>;

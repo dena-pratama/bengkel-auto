@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { AppShell, RailView, TopbarView } from "@/components/app-shell";
 import type { UserContext } from "@/lib/auth";
+import { sampleDashboard } from "@/lib/dashboard";
 import { DashboardSkeleton, DashboardView } from "../../(app)/dashboard/view";
 
 // Pratinjau UI tanpa login, HANYA saat development (404 di production).
@@ -28,7 +29,7 @@ async function Preview() {
 
   return (
     <AppShell rail={<RailView ctx={PREVIEW_CTX} />} topbar={<TopbarView ctx={PREVIEW_CTX} />}>
-      <DashboardView ctx={PREVIEW_CTX} />
+      <DashboardView ctx={PREVIEW_CTX} data={sampleDashboard()} />
     </AppShell>
   );
 }

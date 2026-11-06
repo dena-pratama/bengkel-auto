@@ -71,10 +71,6 @@ export function readOption<T extends string>(sp: Params, name: string, allowed: 
   return v && (allowed as readonly string[]).includes(v) ? (v as T) : null;
 }
 
-/** Tanggal akhir inklusif sebagai batas atas timestamp (untuk kolom timestamptz) */
-export const endOfDay = (d: string) => `${d}T23:59:59.999+07:00`;
-export const startOfDay = (d: string) => `${d}T00:00:00+07:00`;
-
 /** Ringkasan rentang untuk deskripsi halaman, mis. "1 Nov 2026 s/d 30 Nov 2026" atau "Semua tanggal" */
 export function describeRange(r: RangeValue, fmt: (d: string | null) => string): string {
   if (!r.from && !r.to) return "Semua tanggal";

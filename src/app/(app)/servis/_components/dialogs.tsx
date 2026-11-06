@@ -37,6 +37,7 @@ export function NewEstimateDialog({
   vehicleId,
   label = "Estimasi baru",
   variant = "default",
+  trigger,
 }: {
   vehicles: VehicleOption[];
   catalog: CatalogOption[];
@@ -44,13 +45,18 @@ export function NewEstimateDialog({
   vehicleId?: string;
   label?: string;
   variant?: "default" | "outline";
+  trigger?: (open: () => void) => React.ReactNode;
 }) {
   const d = useFormDialog();
   return (
     <>
-      <Button variant={variant} onClick={() => d.setOpen(true)}>
-        <Plus className="size-4" /> {label}
-      </Button>
+      {trigger ? (
+        trigger(() => d.setOpen(true))
+      ) : (
+        <Button variant={variant} onClick={() => d.setOpen(true)}>
+          <Plus className="size-4" /> {label}
+        </Button>
+      )}
       <FormDialog
         open={d.open}
         onOpenChange={d.setOpen}

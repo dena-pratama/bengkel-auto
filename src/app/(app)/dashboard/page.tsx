@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { requireUser } from "@/lib/auth";
+import { loadDashboard } from "@/lib/dashboard";
 import { DashboardSkeleton, DashboardView } from "./view";
 
 export default function DashboardPage() {
@@ -11,5 +12,7 @@ export default function DashboardPage() {
 }
 
 async function DashboardContent() {
-  return <DashboardView ctx={await requireUser()} />;
+  const ctx = await requireUser();
+  const data = await loadDashboard(ctx);
+  return <DashboardView ctx={ctx} data={data} />;
 }

@@ -1,6 +1,455 @@
+## [0.55.1] - 2026-11-06
+
+### Added - README.md Lengkap
+- `README.md` ditulis ulang dari dua baris menjadi dokumentasi proyek lengkap: ringkasan produk, fitur per modul, peran dan hak akses (5 peran bawaan, 27 modul x 6 aksi, RLS, PIN persetujuan), tech stack sesuai `package.json`, prinsip arsitektur, struktur folder, environment (dev/staging/production), langkah menjalankan di lokal, tabel variabel environment, daftar 32 migrasi, endpoint API v1 beserta method-nya, AI Analyst (11 tool MCP, token, Tanya AI multi penyedia, ringkasan mingguan), pengujian dan CI, deploy Docker + Coolify, pratinjau tanpa login, konvensi pengembangan, pemecahan masalah, roadmap, dan dokumen terkait.
+- Semua angka, nama tool, route, dan method dicocokkan langsung dengan kode dan migrasi.
+
+### File terdampak
+`README.md`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
+## [0.55.0] - 2026-11-06
+
+### Added - Pengaturan Tanya AI (Penyedia dan Model)
+- Halaman Pengaturan (Bengkel) punya bagian "Tanya AI (AI Analyst)": pilih penyedia default (atau otomatis) dan isi nama model per penyedia (Anthropic, OpenAI, Gemini, OpenRouter). Kosong = pakai nilai di environment atau bawaan.
+- Status kunci per penyedia ditampilkan sebagai "Kunci terisi" atau "Kunci belum diisi". Nilai kunci tidak pernah ditampilkan atau disimpan di database; tetap diisi di environment server.
+- Migrasi `supabase/migrations/20261106000032_ai_provider_settings.sql`: `save_settings` menerima kunci `ai_provider` (divalidasi: anthropic, openai, gemini, openrouter, atau kosong) dan `ai_model_*` (teks, maksimal 120 karakter, hanya huruf, angka, titik, garis miring, titik dua, minus).
+
+### Changed
+- `src/lib/ai/providers.ts`: model dan penyedia default dibaca dari Pengaturan, lalu environment, lalu bawaan. `configuredProviders` dan `getProvider` kini async.
+- `src/lib/ai/chat.ts`: memakai `getProvider` async.
+- Tanya AI di halaman AI Analyst memulai dari penyedia default yang dipilih di Pengaturan.
+- `src/lib/validation/settings.ts`: `aiSettingsSchema`. `src/app/(app)/pengaturan/actions.ts`: `saveAiSettingsAction`.
+
+### Verifikasi
+- Migrasi dijalankan ke database lokal (`supabase-db` di Docker) tanpa galat; fungsi `save_settings` sudah terganti.
+- `tsc`, `eslint`, `next build` lolos.
+- Belum diuji lewat browser (halaman di balik login) dan belum diuji validasi SQL dengan sesi pengguna sungguhan. Belum diuji dengan kunci penyedia sungguhan.
+
+### File terdampak
+`supabase/migrations/20261106000032_ai_provider_settings.sql` (baru), `src/lib/ai/providers.ts`, `src/lib/ai/chat.ts`, `src/lib/validation/settings.ts`, `src/app/(app)/pengaturan/actions.ts`, `src/app/(app)/pengaturan/_ai-form.tsx` (baru), `src/app/(app)/pengaturan/bengkel/page.tsx`, `src/app/(app)/ai/page.tsx`, `src/app/(app)/ai/_components/client.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
+## [0.54.0] - 2026-11-05
+
+### Added - Pilihan Penyedia AI untuk "Tanya AI"
+- Tanya AI di halaman AI Analyst kini bisa memakai beberapa penyedia: Anthropic (Claude), OpenAI (GPT), Google Gemini, dan OpenRouter. Pengguna memilih penyedia lewat daftar di samping tombol Tanya AI.
+- `src/lib/ai/providers.ts`: daftar penyedia dan model bawaannya. Hanya penyedia yang kuncinya sudah diisi di environment server yang tampil. Kunci tidak pernah dikirim ke browser.
+- `src/lib/ai/chat.ts`: loop tool yang sama untuk semua penyedia, dengan adaptor untuk format API Anthropic (Messages), OpenAI-compatible (GPT dan OpenRouter), dan Gemini (generateContent). Tool tetap read-only dan dijalankan sebagai pengguna yang login.
+- Jawaban menampilkan penyedia dan model yang dipakai.
+- `.env.example`: variabel `OPENAI_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY` dengan model masing-masing (`OPENAI_MODEL`, `GEMINI_MODEL`, `OPENROUTER_MODEL`).
+
+### Changed
+- `src/app/(app)/ai/_components/client.tsx` dan `actions.ts`: `askAction` menerima parameter penyedia (divalidasi terhadap penyedia yang terkonfigurasi di server).
+- `src/app/(app)/ai/page.tsx`: `aiChatConfigured` diganti `configuredProviders`.
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Belum diuji dengan kunci penyedia sungguhan. Perlu dicoba dengan minimal satu kunci per penyedia sebelum dipakai.
+
+### File terdampak
+`src/lib/ai/providers.ts` (baru), `src/lib/ai/chat.ts`, `src/app/(app)/ai/actions.ts`, `src/app/(app)/ai/page.tsx`, `src/app/(app)/ai/_components/client.tsx`, `.env.example`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
+## [0.53.6] - 2026-11-05
+
+### Changed - Efek Pointer Dihapus, Diganti Bayangan Latar Bergeser Pelan
+- `src/app/(auth)/login/login-experience.tsx`: cahaya pengikut pointer mouse dihapus.
+- Sebagai gantinya dua bayangan lembut berwarna logo (biru #1f5fbf dan merah #d92228) bergeser pelan di latar secara otomatis (siklus 26 dan 32 detik, tanpa JavaScript). Gaya di `src/app/globals.css` (`login-drift-a`, `login-drift-b`). Mati saat `prefers-reduced-motion`.
+
+## [0.53.5] - 2026-11-05
+
+### Changed - Ukuran Cahaya Pointer di Halaman Login Diperkecil
+- `src/app/(auth)/login/login-experience.tsx`: cahaya biru dan merah pengikut pointer diperkecil dari 560 px menjadi 240 px (selisih posisi biru-merah ikut disesuaikan).
+
+## [0.53.4] - 2026-11-05
+
+### Added - Cahaya Biru dan Merah Mengikuti Pointer di Halaman Login
+- `src/app/(auth)/login/login-experience.tsx`: dua cahaya lembut (biru dan merah, seperti cahaya latar tachometer) mengikuti pointer mouse dengan gerak halus; merah sedikit tertinggal sehingga terlihat berpisah saat pointer bergerak. Terletak di belakang konten, lebih terang di mode gelap.
+- Dimatikan di layar sentuh, layar kecil, dan saat `prefers-reduced-motion`. Animasi hanya berjalan saat pointer bergerak (tanpa loop terus-menerus).
+
+## [0.53.3] - 2026-11-05
+
+### Changed - Outline Merah pada Kartu Login
+- `src/app/(auth)/login/login-experience.tsx`: kartu form login diberi garis tepi merah logo (#d92228, 1,5 px) dengan cincin tipis lembut di luarnya. Berlaku di Light dan Dark, Web dan Mobile.
+
+## [0.53.2] - 2026-11-05
+
+### Changed - Animasi Halaman Login Disamakan dengan Prototype Figma
+- `src/app/(auth)/login/login-experience.tsx` ditulis ulang: logo, tachometer, dan tombol START kini satu elemen yang berpindah posisi (Smart Animate lewat View Transitions API) seperti prototype: START ditekan, jarum naik ke 8.0 selama 0,9 dtk (ease in-out), tahan 0,3 dtk, lalu bergeser ke posisi login selama 1,1 dtk sementara jarum turun ke 0.8 dan kartu muncul.
+- Tombol START kecil di pojok kanan atas kini berfungsi: mematikan mesin dan kembali ke tahap awal (0,6 dtk), sesuai prototype.
+- `src/app/globals.css`: gaya transisi `login-vt` dan `login-vt-fast`. Browser tanpa View Transitions (mis. Firefox lama) berpindah tanpa animasi gerak; `prefers-reduced-motion` melewati animasi.
+
+### Fixed
+- `src/components/tachometer.tsx`: cahaya merah di busur tidak lagi terpotong kotak (filter CSS drop-shadow diganti busur blur di dalam SVG dengan `overflow-visible`).
+
+## [0.53.1] - 2026-11-05
+
+### Fixed - Galat "Blocking Route / Date.now()" di halaman login
+- `src/app/(auth)/login/page.tsx`: `LoginContent` kini memanggil `await connection()` sebelum memakai klien Supabase (yang memakai `Date.now()` untuk cek sesi), sehingga tidak lagi dipra-render dan overlay galat Next.js hilang.
+
+## [0.53.0] - 2026-11-05
+
+### Added - Halaman Masuk Bergaya Start Mesin (Figma "login UI anima")
+- Alur 3 tahap beranimasi di `src/app/(auth)/login/login-experience.tsx`: (1) mesin mati dengan tachometer 0.0 dan tombol ENGINE START STOP, (2) ignition: jarum naik ke 8.0, busur biru ke merah, cahaya merah di latar, teks "Menyalakan mesin...", (3) mesin nyala: tachometer turun ke 0.8, logo dan tachometer di kiri, kartu "Selamat datang kembali" di kanan (Web) atau kartu di tengah dengan logo kecil (Mobile).
+- Komponen baru `src/components/tachometer.tsx` (SVG, sapuan 270 derajat, 0 sampai 8 x1000 r/min) dan `src/components/engine-start-button.tsx`.
+- Toggle mode terang/gelap di pojok kanan atas halaman masuk (memakai `ThemeToggle` yang sama dengan bilah atas aplikasi, pilihan tersimpan).
+- Tombol "Lihat/Sembunyi" untuk password dan kotak "Ingat email saya" (hanya email yang disimpan di browser, tidak pernah password).
+- Mode gerak dikurangi (`prefers-reduced-motion`): ignition dilewati, langsung ke form.
+
+### Changed
+- `src/app/(auth)/layout.tsx` kini hanya pembungkus; tata letak logo lama dipindah ke `src/app/(auth)/setup/layout.tsx` agar halaman Setup tidak berubah.
+- `src/app/(auth)/login/login-form.tsx` dan `page.tsx` memakai gaya Figma (isian 50 px, tombol Masuk gradien biru). Logika `loginAction`, validasi, pengalihan setup, dan pesan sesi berakhir tidak berubah.
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Di browser: Web Light, Web Dark, dan Mobile Dark (375 px) sesuai Figma, urutan START ke ignition ke login berjalan, validasi form tampil, tanpa scroll horizontal. Login dengan akun nyata belum dicoba (tanpa kredensial).
+
+## [0.52.5] - 2026-11-05
+
+### Performance - Optimasi Kecepatan Dashboard & Responsivitas Navigasi Global
+- Menghapus pemuatan eager 15+ query database (katalog barang, jasa, paket, stok, kendaraan, 1000 work order) dari SSR awal halaman dashboard di `src/app/(app)/dashboard/page.tsx`, mengembalikan performa render awal dashboard menjadi instan.
+- Menambahkan server action `loadQuickActionDataAction` di `src/app/(app)/dashboard/actions.ts` untuk memuat data modal Quick Actions secara on-demand / latar belakang (idle time prefetch).
+- Menerapkan cache data dan prefetch otomatis saat mouse mengarah (hover/focus) ke kartu Quick Action di `src/app/(app)/dashboard/_components/quick-actions.tsx`, sehingga formulir siap terbuka tanpa jeda saat diklik.
+- Menambahkan komponen navigasi progress bar ramping di `src/components/navigation-progress.tsx` yang dipasang pada `src/app/(app)/layout.tsx` untuk memberikan umpan balik visual instan (<16ms) pada setiap klik tautan menu dan rute.
+- Menambahkan kerangka loading transisi App Router di `src/app/(app)/loading.tsx` agar perpindahan antar-halaman tidak mengalami jeda kosong.
+
+## [0.52.4] - 2026-11-05
+
+### Added - Pop-up Isian Langsung untuk Kartu Quick Action Dashboard
+- Mengubah 4 kartu Quick Action pada dashboard agar langsung membuka dialog form pop-up isian interaktif di tempat tanpa navigasi halaman:
+  1. Work order baru: Membuka modal pop-up Estimasi & Work Order baru (NewEstimateDialog).
+  2. Check-in kendaraan: Menggantikan pintasan papan servis dengan formulir registrasi dan penerimaan kendaraan masuk baru (NewVehicleDialog).
+  3. Kasir cepat: Membuka modal POS penjualan langsung dan penerimaan pembayaran multi-metode (SaleDialog).
+  4. Cek stok: Membuka modal scan QR/barcode barang, pencarian SKU/nama cepat, status stok fisik, lokasi rak, dan riwayat mutasi (CheckStockDialog).
+- Menambahkan server action `checkStockAction` pada `src/app/(app)/inventory/actions.ts` yang memanggil `resolveScan` untuk mendukung pencarian dan validasi live.
+- Menambahkan komponen modal baru `CheckStockDialog` pada `src/app/(app)/inventory/_components/check-stock-dialog.tsx` dengan fitur input SKU realtime, kamera pemindai barcode, detail stok, dan rak.
+- Menambahkan properti `trigger?: (open: () => void) => React.ReactNode` opsional pada dialog form yang ada (`NewEstimateDialog`, `NewVehicleDialog`, `SaleDialog`) untuk fleksibilitas pemanggilan dari berbagai pemicu UI.
+- Memperbarui tombol "+ Work order" pada bilah atas dashboard agar terintegrasi langsung dengan dialog pembukaan estimasi baru bagi pengguna yang memiliki hak akses.
+- Mengatasi Runtime AbortError pada pemindai kamera (html5-qrcode) di `src/components/qr-scanner.tsx` saat dialog ditutup cepat atau hot-reload, dengan menangkap dan menetralkan unhandled rejection video.play() serta pembersihan stream kamera yang aman.
+
+## [0.52.3] - 2026-11-05
+
+### Changed - Scrollbar Minimalis Global & Sembunyikan Scrollbar Sidebar
+- Mengatur scrollbar navigasi sidebar menjadi tersembunyi secara visual (`scrollbar-width: none; &::-webkit-scrollbar { display: none }`) pada `src/components/app-shell.tsx` dan `src/components/app-nav.tsx` tanpa menghilangkan fungsionalitas scroll halus via roda mouse atau trackpad.
+- Menerapkan penataan scrollbar modern dan minimalis di seluruh aplikasi pada `src/app/globals.css`: lebar ramping 6px, latar transparan, dan thumb membulat dengan warna halus yang adaptif terhadap tema terang dan gelap.
+
+## [0.52.2] - 2026-11-05
+
+### Refactor - Pembersihan Dead Code, Variabel, dan Placeholder Tidak Terpakai
+- Membersihkan properti tidak terpakai pada `src/lib/navigation.ts`: menghapus flag `ready: boolean` dan `badge` pada definisi `NavItem` serta menghapus deklarasi redundannya di seluruh 13 item `NAV_ITEMS`.
+- Menghapus komponen pencarian global placeholder (readOnly / belum aktif) dan icon `Search` yang tidak terpakai pada `src/components/app-shell.tsx`.
+- Menghapus fungsi tidak terpakai `initials()` pada `src/components/app-shell.tsx`.
+- Menghapus mapping redundan `settings: Settings` pada objek `ICONS` di `src/components/app-nav.tsx`.
+- Menghapus helper batas waktu `startOfDay` dan `endOfDay` yang tidak pernah diimpor pada `src/lib/list-filter.ts`.
+- Mengubah fungsi dan konstanta lokal yang tidak perlu diekspor menjadi private/internal: `rupiahShort` pada `src/app/(app)/dashboard/widgets.tsx`, `WO_STATUS_STYLE` pada `src/app/(app)/servis/_components/ui.tsx`.
+- Menghapus komponen dan helper tidak terpakai pada modul stok opname (`VarianceReasonBadge` dan `formatQty` lokal ganda) pada `src/app/(app)/stok-opname/_components/ui.tsx`.
+- Menyelaraskan pengetikan `PageProps<"/stok-opname/[id]">` pada halaman detail stok opname `src/app/(app)/stok-opname/[id]/page.tsx`.
+- Menghapus 7 berkas komponen UI boilerplate generik yang tidak digunakan oleh aplikasi (`badge.tsx`, `dialog.tsx`, `select.tsx`, `separator.tsx`, `sheet.tsx`, `table.tsx`, `tabs.tsx` di `src/components/ui/`).
+
+## [0.52.1] - 2026-11-05
+
+### Added - Integrasi CI/CD GitHub Actions & Playwright E2E via Browserless
+- Menambahkan pipeline otomatis GitHub Actions pada `.github/workflows/ci.yml`.
+- Job `quality-check`: Menjalankan verifikasi bebas dash panjang (`npm run check:dashes`), linter ESLint, dan build produksi Next.js.
+- Job `e2e-playwright`: Menjalankan container service Browserless Chromium di dalam runner CI dan menghubungkan Playwright client (`playwright-core`) via protokol CDP WebSocket.
+- Menambahkan skrip uji Playwright di `scripts/test-playwright.mjs` dan shortcut `npm run test:e2e`.
+- Menambahkan skrip uji performa dan audit memori Chrome DevTools Protocol (CDP) di `scripts/uji-performa-cdp.mjs` dan shortcut `npm run test:perf`.
+- Menambahkan skrip uji menyeluruh Browserless di `scripts/uji-lengkap-browserless.mjs`.
+
+## [0.52.0] - 2026-11-05
+
+### Fixed - Tata Letak Sidebar Saat Diciutkan (Rail Mode) dan Tooltip Floating
+- Mengatasi masalah penumpukan ikon menu (Karyawan, AI Analyst, Pengaturan, Keluar) saat sidebar berada pada mode diciutkan (rail mode 72px).
+- Menjaga flex container navigasi tetap memiliki perilaku scroll vertikal (`overflow-y-auto overflow-x-hidden`) saat diciutkan sehingga menu tidak pernah meluber menabrak area footer.
+- Mengintegrasikan Base UI Tooltip dengan Portal (`Tooltip.Portal`) sehingga tooltip melayang di luar kontainer DOM (`document.body`) tanpa terpotong batas overflow sidebar.
+- Menyempurnakan ukuran dan penataan tombol ikon rail menjadi `size-10 rounded-xl` yang presisi dengan status aktif latar biru lembut (`bg-brand-blue-soft text-brand-blue`).
+- Menambahkan lencana notifikasi berbentuk dot bulat merah/biru (`size-2 rounded-full`) di sudut ikon saat menu dalam keadaan diciutkan.
+- Mengunci area footer (Pengaturan dan Keluar) dengan `shrink-0` agar selalu berada rapi di bagian bawah sidebar.
+
+## [0.51.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 15: Notifikasi & Optimasi Navigasi Suspense
+- Mengadopsi visual token Figma page `16 · Notifikasi` (frame `8:23778`).
+- Modernisasi Popover Bel Notifikasi topbar: kontainer `rounded-2xl` dengan border halus, icon tile semantik per modul, indikator dot merah belum dibaca, dan link footer interaktif.
+- Redesain halaman utama `/notifikasi`:
+  - Pengelompokan baris notifikasi berdasarkan hari (DayHeader) seperti `HARI INI : ...` dan `KEMARIN : ...`.
+  - Icon tile semantik yang adaptif (Wrench untuk Servis, Receipt untuk Kasir, Package untuk Stok, Wallet untuk Keuangan, Octagon/Triangle untuk Alert).
+  - Badge pill bulat penuh (`rounded-full`) untuk modul dan tingkat keparahan (severity).
+  - Tampilan empty state yang bersih dan footer paginasi yang rapi.
+- Memperluas rute `/dev/preview/notifikasi` dengan showcase interaktif bel popover, banner mengambang, daftar grup notifikasi, dan toggle halaman kosong.
+- Memperbaiki pembacaan URL params agar berada di dalam boundary Suspense pada halaman detail stok opname (`src/app/(app)/stok-opname/[id]/page.tsx`) untuk mendukung navigasi instan (PPR) Next.js 16 tanpa peringatan devtools.
+
+## [0.50.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 14: Pengaturan
+- Mengadopsi visual token Figma page `15 · Pengaturan` (frame `7:20621`).
+- Tata letak responsif 2 kolom terstruktur pada halaman Profil:
+  - Kolom Kiri: Kartu Foto profil dengan avatar `rounded-full` dan kartu Data akun dengan daftar key-value bergaris halus, badge peran bulat penuh (`rounded-full`), serta form kontak WhatsApp.
+  - Kolom Kanan: Kartu Keamanan (Ganti password & PIN persetujuan) dan kartu Tampilan (Theme switcher).
+- Redesain halaman Pengaturan Bengkel (`/pengaturan/bengkel`) menjadi 2 kartu modern: Diskon dan retur serta Stok dan part, dilengkapi icon tile semantik, toggle modern, banner catatan pajak, dan save bar terpadu.
+- Memperbarui rute pratinjau `/dev/preview/pengaturan` dengan pratinjau komprehensif profil dan pengaturan bengkel.
+
+## [0.49.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 13: Pop up Form & Input
+- Mengadopsi visual token Figma page `14 · Pop up input` (frame `5:18426`).
+- Modernisasi Dialog & FormDialog: backdrop blur (`bg-black/50 backdrop-blur-sm`), kontainer sudut melengkung 18px (`rounded-2xl`), shadow elevasi tinggi, dan garis tepi lembut.
+- Header dialog yang diperbarui dengan tombol tutup melingkar (`rounded-full`) dan pembatas border bawah halus.
+- Footer dialog dengan tombol aksi rapi dan latar selaras.
+- Memperluas rute `/dev/preview/form-dialog` dengan showcase interaktif 5 modal form utama sesuai Figma (Estimasi baru, Tambah karyawan, Tambah pelanggan, Tambah barang, Catat pengeluaran) dan toast notifications.
+
+## [0.48.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 12: Audit Log
+- Mengadopsi visual token Figma page `13 · Audit Log` (frame `5:16256`).
+- Banner notifikasi keamanan ketat (immutable security log notice) dengan icon gembok profesional.
+- Modernisasi badge aksi audit (INSERT, UPDATE, DELETE, AI Tool) dengan warna semantik pill bulat penuh (`rounded-full`).
+- Perbaikan layout baris log dengan chevron interaktif dan panel inspeksi diff perubahan kolom (sebelum/sesudah) yang rapi.
+- Menambahkan rute pratinjau `/dev/preview/audit` untuk pengujian visual mandiri.
+
+## [0.47.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 11: AI Analyst
+- Mengadopsi visual token Figma page `12 · AI Analyst` (frame `5:13477`).
+- Kartu Skor Kesehatan Bisnis dengan skor numerik mencolok (warna hijau/kuning/merah adaptif), dot status semantik, dan badge pill bulat (`rounded-full`).
+- Tata letak responsif 2 kolom: Ringkasan Mingguan terstruktur 4 kartu (Yang membaik, Perlu perhatian, Saran, Pengingat) dan kotak interaktif Tanya AI di sisi kanan.
+- Bagian integrasi MCP Claude dan tabel riwayat pemanggilan tool yang modern dan rapi.
+- Menambahkan rute pratinjau `/dev/preview/ai` untuk verifikasi visual mandiri.
+
+## [0.46.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 10: Karyawan
+- Mengadopsi visual token Figma page `08 · Karyawan` (frame `3:4694`).
+- 4 Kartu ringkasan metrik karyawan (Total karyawan, Aktif hari ini, Mekanik, Akun login) dengan icon semantik dan warna soft.
+- Modernisasi badge status karyawan dan chip role menggunakan pill bulat penuh (`rounded-full`).
+- Avatar karyawan modern (`rounded-full`) dengan inisial dan fallback foto profil yang konsisten.
+- Menambahkan rute pratinjau `/dev/preview/karyawan` untuk pengujian visual mandiri.
+
+## [0.45.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 09: Pajak
+- Mengadopsi visual token Figma page `11 · Pajak` (frame `5:11723`).
+- Banner disclaim edukatif di bagian atas untuk kepatuhan perpajakan.
+- Penataan formulir pajak dalam tata letak responsif 2 kolom: Profil Usaha & PPN di sisi kiri; Tarif PPN & Pajak Penghasilan (PPh) di sisi kanan.
+- Badge status tarif PPN yang berlaku menggunakan pill bulat penuh (`rounded-full`).
+- Menambahkan rute pratinjau `/dev/preview/pajak` untuk verifikasi visual mandiri.
+
+## [0.44.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 08: Penggajian
+- Mengadopsi visual token Figma page `09 · Penggajian` (frame `5:6910`).
+- 4 Kartu ringkasan gaji (Total periode terkini, Menunggu dibayar, Sudah dibayar tahun ini, Rata-rata per periode) dengan icon semantik dan penataan rapi.
+- Pembaruan tampilan tabel periode penggajian dengan status badge bulat (`rounded-full`), navigasi baris terintegrasi, dan pemformatan nominal/tanggal konsisten.
+- Menambahkan rute pratinjau `/dev/preview/penggajian` untuk verifikasi visual mandiri.
+
+## [0.43.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 07: Keuangan
+- Mengadopsi visual token Figma page `10 · Keuangan` (frame `5:9661`).
+- Kartu akun kas dan bank dengan icon tile profesional (Wallet/Landmark), badge status pill, dan card tambah akun bergaris putus-putus.
+- 4 Kartu ringkasan arus kas (Uang masuk, Uang keluar, Arus kas bersih, Biaya rutin menunggu) dengan aksen warna semantik soft (hijau, merah, biru, pasir).
+- Tabel transaksi kas dengan badge tipe transaksi pill bulat penuh, highlight warna nominal masuk/keluar, dan tombol ekspor.
+- Kartu biaya rutin bulanan dengan tampilan template modern dan ringkasan total pengeluaran per bulan.
+- Menambahkan rute pratinjau `/dev/preview/keuangan` untuk pengujian visual mandiri.
+
+## [0.42.0] - 2026-11-05
+
+### Changed - UI/UX Redesign Module 06: Stok Opname
+- Mengadopsi visual token Figma page `07 · Stok Opname` (frame `3:2496`).
+- 4 Kartu ringkasan metrik stok opname (Sesi tercatat, Akurasi rata-rata, Menunggu tinjauan, Selisih nilai) dengan icon dan aksen warna soft.
+- Modernisasi badge status dan tipe opname menggunakan pill penuh (`rounded-full`).
+- Penyempurnaan styling daftar sesi stok opname, filter bar, dan status selisih.
+- Menambahkan rute pratinjau `/dev/preview/stok-opname` untuk verifikasi visual mandiri.
+
 # Devlog Bengkel Mobil App
 
 Catatan setiap perubahan. Entri terbaru di paling atas.
+
+---
+
+## [0.41.0] 2026-11-05
+**Ringkasan:** Redesain UI/UX tahap 3, modul Pelanggan: halaman Pelanggan mengikuti frame Figma "06 · Pelanggan" (Desktop & Mobile, Light & Dark) dengan 4 kartu metrik (total pelanggan, pelanggan fleet/perusahaan, kendaraan terdaftar, dan pelanggan boleh tempo), bilah pencarian & filter tipe pelanggan bergaya pil membulat, kartu pelanggan & kendaraan rapi dalam grid responsif dengan avatar dan lencana nomor plat mono. Ditambah pratinjau `/dev/preview/pelanggan`.
+
+### Changed
+- `src/app/(app)/pelanggan/page.tsx`: penambahan 4 kartu ringkasan (Total pelanggan berikon pengguna biru, Pelanggan fleet berikon gedung hijau, Kendaraan terdaftar berikon mobil kuning, dan Boleh tempo berikon jam merah).
+- `src/app/(app)/pelanggan/_components/lists.tsx`: tombol filter tipe pelanggan (Semua, Perorangan, Perusahaan) diselaraskan ke gaya pil Figma dengan warna `bg-brand-rail`, kartu pelanggan dan kendaraan diperbarui menjadi `rounded-xl border border-border bg-card` dengan efek hover halus dan lencana plat nomor font mono.
+
+### Added
+- `src/app/dev/preview/pelanggan/page.tsx`: pratinjau tampilan pelanggan & kendaraan tanpa login (khusus development) dengan 4 contoh pelanggan (perorangan dan armada perusahaan) dan 5 kendaraan terkait.
+
+### Verifikasi
+- `tsc`, `eslint`, `check:dashes`, `next build` lolos.
+- Desain selaras dengan Figma page "06 · Pelanggan" (Desktop Light/Dark dan Mobile Light/Dark).
+
+### File terdampak
+`src/app/(app)/pelanggan/page.tsx`, `src/app/(app)/pelanggan/_components/lists.tsx`, `src/app/dev/preview/pelanggan/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
+## [0.40.0] 2026-11-05
+**Ringkasan:** Redesain UI/UX tahap 3, modul Pembelian: halaman utama Purchase Order & Pembelian mengikuti frame Figma "05 · Pembelian" (Desktop & Mobile, Light & Dark) dengan 4 kartu metrik (pembelian bulan ini, PO menunggu datang, hutang jatuh tempo, dan supplier aktif), lencana status PO membulat, bilah filter terpadu, serta tabel daftar PO berbingkai rapi. Ditambah pratinjau `/dev/preview/pembelian`.
+
+### Changed
+- `src/app/(app)/pembelian/page.tsx`: penambahan 4 kartu ringkasan (Pembelian bulan ini berikon paket biru, Menunggu datang berikon jam kuning, Hutang jatuh tempo berikon peringatan merah, dan Supplier aktif berikon truk hijau), serta tabel PO berbingkai dengan nomor PO, rekanan supplier, jumlah barang, tanggal, lencana status, dan total rupiah.
+- `src/app/(app)/pembelian/_components/ui.tsx`: pembaruan lencana `PoStatusBadge` dan `DueBadge` menjadi pil membulat (`rounded-full`) dengan padding dan warna token sesuai Figma.
+
+### Added
+- `src/app/dev/preview/pembelian/page.tsx`: pratinjau tampilan Purchase Order & Pembelian tanpa login (khusus development) dengan 4 contoh PO mencakup status draft, dikirim, sebagian, dan diterima.
+
+### Verifikasi
+- `tsc`, `eslint`, `check:dashes`, `next build` lolos.
+- Desain selaras dengan Figma page "05 · Pembelian" (Desktop Light/Dark dan Mobile Light/Dark).
+
+### File terdampak
+`src/app/(app)/pembelian/page.tsx`, `src/app/(app)/pembelian/_components/ui.tsx`, `src/app/dev/preview/pembelian/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
+## [0.39.0] 2026-11-05
+**Ringkasan:** Redesain UI/UX tahap 3, modul Barang & Jasa: halaman utama Barang & Suku Cadang mengikuti frame Figma "04 · Barang & Jasa" (Desktop & Mobile, Light & Dark) dengan 4 kartu ringkasan metrik (SKU aktif, estimasi nilai persediaan, stok menipis, dan stok habis), tab filter status berpenanda angka, bilah filter lokal, serta tabel katalog barang berbingkai rapi. Ditambah pratinjau `/dev/preview/inventory`.
+
+### Changed
+- `src/app/(app)/inventory/page.tsx`: penambahan 4 kartu ringkasan di atas tabel (Total SKU aktif, Nilai persediaan dengan ikon dompet hijau, Stok menipis dengan ikon peringatan kuning, dan Stok habis dengan ikon merah).
+- `src/app/(app)/inventory/_components/items-table.tsx`: tombol tab filter status (Aktif, Stok menipis, Nonaktif, Semua) diselaraskan ke gaya pil Figma dengan badge angka membulat, bilah filter kategori/merek, pembungkus tabel berbingkai border rapi dengan baris hover lembut.
+
+### Added
+- `src/app/dev/preview/inventory/page.tsx`: pratinjau tampilan katalog barang tanpa login (khusus development) dengan 6 contoh suku cadang (filter oli, kampas rem, oli mesin, busi iridium, fan belt, lampu depan) mencakup kondisi aman, menipis, dan habis.
+
+### Verifikasi
+- `tsc`, `eslint`, `check:dashes`, `next build` lolos.
+- Desain selaras dengan Figma page "04 · Barang & Jasa" (Desktop Light/Dark dan Mobile Light/Dark).
+
+### File terdampak
+`src/app/(app)/inventory/page.tsx`, `src/app/(app)/inventory/_components/items-table.tsx`, `src/app/dev/preview/inventory/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
+## [0.38.0] 2026-11-05
+**Ringkasan:** Redesain UI/UX tahap 3, modul Servis: papan Kanban work order mengikuti frame Figma "02 · Servis & Work Order" (Desktop & Mobile, Light & Dark) dengan 6 kolom status berindikator warna, kartu kendaraan lengkap (plat, model, keluhan/layanan, pelanggan, bilah progres, avatar mekanik, dan penghitung durasi), serta riwayat work order selesai/batal dalam tabel bersih. Ditambah pratinjau `/dev/preview/servis`.
+
+### Changed
+- `src/app/(app)/servis/_components/board.tsx`: tata letak 6 kolom status (Antri, Dikerjakan, Menunggu Part, Menunggu Persetujuan, Selesai/QC, Siap Diambil) dengan titik warna status dan lencana jumlah kartu sesuai Figma.
+- Kartu work order diperkaya: nomor WO, penanda lewat estimasi/garansi, nomor plat berlatar, nama model kendaraan tebal, layanan/keluhan, nama pelanggan berikon, peringatan part pending/requested, bilah progres pekerjaan (status Dikerjakan), info biaya penagihan (status Siap Diambil), avatar inisial mekanik atau tombol penugasan cepat, serta penghitung waktu di status.
+- Tabel riwayat work order selesai dan batal dengan kolom kendaraan, pelanggan, layanan, tanggal, badge status/garansi, dan total rupiah.
+
+### Added
+- `src/app/dev/preview/servis/page.tsx`: pratinjau tampilan papan Kanban servis tanpa login (khusus development) dengan 9 contoh kendaraan aktif mencakup seluruh status kolom.
+
+### Verifikasi
+- `tsc`, `eslint`, `check:dashes`, `next build` lolos.
+- Desain selaras dengan Figma page "02 · Servis & Work Order" (Desktop Light/Dark dan Mobile Light/Dark).
+
+### File terdampak
+`src/app/(app)/servis/_components/board.tsx`, `src/app/dev/preview/servis/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
+## [0.37.0] 2026-11-05
+**Ringkasan:** Redesain UI/UX tahap 3, modul Kasir: halaman utama Kasir mengikuti frame Figma "03 · Kasir" (Desktop & Mobile, Light & Dark) dengan kartu shift, ringkasan metode pembayaran, work order siap ditagih, transaksi terakhir, transaksi ditahan, dan aksi cepat. Ditambah halaman pratinjau `/dev/preview/kasir`.
+
+### Changed
+- `src/app/(app)/kasir/page.tsx`: tata letak kartu shift dengan indikator status terbuka hijau, 5 metrik kartu (modal awal, tunai masuk, kas keluar, kas seharusnya dengan sorotan biru, dan non-tunai) yang adaptif untuk desktop (5 kolom) dan mobile (sorotan kas seharusnya di atas, 4 metrik grid 2x2).
+- Ringkasan metode pembayaran hari ini (Tunai, QRIS, Transfer, Kartu) dengan angka real-time.
+- Tabel work order siap ditagih dengan kolom nomor WO, nomor polisi, pelanggan, jumlah item, total biaya, dan tombol aksi penagihan langsung.
+- Tabel transaksi terakhir dengan nomor invoice, pelanggan/WO, metode bayar, badge status lunas/tempo, dan nominal transaksi.
+- Kolom kanan: kartu transaksi ditahan dengan rincian item dan nominal, serta kartu aksi cepat (jual part langsung, tagih WO, terima piutang, retur penjualan).
+
+### Added
+- `src/app/dev/preview/kasir/page.tsx`: pratinjau tampilan modul Kasir tanpa login (khusus development) dengan data contoh lengkap sesuai desain Figma.
+
+### Verifikasi
+- `tsc`, `eslint`, `check:dashes`, `next build` lolos.
+- Desain selaras dengan Figma page "03 · Kasir" (Desktop Light/Dark dan Mobile Light/Dark).
+
+### File terdampak
+`src/app/(app)/kasir/page.tsx`, `src/app/dev/preview/kasir/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
+## [0.36.1] 2026-11-04
+**Ringkasan:** `catatan-redesain.md` dikeluarkan dari git (catatan serah terima lokal, hanya ada di mesin developer).
+
+### Changed
+- `.gitignore` menambahkan `catatan-redesain.md`; berkas dilepas dari pelacakan git (isi di disk tetap ada).
+
+### File terdampak
+`.gitignore`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
+## [0.36.0] 2026-11-04
+**Ringkasan:** Redesain UI/UX tahap 3, halaman pertama: Beranda mengikuti Figma dengan data nyata dari database (bukan data contoh lagi). Ditambah `catatan-redesain.md` untuk melanjutkan redesain modul lain.
+
+### Added
+- `src/lib/dashboard.ts`: pemuat data Beranda (RLS menyaring per peran, tiap blok null bila peran tidak berhak; kegagalan satu blok tidak merusak halaman).
+- Kartu angka dari data nyata: work order aktif dan yang melewati estimasi, omzet bulan ini (penjualan diposting), piutang pelanggan, barang menipis.
+- Daftar work order aktif (tautan ke detail), notifikasi terbaru (penanda belum dibaca), beban mekanik, barang menipis, kas shift saya.
+- `catatan-redesain.md`: catatan serah terima redesain.
+
+### Changed
+- Beranda ditulis ulang sesuai Figma: sapaan, empat aksi cepat bertaut ke modul, kartu angka, tabel work order aktif, panel notifikasi, kartu bawah. Kalender booking dan target omzet tidak ada (keputusan: data nyata saja).
+- Pratinjau tanpa login `/dev/preview` kini memakai data contoh dari `sampleDashboard()` dan diberi label "Data contoh".
+
+### Removed
+- `src/lib/demo/dashboard.ts` (data contoh lama).
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Di browser (pratinjau, data contoh): Desktop Light, Desktop Dark, dan Mobile 375 px tanpa scroll horizontal. Query data nyata belum dilihat dengan sesi login; periksa di browser dengan login Owner.
+
+### File terdampak
+`src/lib/dashboard.ts`, `src/app/(app)/dashboard/page.tsx`, `src/app/(app)/dashboard/view.tsx`, `src/app/(app)/dashboard/widgets.tsx`, `src/app/dev/preview/page.tsx`, `src/lib/demo/dashboard.ts` (dihapus), `catatan-redesain.md`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
+## [0.35.0] 2026-11-04
+**Ringkasan:** Redesain UI/UX tahap 2 (cabang `ui-ux-redesign`): kerangka aplikasi mengikuti Figma. Sidebar terang 264 px dengan menu bergrup dan lencana, bilah atas dengan pencarian, tombol tema, bel, pengaturan, dan chip profil, serta drawer di layar kecil.
+
+### Changed
+- **Sidebar** terang (264 px, bisa diciutkan ke 72 px, pilihan diingat; Ctrl+B): logo, kartu Cabang (label saja), menu bergrup Operasional, Keuangan, SDM & Sistem, Pengaturan dan Keluar di bawah. Item aktif biru lembut.
+- **Lencana menu dari data nyata**: jumlah work order aktif di Servis, jumlah barang menipis (merah) di Barang & Jasa, "Baru" di AI Analyst.
+- **Bilah atas**: pencarian global (tampilan saja, Ctrl K), tombol tema berbentuk pil dengan matahari dan bulan, bel notifikasi, tombol Pengaturan, chip profil bulat.
+- **Mobile**: sidebar menjadi drawer 300 px dengan scrim, dibuka lewat tombol menu, tutup dengan Esc.
+- Urutan menu: Beranda, Servis & Work Order, Kasir, Barang & Jasa, Pembelian, Pelanggan, Stok Opname, Keuangan, Penggajian, Pajak, Karyawan, AI Analyst, Audit Log.
+
+### Verifikasi
+- `tsc`, `eslint`, `next build` lolos.
+- Di browser (pratinjau tanpa login): Desktop Light, Desktop Dark, dan drawer Mobile sesuai Figma. Halaman di balik login belum dilihat dengan sesi nyata.
+
+### File terdampak
+`src/lib/navigation.ts`, `src/components/app-nav.tsx`, `src/components/app-shell.tsx`, `src/components/topbar-controls.tsx`, `src/components/notification-bell.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
+## [0.34.0] 2026-11-04
+**Ringkasan:** Redesain UI/UX tahap 1 (cabang `ui-ux-redesign`): fondasi desain dari file Figma "Bengkel-App UI". Token warna Light dan Dark, font Inter, skala teks, radius, dan komponen dasar kini mengikuti Figma. Kerangka (sidebar, bilah atas) dan halaman per modul menyusul di tahap berikutnya.
+
+### Changed
+- **Token warna** (`globals.css`) diganti dengan palet Figma. Nama `brand-*` dipertahankan agar semua komponen ikut berganti:
+  - Light: latar #f5f6f8, kartu putih bergaris #e5e7eb, teks #0f172a, aksen biru #1e40af, biru lembut #eef2ff, merah #dc2626, kuning #b45309 (latar #fffbeb), hijau #15803d.
+  - Dark: latar #0b0f17, kartu #121826, garis #232b3b, teks #f1f5f9, aksen #3563e9 dan #4c7dff.
+  - Token baru `brand-green` dan `brand-green-soft` untuk status sukses.
+- **Font** Inter menggantikan Geist (Geist Mono tetap untuk kode). **Skala teks** mengikuti Figma: isi 14 px, label 11-12 px, judul halaman 26 px.
+- **Radius**: 8 px (tombol, isian), 12 px (kartu), 16 px (dialog), pil tetap untuk lencana.
+- **Komponen dasar**: tombol 8 px dengan biru #1e40af; isian h-40 px, border #e0e3e9, fokus biru; kartu (`panel`) datar bergaris tipis tanpa bayangan; tab bagian (`SectionNav`) berupa wadah bergaris dengan item aktif biru penuh; dialog 16 px; toast peringatan memakai warna kuning Figma; judul halaman 26 px.
+- Latar halaman kini solid (gradasi biru lama dihapus).
+- Pratinjau tanpa login (development saja): `/dev/preview/fondasi`.
+
+### Catatan
+- Kerangka lama (sidebar gelap membulat, bingkai) masih ada sementara dan akan tampak berbeda dengan token baru; diganti di tahap 2 (sidebar terang 264 px, bilah atas, drawer mobile, bel notifikasi).
+- Sumber desain: file Figma "Bengkel-App UI", 16 halaman (Desktop dan Mobile, Light dan Dark). Keputusan: Beranda memakai data nyata (tanpa kalender booking dan target omzet), pilihan cabang berupa label, pencarian global tampilan saja.
+- Tampilan sebelum redesain tersimpan di tag dan cabang `ui-ux-base`.
+
+### Verifikasi
+- `tsc`, `eslint`, cek tanda pisah, `next build` lolos.
+- Di browser (pratinjau): judul, tab, tombol, isian, kartu, dan lencana di Light dan Dark sesuai Figma.
+
+### File terdampak
+`src/app/globals.css`, `src/app/layout.tsx`, `src/components/page-kit.tsx`, `src/components/ui/button.tsx`, `src/components/ui/input.tsx`, `src/components/form-dialog.tsx`, `src/components/app-toaster.tsx`, `src/app/dev/preview/fondasi/page.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
 
 ---
 

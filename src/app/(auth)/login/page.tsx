@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { LoginExperience } from "./login-experience";
 import { LoginForm } from "./login-form";
 
 const NOTICES: Record<string, string> = {
@@ -10,21 +11,17 @@ const NOTICES: Record<string, string> = {
 
 export default function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
-    <Card className="rounded-md shadow-[0_1px_2px_rgb(23_36_51/0.04),0_8px_24px_-12px_rgb(23_36_51/0.08)] ring-foreground/5">
-      <CardHeader>
-        <CardTitle>Masuk</CardTitle>
-        <CardDescription>Gunakan email dan password akun karyawan Anda.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Suspense fallback={<LoginForm />}>
-          <LoginContent searchParams={searchParams} />
-        </Suspense>
-      </CardContent>
-    </Card>
+    <LoginExperience>
+      <Suspense fallback={<LoginForm />}>
+        <LoginContent searchParams={searchParams} />
+      </Suspense>
+    </LoginExperience>
   );
 }
 
 async function LoginContent({ searchParams }: Pick<PageProps<"/login">, "searchParams">) {
+  // Data per request: Supabase memakai Date.now() untuk cek sesi, jadi jangan di-prerender
+  await connection();
   const supabase = await createClient();
   const { data: needsSetup } = await supabase.rpc("needs_setup");
   if (needsSetup) redirect("/setup");

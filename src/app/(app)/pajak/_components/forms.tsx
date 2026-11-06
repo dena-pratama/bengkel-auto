@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus, Undo2 } from "lucide-react";
+import { Info, Plus, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FormDialog } from "@/components/form-dialog";
 import { FormError } from "@/components/form-field";
@@ -31,7 +31,15 @@ const Check = ({ checked, onChange, disabled, children }: { checked: boolean; on
 );
 
 /** Profil pajak (PRD §12.1): bentuk usaha, PKP, saklar PPN, harga, dan pilihan PPh */
-export function TaxSettingsForm({ defaults, readOnly }: { defaults: TaxSettingsInput; readOnly: boolean }) {
+export function TaxSettingsForm({
+  defaults,
+  readOnly,
+  ratesSlot,
+}: {
+  defaults: TaxSettingsInput;
+  readOnly: boolean;
+  ratesSlot?: React.ReactNode;
+}) {
   const router = useRouter();
   const [v, setV] = useState(defaults);
   const [error, setError] = useState<string | null>(null);
@@ -48,107 +56,127 @@ export function TaxSettingsForm({ defaults, readOnly }: { defaults: TaxSettingsI
 
   return (
     <div className="grid gap-5">
-      <section className={cn(panel, "grid gap-4")}>
-        <h2 className="text-lg font-semibold">Profil usaha</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Bentuk usaha" hint="Menentukan aturan PPh Final yang berlaku.">
-            <select disabled={readOnly} value={v.business_form} onChange={(e) => set("business_form", e.target.value as TaxSettingsInput["business_form"])} className={inputClass}>
-              {BUSINESS_FORMS.map((f) => (
-                <option key={f} value={f}>
-                  {BUSINESS_FORM_LABEL[f]}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <div className="grid content-end gap-2">
-            <Check
-              checked={v.is_pkp}
-              disabled={readOnly}
-              onChange={(c) => {
-                set("is_pkp", c);
-                if (!c) set("ppn_enabled", false);
-              }}
-            >
-              Bengkel berstatus <strong>PKP</strong> (Pengusaha Kena Pajak)
+      {/* Disclaimer Banner matching Figma */}
+      <div className="flex items-center gap-3 rounded-xl border border-brand-blue/30 bg-brand-blue-soft/50 p-3.5 text-xs text-brand-blue-fg">
+        <Info className="size-4 shrink-0 text-brand-blue-fg" />
+        <p className="min-w-0">
+          Modul ini membantu perhitungan dan pencatatan pajak bengkel secara otomatis. Tarif dan batas omzet dapat disesuaikan tanpa memperbarui sistem inti.
+        </p>
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-2">
+        {/* Left Column */}
+        <div className="grid content-start gap-5">
+          <section className={cn(panel, "grid gap-4 p-4 sm:p-5")}>
+            <h2 className="text-lg font-semibold">Profil usaha</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Bentuk usaha" hint="Menentukan aturan PPh Final yang berlaku.">
+                <select disabled={readOnly} value={v.business_form} onChange={(e) => set("business_form", e.target.value as TaxSettingsInput["business_form"])} className={inputClass}>
+                  {BUSINESS_FORMS.map((f) => (
+                    <option key={f} value={f}>
+                      {BUSINESS_FORM_LABEL[f]}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <div className="grid content-end gap-2">
+                <Check
+                  checked={v.is_pkp}
+                  disabled={readOnly}
+                  onChange={(c) => {
+                    set("is_pkp", c);
+                    if (!c) set("ppn_enabled", false);
+                  }}
+                >
+                  Bengkel berstatus <strong>PKP</strong> (Pengusaha Kena Pajak)
+                </Check>
+              </div>
+            </div>
+          </section>
+
+          <section className={cn(panel, "grid gap-4 p-4 sm:p-5")}>
+            <h2 className="text-lg font-semibold">PPN</h2>
+            <Check checked={v.ppn_enabled} disabled={readOnly || !v.is_pkp} onChange={(c) => set("ppn_enabled", c)}>
+              Hitung PPN di invoice. PPN Keluaran dan Masukan dicatat ke akun terpisah dan tidak mengurangi laba.
+              {!v.is_pkp && <span className="block text-xs text-muted-foreground">PPN hanya bisa diaktifkan jika PKP.</span>}
             </Check>
-          </div>
-        </div>
-      </section>
-
-      <section className={cn(panel, "grid gap-4")}>
-        <h2 className="text-lg font-semibold">PPN</h2>
-        <Check checked={v.ppn_enabled} disabled={readOnly || !v.is_pkp} onChange={(c) => set("ppn_enabled", c)}>
-          Hitung PPN di invoice. PPN Keluaran dan Masukan dicatat ke akun terpisah dan tidak mengurangi laba.
-          {!v.is_pkp && <span className="block text-xs text-muted-foreground">PPN hanya bisa diaktifkan jika PKP.</span>}
-        </Check>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Check checked={v.prices_include_ppn} disabled={readOnly || !v.ppn_enabled} onChange={(c) => set("prices_include_ppn", c)}>
-            Harga jual sudah termasuk PPN
-            <span className="block text-xs text-muted-foreground">Sistem memecah DPP dan PPN dari harga di nota.</span>
-          </Check>
-        </div>
-      </section>
-
-      <section className={cn(panel, "grid gap-4")}>
-        <h2 className="text-lg font-semibold">Pajak penghasilan</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Cara menghitung PPh">
-            <select disabled={readOnly} value={v.pph_mode} onChange={(e) => set("pph_mode", e.target.value as TaxSettingsInput["pph_mode"])} className={inputClass}>
-              {PPH_MODES.map((m) => (
-                <option key={m} value={m}>
-                  {PPH_MODE_LABEL[m]}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <Field label="Tanggal setor tiap bulan" hint="Untuk pengingat setor PPh (1-28).">
-            <input disabled={readOnly} inputMode="numeric" value={String(v.pph_due_day ?? "")} onChange={(e) => set("pph_due_day", e.target.value)} className={inputClass} />
-          </Field>
+            <div className="grid gap-3">
+              <Check checked={v.prices_include_ppn} disabled={readOnly || !v.ppn_enabled} onChange={(c) => set("prices_include_ppn", c)}>
+                Harga jual sudah termasuk PPN
+                <span className="block text-xs text-muted-foreground">Sistem memecah DPP dan PPN dari harga di nota.</span>
+              </Check>
+            </div>
+          </section>
         </div>
 
-        {v.pph_mode === "final" && (
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Tarif PPh Final (%)">
-              <input disabled={readOnly} inputMode="decimal" value={String(v.pph_final_rate ?? "")} onChange={(e) => set("pph_final_rate", e.target.value)} className={inputClass} />
-            </Field>
-            <Field label="Batas omzet setahun (Rp)" hint="Peringatan muncul di 80% dan 95% batas ini.">
-              <input disabled={readOnly} inputMode="numeric" value={String(v.annual_ceiling ?? "")} onChange={(e) => set("annual_ceiling", e.target.value)} className={inputClass} />
-            </Field>
-            {v.business_form === "orang_pribadi" && (
-              <Field label="Omzet bebas PPh (Rp)" hint="Omzet pertama setahun yang tidak dikenai PPh (Orang Pribadi).">
-                <input disabled={readOnly} inputMode="numeric" value={String(v.free_threshold ?? "")} onChange={(e) => set("free_threshold", e.target.value)} className={inputClass} />
+        {/* Right Column */}
+        <div className="grid content-start gap-5">
+          {ratesSlot}
+
+          <section className={cn(panel, "grid gap-4 p-4 sm:p-5")}>
+            <h2 className="text-lg font-semibold">Pajak penghasilan</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Cara menghitung PPh">
+                <select disabled={readOnly} value={v.pph_mode} onChange={(e) => set("pph_mode", e.target.value as TaxSettingsInput["pph_mode"])} className={inputClass}>
+                  {PPH_MODES.map((m) => (
+                    <option key={m} value={m}>
+                      {PPH_MODE_LABEL[m]}
+                    </option>
+                  ))}
+                </select>
               </Field>
-            )}
-            {v.business_form === "cv_firma_pt" && (
-              <Field label="Fasilitas berlaku sampai" hint="CV, firma, dan PT biasa yang baru terdaftar tidak lagi bisa memakai tarif ini.">
-                <input disabled={readOnly} type="date" value={v.facility_end_date} onChange={(e) => set("facility_end_date", e.target.value)} className={inputClass} />
+              <Field label="Tanggal setor tiap bulan" hint="Untuk pengingat setor PPh (1-28).">
+                <input disabled={readOnly} inputMode="numeric" value={String(v.pph_due_day ?? "")} onChange={(e) => set("pph_due_day", e.target.value)} className={inputClass} />
               </Field>
+            </div>
+
+            {v.pph_mode === "final" && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="Tarif PPh Final (%)">
+                  <input disabled={readOnly} inputMode="decimal" value={String(v.pph_final_rate ?? "")} onChange={(e) => set("pph_final_rate", e.target.value)} className={inputClass} />
+                </Field>
+                <Field label="Batas omzet setahun (Rp)" hint="Peringatan muncul di 80% dan 95% batas ini.">
+                  <input disabled={readOnly} inputMode="numeric" value={String(v.annual_ceiling ?? "")} onChange={(e) => set("annual_ceiling", e.target.value)} className={inputClass} />
+                </Field>
+                {v.business_form === "orang_pribadi" && (
+                  <Field label="Omzet bebas PPh (Rp)" hint="Omzet pertama setahun yang tidak dikenai PPh (Orang Pribadi).">
+                    <input disabled={readOnly} inputMode="numeric" value={String(v.free_threshold ?? "")} onChange={(e) => set("free_threshold", e.target.value)} className={inputClass} />
+                  </Field>
+                )}
+                {v.business_form === "cv_firma_pt" && (
+                  <Field label="Fasilitas berlaku sampai" hint="CV, firma, dan PT biasa yang baru terdaftar tidak lagi bisa memakai tarif ini.">
+                    <input disabled={readOnly} type="date" value={v.facility_end_date} onChange={(e) => set("facility_end_date", e.target.value)} className={inputClass} />
+                  </Field>
+                )}
+              </div>
             )}
-          </div>
-        )}
-        {v.pph_mode === "final" && v.business_form === "cv_firma_pt" && (
-          <p className="rounded-2xl bg-brand-sand-soft px-4 py-3 text-sm">
-            PPh Final mungkin tidak berlaku untuk CV, firma, dan PT biasa. Isi tanggal akhir fasilitas, atau pilih estimasi tarif umum dan konsultasikan dengan konsultan pajak.
-          </p>
-        )}
-        {v.pph_mode === "general" && (
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Tarif PPh umum (%)" hint="Default 22% (tarif umum PPh Badan). Hasilnya estimasi, bukan jurnal.">
-              <input disabled={readOnly} inputMode="decimal" value={String(v.general_rate ?? "")} onChange={(e) => set("general_rate", e.target.value)} className={inputClass} />
-            </Field>
-          </div>
-        )}
-      </section>
+            {v.pph_mode === "final" && v.business_form === "cv_firma_pt" && (
+              <p className="rounded-2xl bg-brand-sand-soft px-4 py-3 text-sm">
+                PPh Final mungkin tidak berlaku untuk CV, firma, dan PT biasa. Isi tanggal akhir fasilitas, atau pilih estimasi tarif umum dan konsultasikan dengan konsultan pajak.
+              </p>
+            )}
+            {v.pph_mode === "general" && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="Tarif PPh umum (%)" hint="Default 22% (tarif umum PPh Badan). Hasilnya estimasi, bukan jurnal.">
+                  <input disabled={readOnly} inputMode="decimal" value={String(v.general_rate ?? "")} onChange={(e) => set("general_rate", e.target.value)} className={inputClass} />
+                </Field>
+              </div>
+            )}
+          </section>
+        </div>
+      </div>
 
       <FormError message={error} />
       {!readOnly && (
-        <div>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+          <p className="text-xs text-muted-foreground">
+            Bukan pengganti konsultan pajak. Konsultasikan dengan pihak berwenang jika membutuhkan kepastian hukum.
+          </p>
           <Button disabled={pending} onClick={submit}>
             {pending ? "Menyimpan..." : "Simpan pengaturan"}
           </Button>
         </div>
       )}
-      <p className="text-xs text-muted-foreground">Modul ini membantu perhitungan dan pencatatan, bukan pengganti konsultan pajak. Aturan bisa berubah; tarif dan batas dapat diubah di sini tanpa memperbarui aplikasi.</p>
     </div>
   );
 }

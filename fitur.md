@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.33.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.55.1**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -24,6 +24,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.33.0**
 | Dark mode + toggle; menu profil (profil, pengaturan, keluar) di top bar | ✅ | 0.4.0 |
 | Skala huruf lebih besar (min. 12px) + angka metrik menonjol | ✅ | 0.4.1 |
 | Logo AutoMobi transparan (sidebar, login, favicon; varian mode gelap) | ✅ | 0.4.5 |
+| README.md lengkap (fitur, arsitektur, setup, env, migrasi, API, AI/MCP, tes, deploy) | ✅ | 0.55.1 |
 
 ## MVP
 | Modul | Fitur | Status | Versi |
@@ -76,12 +77,30 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.33.0**
 | | PPh Final UMKM (omzet bebas OP, jurnal bulanan, peringatan 80%/95% batas, setor) & estimasi PPh tarif umum di laba rugi | ✅ | 0.15.0 |
 | | Ekspor faktur pajak format DJP | ⬜ | Coming Soon |
 | AI | MCP server read-only (11 tools, token pribadi), skor kesehatan 9 indikator, ringkasan mingguan, log panggilan AI | ✅ | 0.17.0 |
-| | Tanya AI di aplikasi (butuh ANTHROPIC_API_KEY) | 🟨 | 0.17.0 (belum diuji dengan kunci) |
+| | Tanya AI di aplikasi: pilihan penyedia (Anthropic, OpenAI, Gemini, OpenRouter) | 🟨 | 0.54.0 (belum diuji dengan kunci) |
+| | Pengaturan Tanya AI: penyedia default dan nama model di halaman Pengaturan | 🟨 | 0.55.0 (belum diuji lewat browser) |
 | | OAuth per pengguna untuk MCP, ambang skor bisa diatur, kirim ringkasan ke WhatsApp | ⬜ | Backlog / Fase 2 |
 | Audit | Audit log: pencatatan otomatis di DB (append-only) | ✅ | 0.2.0 |
 | Sistem | Layar pengaturan bengkel (diskon, retur, opname, stok minus, wajib scan part) | ✅ | 0.24.0 |
 | | Pengaturan profil: foto profil, nomor HP, ganti password, PIN, tema | ✅ | 0.32.0 |
 | | Pusat notifikasi: bel slide-down, banner realtime, rekam aksi semua modul, riwayat berfilter | ✅ | 0.33.0 |
+| | Redesain UI/UX dari Figma, tahap 1: fondasi (token Light/Dark, Inter, komponen dasar) | ✅ | 0.34.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 2: kerangka (sidebar terang bergrup, bilah atas, drawer mobile) | ✅ | 0.35.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: Beranda dengan data nyata | ✅ | 0.36.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Kasir sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.37.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Servis & Work Order sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.38.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Barang & Jasa sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.39.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Pembelian sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.40.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Pelanggan sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.41.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Stok Opname sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.42.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Keuangan sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.43.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Penggajian sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.44.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Pajak sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.45.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Karyawan sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.46.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul AI Analyst sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.47.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Audit Log sesuai Figma (Desktop & Mobile, Light & Dark) | ✅ | 0.48.0 (cabang ui-ux-redesign) |
+| | Halaman masuk bergaya start mesin (tachometer beranimasi) + toggle terang/gelap | ✅ | 0.53.0 (cabang ui-ux-redesign) |
+| | Redesain UI/UX tahap 3: modul Pop up form, Pengaturan, Notifikasi | 🟨 | menyusul, lihat catatan-redesain.md |
 | | Notifikasi per peran (izin Notifikasi di matriks peran + tersaring izin modul) | ✅ | 0.33.0 |
 | | Filter daftar seragam (rentang tanggal + kategori): Kasir (penjualan, retur, shift, piutang) | ✅ | 0.29.0 |
 | | Filter daftar: Pembelian (PO, penerimaan, hutang), Stok opname, Servis (estimasi, riwayat), Kas & bank | ✅ | 0.30.0 |

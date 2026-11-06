@@ -493,15 +493,21 @@ export function ToggleAccountButton({ id, active }: { id: string; active: boolea
   );
 }
 
-export function CashBankDialog() {
+export function CashBankDialog({ trigger }: { trigger?: React.ReactNode } = {}) {
   const a = useDialogAction("Akun kas/bank ditambahkan.");
   const blank = { name: "", kind: "bank" as "cash" | "bank", bank_name: "", account_number: "" };
   const [v, setV] = useState(blank);
   return (
     <>
-      <Button variant="outline" onClick={() => a.setOpen(true)}>
-        <Plus className="size-4" /> Akun kas/bank
-      </Button>
+      {trigger ? (
+        <span onClick={() => a.setOpen(true)} className="inline-contents">
+          {trigger}
+        </span>
+      ) : (
+        <Button variant="outline" onClick={() => a.setOpen(true)}>
+          <Plus className="size-4" /> Akun kas/bank
+        </Button>
+      )}
       <FormDialog open={a.open} onOpenChange={a.setOpen} title="Akun kas/bank baru" description="Akun di bagan akun dibuat otomatis." size="md">
         <div className="grid gap-4">
           <div className="grid gap-4 sm:grid-cols-[1fr_160px]">

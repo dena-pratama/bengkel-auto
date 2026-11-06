@@ -33,6 +33,7 @@ export function SaleDialog({
   draft,
   label = "Penjualan baru",
   variant = "default",
+  trigger,
 }: {
   catalog: CatalogOption[];
   customers: CustomerOption[];
@@ -40,6 +41,7 @@ export function SaleDialog({
   draft?: Draft;
   label?: string;
   variant?: "default" | "outline";
+  trigger?: (open: () => void) => React.ReactNode;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -77,9 +79,13 @@ export function SaleDialog({
 
   return (
     <>
-      <Button variant={variant} onClick={() => setOpen(true)}>
-        <Plus className="size-4" /> {label}
-      </Button>
+      {trigger ? (
+        trigger(() => setOpen(true))
+      ) : (
+        <Button variant={variant} onClick={() => setOpen(true)}>
+          <Plus className="size-4" /> {label}
+        </Button>
+      )}
       <FormDialog open={open} onOpenChange={(o) => (o ? setOpen(true) : close())} title={total == null ? "Penjualan part" : "Pembayaran"} description={total == null ? "Cari barang, pilih pelanggan (opsional), lalu lanjut ke pembayaran." : "Transaksi tersimpan sebagai draft sampai dibayar."} size="xl">
         {total == null ? (
           <div className="grid gap-4">

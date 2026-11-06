@@ -150,7 +150,7 @@ export function ItemPicker({
               setOpen(true);
             }
           }}
-          className="h-11 shrink-0 rounded-[14px]"
+          className="h-11 shrink-0 rounded-lg"
         />
       )}
     </div>

@@ -64,7 +64,10 @@ export function CustomersList({ customers, vehicles }: { customers: Customer[]; 
               role="tab"
               aria-selected={type === t}
               onClick={() => setType(t)}
-              className={cn("rounded-sm px-3 py-2 text-sm font-medium", type === t ? "bg-brand-blue-ink text-white" : "bg-muted text-muted-foreground hover:text-foreground")}
+              className={cn(
+                "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                type === t ? "bg-brand-rail text-white" : "bg-muted text-muted-foreground hover:text-foreground",
+              )}
             >
               {t === "all" ? "Semua" : t === "individual" ? "Perorangan" : "Perusahaan"}
             </button>
@@ -85,25 +88,25 @@ export function CustomersList({ customers, vehicles }: { customers: Customer[]; 
       {shown.length === 0 ? (
         <EmptyState icon={Users} text={customers.length === 0 ? "Belum ada pelanggan." : "Tidak ada yang cocok."} />
       ) : (
-        <ul className="grid gap-2 md:grid-cols-2 2xl:grid-cols-3">
+        <ul className="grid gap-2.5 md:grid-cols-2 2xl:grid-cols-3">
           {shown.map((c) => {
             const vs = plates.get(c.id) ?? [];
             return (
               <li key={c.id}>
-                <Link href={`/pelanggan/${c.id}`} className={cn("flex h-full items-center gap-3 rounded-sm border border-border p-3 hover:bg-muted/60", !c.is_active && "opacity-60")}>
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-brand-blue-soft text-brand-blue-fg">
+                <Link href={`/pelanggan/${c.id}`} className={cn("flex h-full items-center gap-3.5 rounded-xl border border-border bg-card p-3.5 transition-all hover:border-brand-blue hover:shadow-sm", !c.is_active && "opacity-60")}>
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-blue-soft text-brand-blue-fg">
                     {c.type === "company" ? <Building2 className="size-5" /> : <User className="size-5" />}
                   </span>
-                  <div className="grid min-w-0 flex-1 gap-0.5">
-                    <p className="truncate font-medium">{c.name}</p>
+                  <div className="grid min-w-0 flex-1 gap-1">
+                    <p className="truncate font-semibold text-[13px]">{c.name}</p>
                     <p className="truncate text-xs text-muted-foreground">
                       <span className="font-mono">{c.code}</span>
                       {c.phone && ` · ${c.phone}`}
                     </p>
                     {vs.length > 0 && (
-                      <p className="flex flex-wrap gap-1">
+                      <p className="flex flex-wrap gap-1 pt-0.5">
                         {vs.slice(0, 3).map((v) => (
-                          <span key={v.id} className="rounded-sm bg-muted px-1.5 py-0.5 font-mono text-2xs">
+                          <span key={v.id} className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-2xs font-medium">
                             {v.plate_no}
                           </span>
                         ))}
@@ -155,13 +158,13 @@ export function VehiclesList({ vehicles }: { vehicles: Vehicle[] }) {
       {shown.length === 0 ? (
         <EmptyState icon={Car} text={vehicles.length === 0 ? "Belum ada kendaraan." : "Tidak ada yang cocok."} />
       ) : (
-        <ul className="grid gap-2 md:grid-cols-2 2xl:grid-cols-3">
+        <ul className="grid gap-2.5 md:grid-cols-2 2xl:grid-cols-3">
           {shown.map((v) => (
             <li key={v.id}>
-              <Link href={`/pelanggan/kendaraan/${v.id}`} className={cn("flex h-full items-center gap-3 rounded-sm border border-border p-3 hover:bg-muted/60", !v.is_active && "opacity-60")}>
-                <span className="shrink-0 rounded-sm border-2 border-foreground/80 bg-card px-2 py-1 font-mono text-sm font-bold tracking-wide">{v.plate_no}</span>
-                <div className="grid min-w-0 flex-1 gap-0.5">
-                  <p className="truncate text-sm font-medium">{[v.make_name, v.model_name, v.variant, v.year].filter(Boolean).join(" ") || "Model belum diisi"}</p>
+              <Link href={`/pelanggan/kendaraan/${v.id}`} className={cn("flex h-full items-center gap-3.5 rounded-xl border border-border bg-card p-3.5 transition-all hover:border-brand-blue hover:shadow-sm", !v.is_active && "opacity-60")}>
+                <span className="shrink-0 rounded-md border border-border bg-muted/60 px-2.5 py-1.5 font-mono text-xs font-bold tracking-wide">{v.plate_no}</span>
+                <div className="grid min-w-0 flex-1 gap-1">
+                  <p className="truncate text-[13px] font-semibold">{[v.make_name, v.model_name, v.variant, v.year].filter(Boolean).join(" ") || "Model belum diisi"}</p>
                   <p className="truncate text-xs text-muted-foreground">
                     {v.customer_name ?? "Tanpa pemilik"}
                     {v.last_odometer != null && ` · ${formatQty(v.last_odometer)} km`}

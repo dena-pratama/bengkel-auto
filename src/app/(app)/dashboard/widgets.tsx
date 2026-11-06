@@ -1,440 +1,331 @@
+import Link from "next/link";
 import {
-  AlarmClock,
-  Car,
-  ChevronLeft,
-  ChevronRight,
+  AlertTriangle,
+  ArrowRight,
   ClipboardList,
-  Clock,
-  Edit3,
-  Mail,
-  MoreHorizontal,
-  Package,
-  PackageX,
-  Pencil,
-  Plus,
-  QrCode,
+  Info,
   ReceiptText,
-  Share2,
-  Trash2,
-  Truck,
+  Wallet,
   Wrench,
-  X,
   type LucideIcon,
 } from "lucide-react";
-import { agenda, cashShift, lowStock, mechanicJob, notifications, targets, todayWorkOrders } from "@/lib/demo/dashboard";
+import type { DashboardData, DashWorkOrder } from "@/lib/dashboard";
+import { formatDuration, formatRupiah } from "@/lib/format";
+import { timeAgo, type Severity } from "@/lib/validation/notifications";
+import { WO_STATUS_LABEL, type WorkOrderStatus } from "@/lib/validation/service";
+import { panel } from "@/components/page-kit";
 import { cn } from "@/lib/utils";
 
-export const card = "min-w-0 rounded-[28px] bg-card p-5 shadow-[0_1px_2px_rgb(23_36_51/0.04),0_10px_28px_-14px_rgb(23_36_51/0.14)] sm:p-6";
+type Tone = "muted" | "blue" | "sand" | "green" | "red";
+const TONE: Record<Tone, string> = {
+  muted: "bg-muted text-muted-foreground",
+  blue: "bg-brand-blue-soft text-brand-blue-fg",
+  sand: "bg-brand-sand-soft text-brand-sand",
+  green: "bg-brand-green-soft text-brand-green",
+  red: "bg-brand-red-soft text-brand-red",
+};
+const STATUS_TONE: Record<WorkOrderStatus, Tone> = {
+  queued: "muted",
+  in_progress: "blue",
+  waiting_parts: "sand",
+  waiting_approval: "sand",
+  quality_check: "blue",
+  ready: "green",
+  delivered: "muted",
+  void: "muted",
+};
 
-function CardHead({ title, children }: { title: React.ReactNode; children?: React.ReactNode }) {
+function Badge({ tone, children }: { tone: Tone; children: React.ReactNode }) {
+  return <span className={cn("inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-2xs font-medium", TONE[tone])}>{children}</span>;
+}
+
+function CardHead({ title, hint, children }: { title: React.ReactNode; hint?: string; children?: React.ReactNode }) {
   return (
-    <div className="mb-4 flex items-center justify-between gap-2">
-      <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
-      {children ?? (
-        <span aria-hidden className="flex size-8 items-center justify-center rounded-full text-muted-foreground">
-          <MoreHorizontal className="size-5" />
-        </span>
-      )}
+    <div className="mb-4 flex items-start justify-between gap-2">
+      <div className="min-w-0">
+        <h2 className="text-base font-semibold">{title}</h2>
+        {hint && <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>}
+      </div>
+      {children}
     </div>
   );
 }
 
-function GhostAction({ icon: Icon, children }: { icon: LucideIcon; children: React.ReactNode }) {
+function TextLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-      <Icon className="size-3.5" />
+    <Link href={href} className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-brand-blue-fg hover:underline">
       {children}
-    </span>
+      <ArrowRight className="size-3.5" />
+    </Link>
   );
 }
 
-function IconButton({ icon: Icon, label, tone = "muted" }: { icon: LucideIcon; label: string; tone?: "muted" | "blue" }) {
-  return (
-    <span
-      title={label}
-      className={cn(
-        "flex size-8 items-center justify-center rounded-sm",
-        tone === "blue" ? "bg-brand-blue-ink text-white" : "text-muted-foreground hover:bg-muted",
-      )}
-    >
-      <Icon className="size-4" />
-      <span className="sr-only">{label}</span>
-    </span>
-  );
+/** "Rp 128 jt", "Rp 24,8 jt", "Rp 1,2 M" untuk kartu ringkas */
+function rupiahShort(n: number): string {
+  const f = (v: number, unit: string) => `Rp ${new Intl.NumberFormat("id-ID", { maximumFractionDigits: v < 100 ? 1 : 0 }).format(v)} ${unit}`;
+  if (n >= 1e9) return f(n / 1e9, "M");
+  if (n >= 1e6) return f(n / 1e6, "jt");
+  if (n >= 1e4) return f(n / 1e3, "rb");
+  return formatRupiah(n);
 }
 
-/* ================================================================ Hero */
+/* ================================================================ Sapaan */
 export function Hero({ firstName }: { firstName: string }) {
   return (
-    <section className="flex flex-col justify-center gap-3 py-2 md:col-span-2 xl:col-span-5">
-      <h1 className="text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl">
-        Halo, {firstName}!
-        <br />
-        Apa rencana bengkel hari ini?
-      </h1>
-      <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
-        Pantau servis, kasir, stok, dan keuangan bengkel dari satu tempat. Semua tercatat otomatis.
-      </p>
+    <section className="grid gap-1.5">
+      <h1 className="text-2xl font-semibold tracking-tight text-balance sm:text-[28px]">Halo, {firstName}! Apa rencana bengkel hari ini?</h1>
+      <p className="text-sm text-muted-foreground">Pantau servis, kasir, stok, dan keuangan bengkel dari satu tempat. Semua tercatat otomatis.</p>
     </section>
   );
 }
 
-/* ================================================================ Tile aksi cepat */
-const QUICK_TILES: { title: string; desc: string; icon: LucideIcon; badge: LucideIcon }[] = [
-  { title: "Terima kendaraan", desc: "Estimasi & work order", icon: Car, badge: ClipboardList },
-  { title: "Kasir cepat", desc: "Jual part & terima bayar", icon: ReceiptText, badge: Plus },
-  { title: "Cek stok", desc: "Scan QR barang & rak", icon: QrCode, badge: Package },
-];
 
-export function QuickTiles() {
+/* ================================================================ Kartu angka */
+function StatTile({ eyebrow, tone, title, value, foot, href, cta, icon: Icon }: { eyebrow: string; tone: Tone; title: string; value: string; foot: string; href: string; cta: string; icon: LucideIcon }) {
   return (
-    <section className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:col-span-2 xl:col-span-7">
-      <div
-        title="Buat Work Order baru (tersedia setelah modul Servis)"
-        className="flex aspect-square flex-col items-center justify-center gap-2 rounded-[28px] border-2 border-dashed border-brand-blue/50 bg-brand-blue-soft/40 text-brand-blue-fg sm:aspect-auto"
-      >
-        <span className="flex size-10 items-center justify-center rounded-sm bg-brand-blue-ink text-white shadow-md shadow-brand-blue-ink/30">
-          <Plus className="size-5" />
-        </span>
-        <span className="px-2 text-center text-xs font-medium">Work order baru</span>
-      </div>
-      {QUICK_TILES.map(({ title, desc, icon: Icon, badge: Badge }) => (
-        <div key={title} className={cn(card, "flex flex-col gap-3 p-4")} title={`${title} (segera)`}>
-          <div className="relative mx-auto flex aspect-[4/3] w-full max-w-36 items-center justify-center rounded-sm bg-brand-blue-soft">
-            <div className="absolute top-3 left-3 h-1.5 w-8 rounded-full bg-brand-blue/50" />
-            <div className="absolute top-6 left-3 h-1.5 w-5 rounded-full bg-brand-blue/30" />
-            <Icon className="size-12 text-brand-blue-fg" strokeWidth={1.5} />
-            <span className="absolute right-3 bottom-3 flex size-7 items-center justify-center rounded-sm bg-brand-red text-white shadow-md shadow-brand-red/30">
-              <Badge className="size-3.5" />
-            </span>
-          </div>
-          <div>
-            <p className="text-sm font-semibold">{title}</p>
-            <p className="text-xs text-muted-foreground">{desc}</p>
-          </div>
+    <div className={cn(panel, "flex flex-col gap-1 p-5")}>
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className={cn("text-2xs font-semibold tracking-wider uppercase", tone === "muted" ? "text-muted-foreground" : TONE[tone].split(" ")[1])}>{eyebrow}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{title}</p>
         </div>
-      ))}
+        <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg", TONE[tone])}>
+          <Icon className="size-[18px]" />
+        </span>
+      </div>
+      <p className="mt-2 text-[28px] leading-tight font-semibold tabular-nums">{value}</p>
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <span className="min-w-0 truncate text-xs text-muted-foreground">{foot}</span>
+        <TextLink href={href}>{cta}</TextLink>
+      </div>
+    </div>
+  );
+}
+
+export function StatTiles({ data }: { data: DashboardData }) {
+  const { workOrders: wo, revenue, receivable, lowStock } = data;
+  const tiles: React.ReactNode[] = [];
+  if (wo)
+    tiles.push(
+      <StatTile key="wo" eyebrow="Hari ini" tone="blue" title="Work order aktif" value={`${wo.active} WO`} foot={wo.overdue > 0 ? `${wo.overdue} melewati estimasi` : "Tidak ada yang terlambat"} href="/servis" cta="Papan servis" icon={ClipboardList} />,
+    );
+  if (revenue)
+    tiles.push(
+      <StatTile key="rev" eyebrow="Bulan ini" tone="green" title="Omzet penjualan" value={rupiahShort(revenue.month)} foot={`${revenue.count} transaksi diposting`} href="/keuangan/laporan" cta="Laporan" icon={Wallet} />,
+    );
+  if (receivable)
+    tiles.push(
+      <StatTile key="ar" eyebrow="Piutang" tone="sand" title="Piutang pelanggan" value={rupiahShort(receivable.outstanding)} foot={receivable.invoices > 0 ? `${receivable.invoices} invoice belum lunas` : "Semua lunas"} href="/kasir/piutang" cta="Tagih" icon={ReceiptText} />,
+    );
+  if (lowStock)
+    tiles.push(
+      <StatTile key="low" eyebrow="Stok" tone={lowStock.count > 0 ? "red" : "muted"} title="Barang menipis" value={`${lowStock.count} barang`} foot={lowStock.rows[0] ? `${lowStock.rows[0].name} sisa ${lowStock.rows[0].qty}` : "Stok aman"} href="/pembelian" cta="Buat PO" icon={AlertTriangle} />,
+    );
+  if (tiles.length === 0) return null;
+  return <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">{tiles}</section>;
+}
+
+/* ================================================================ Work order aktif */
+function WoRow({ w }: { w: DashWorkOrder }) {
+  return (
+    <Link href={`/servis/${w.id}`} className="grid gap-x-4 gap-y-1.5 border-t border-border px-5 py-3.5 transition-colors first:border-t-0 hover:bg-muted/50 md:grid-cols-[minmax(0,1fr)_120px_100px_130px_120px] md:items-center">
+      <div className="min-w-0">
+        <p className="truncate text-sm font-semibold">{w.services || w.complaint || "Belum ada jasa"}</p>
+        <p className="truncate text-xs text-muted-foreground">
+          {w.wo_no}
+          {w.vehicle_label ? ` · ${w.vehicle_label}` : ""}
+        </p>
+      </div>
+      <span className="w-fit rounded-md border border-border bg-card px-2 py-0.5 font-mono text-xs font-medium">{w.plate_no}</span>
+      <span className="truncate text-sm text-muted-foreground">{w.mechanics || "Belum ada mekanik"}</span>
+      <span className="text-xs text-muted-foreground tabular-nums">{formatDuration(w.minutes_in_status)} di status ini</span>
+      <span className="flex flex-wrap gap-1">
+        <Badge tone={STATUS_TONE[w.status]}>{WO_STATUS_LABEL[w.status]}</Badge>
+        {w.is_overdue && <Badge tone="red">Terlambat</Badge>}
+      </span>
+    </Link>
+  );
+}
+
+export function ActiveWorkOrders({ data }: { data: NonNullable<DashboardData["workOrders"]> }) {
+  return (
+    <section className={cn(panel, "flex flex-col p-0 xl:col-span-2")}>
+      <div className="flex items-center justify-between gap-2 px-5 pt-5 pb-3">
+        <h2 className="text-base font-semibold">Work order aktif</h2>
+        <TextLink href="/servis">Buka papan servis</TextLink>
+      </div>
+      <div className="hidden grid-cols-[minmax(0,1fr)_120px_100px_130px_120px] gap-4 border-y border-border bg-muted/50 px-5 py-2 text-2xs font-semibold tracking-wider text-muted-foreground uppercase md:grid">
+        <span>Pekerjaan</span>
+        <span>Kendaraan</span>
+        <span>Mekanik</span>
+        <span>Durasi</span>
+        <span>Status</span>
+      </div>
+      {data.rows.length === 0 ? (
+        <p className="px-5 py-10 text-center text-sm text-muted-foreground">Tidak ada work order aktif.</p>
+      ) : (
+        <div>
+          {data.rows.map((w) => (
+            <WoRow key={w.id} w={w} />
+          ))}
+        </div>
+      )}
+      <p className="mt-auto border-t border-border px-5 py-3 text-xs text-muted-foreground">
+        {data.active > data.rows.length ? `Menampilkan ${data.rows.length} dari ${data.active} work order aktif` : `${data.active} work order aktif`}
+      </p>
     </section>
   );
 }
 
 /* ================================================================ Notifikasi */
-export function NotificationsCard() {
-  const [alert, message] = notifications;
-  return (
-    <section className={cn(card, "xl:col-span-4")}>
-      <CardHead title="Notifikasi">
-        <GhostAction icon={X}>Bersihkan</GhostAction>
-      </CardHead>
-      <div className="grid grid-cols-1 gap-3">
-        <div className="flex min-w-0 gap-2">
-          <div className="min-w-0 flex-1 rounded-sm border border-border bg-card p-4 shadow-md shadow-brand-blue-ink/5">
-            <div className="flex items-start justify-between gap-2">
-              <p className="flex items-center gap-1.5 text-sm font-semibold">
-                {alert.title}
-                <span className="size-2 rounded-full bg-brand-red" />
-              </p>
-              <MoreHorizontal className="size-4 text-muted-foreground" />
-            </div>
-            <p className="text-xs text-muted-foreground">{alert.meta}</p>
-            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
-              <span className="flex items-center gap-1">
-                <AlarmClock className="size-3.5 text-brand-red" /> {alert.date}
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="size-3.5 text-muted-foreground" /> {alert.time} WIB
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-col justify-center gap-1 rounded-sm bg-brand-blue-soft px-1">
-            <IconButton icon={Trash2} label="Hapus" />
-            <IconButton icon={Pencil} label="Tindak lanjut" />
-          </div>
-        </div>
-        <div className="min-w-0 rounded-sm border border-border p-4 sm:ml-4">
-          <div className="flex items-start justify-between gap-2">
-            <p className="text-sm font-semibold">{message.title}</p>
-            <MoreHorizontal className="size-4 text-muted-foreground" />
-          </div>
-          <p className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Mail className="size-3.5" /> {message.meta}
-          </p>
-          <p className="mt-2 truncate rounded-sm bg-brand-blue-soft px-3 py-1.5 text-xs text-brand-blue-deep">{message.preview}</p>
-        </div>
-      </div>
-    </section>
-  );
-}
+const SEV_ICON: Record<Severity, { icon: LucideIcon; tone: Tone }> = {
+  danger: { icon: AlertTriangle, tone: "red" },
+  warn: { icon: AlertTriangle, tone: "sand" },
+  info: { icon: Info, tone: "blue" },
+};
 
-/* ================================================================ Pekerjaan mekanik */
-export function MechanicJobCard() {
-  const job = mechanicJob;
+export function NotificationsPanel({ data }: { data: NonNullable<DashboardData["notifications"]> }) {
   return (
-    <section className={cn(card, "xl:col-span-4")}>
-      <CardHead title="Pekerjaan mekanik">
-        <GhostAction icon={Edit3}>Ubah</GhostAction>
+    <section className={panel}>
+      <CardHead title="Notifikasi" hint={data.unread > 0 ? `${data.unread} belum dibaca` : "Semua sudah dibaca"}>
+        <TextLink href="/notifikasi">Semua</TextLink>
       </CardHead>
-      <div className="rounded-sm border border-border p-4 shadow-md shadow-brand-blue-ink/5">
-        <div className="flex items-center justify-between gap-2 text-xs">
-          <p>
-            <span className="font-medium text-brand-blue-fg">{job.category}</span>
-            <span className="mx-1.5 text-muted-foreground">|</span>
-            <span className="font-mono font-semibold">{job.plate}</span>
-          </p>
-          <MoreHorizontal className="size-4 text-muted-foreground" />
-        </div>
-        <div className="mt-3 flex items-start justify-between gap-3">
-          <p className="text-[15px] leading-snug font-semibold">{job.title}</p>
-          <span className="shrink-0 rounded-sm bg-brand-red-soft px-2.5 py-1 text-xs font-medium text-brand-red">{job.priority}</span>
-        </div>
-        <div className="mt-4 flex items-center justify-between gap-2">
-          <span className="rounded-sm bg-brand-blue px-2.5 py-1 text-xs font-medium text-[#1d3d57]">{job.tag}</span>
-          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            {job.mechanic}
-            <span className="flex size-6 items-center justify-center rounded-full bg-brand-blue-soft text-2xs font-semibold text-brand-blue-fg">
-              {job.mechanic[0]}
-            </span>
-          </span>
-        </div>
-      </div>
-      <div className="mt-3 flex items-center justify-center gap-2 rounded-sm border-2 border-dashed border-brand-blue/50 bg-brand-blue-soft/40 py-4 text-sm font-medium text-brand-blue-fg">
-        <span className="flex size-6 items-center justify-center rounded-md bg-brand-blue-ink text-white">
-          <Plus className="size-4" />
-        </span>
-        Tugaskan pekerjaan baru
-      </div>
-    </section>
-  );
-}
-
-/* ================================================================ Agenda (kalender minggu ini) */
-export function AgendaCard() {
-  const tz = "Asia/Jakarta";
-  const today = new Date(new Date().toLocaleString("en-US", { timeZone: tz }));
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
-  const days = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    return d;
-  });
-  const monthLabel = new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric" }).format(today);
-  const dayName = new Intl.DateTimeFormat("id-ID", { weekday: "short" });
-  const icons = { car: Car, truck: Truck };
-
-  return (
-    <section className={cn(card, "md:col-span-2 xl:col-span-4")}>
-      <CardHead title={<span className="capitalize">{monthLabel}</span>}>
-        <div className="flex gap-1">
-          <span className="flex size-7 items-center justify-center rounded-full border border-border text-muted-foreground">
-            <ChevronLeft className="size-4" />
-          </span>
-          <span className="flex size-7 items-center justify-center rounded-full border border-border text-muted-foreground">
-            <ChevronRight className="size-4" />
-          </span>
-        </div>
-      </CardHead>
-      <div className="grid grid-cols-7 text-center">
-        {days.map((d) => {
-          const isToday = d.toDateString() === today.toDateString();
-          return (
-            <div key={d.toISOString()} className="grid gap-1.5">
-              <span className="text-2xs text-muted-foreground">{dayName.format(d)}</span>
-              <span
-                className={cn(
-                  "mx-auto flex size-8 items-center justify-center rounded-full text-sm font-medium",
-                  isToday && "bg-brand-blue-ink text-white shadow-md shadow-brand-blue-ink/30",
-                )}
-              >
-                {d.getDate()}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-      <ul className="mt-4 grid gap-1">
-        {agenda.map((a) => {
-          const Icon = icons[a.icon];
-          return (
-            <li key={a.title}>
-              <div className="flex items-center gap-3 py-2 text-sm font-medium">
-                {a.slot}
-                <span className="h-px flex-1 border-t border-dashed border-border" />
-              </div>
-              <div className="flex items-center gap-3 rounded-sm p-2 hover:bg-muted">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-sm bg-brand-blue-soft text-brand-blue-fg">
+      {data.items.length === 0 ? (
+        <p className="py-6 text-center text-sm text-muted-foreground">Belum ada notifikasi.</p>
+      ) : (
+        <ul className="grid">
+          {data.items.map((n) => {
+            const { icon: Icon, tone } = SEV_ICON[n.severity] ?? SEV_ICON.info;
+            const unread = !data.lastReadAt || n.created_at > data.lastReadAt;
+            const body = (
+              <>
+                <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg", TONE[tone])}>
                   <Icon className="size-4" />
                 </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">{a.title}</p>
-                  <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    {a.meta}
-                    {a.urgent && <span className="size-1.5 rounded-full bg-brand-red" />}
-                  </p>
-                </div>
-                <MoreHorizontal className="size-4 text-muted-foreground" />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold">{n.title}</span>
+                  {n.body && <span className="block truncate text-xs text-muted-foreground">{n.body}</span>}
+                  <span className="block text-2xs text-muted-foreground">
+                    {timeAgo(n.created_at)}
+                    {n.actor_name ? ` · ${n.actor_name}` : ""}
+                  </span>
+                </span>
+                {unread && <span aria-label="Belum dibaca" className="mt-1 size-2 shrink-0 rounded-full bg-brand-blue" />}
+              </>
+            );
+            return (
+              <li key={n.id} className="border-t border-border first:border-t-0">
+                {n.link ? (
+                  <Link href={n.link} className="-mx-2 flex items-start gap-3 rounded-lg px-2 py-3 hover:bg-muted/50">
+                    {body}
+                  </Link>
+                ) : (
+                  <div className="flex items-start gap-3 py-3">{body}</div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+/* ================================================================ Beban mekanik */
+export function MechanicLoad({ rows, active }: { rows: { name: string; count: number }[]; active: number }) {
+  const max = Math.max(1, ...rows.map((r) => r.count));
+  return (
+    <section className={panel}>
+      <CardHead title="Beban mekanik" hint="Work order aktif per mekanik">
+        <span className="flex size-9 items-center justify-center rounded-lg bg-brand-blue-soft text-brand-blue-fg">
+          <Wrench className="size-[18px]" />
+        </span>
+      </CardHead>
+      {rows.length === 0 ? (
+        <p className="py-6 text-center text-sm text-muted-foreground">{active > 0 ? "Belum ada mekanik ditugaskan." : "Tidak ada work order aktif."}</p>
+      ) : (
+        <ul className="grid gap-3">
+          {rows.map((r) => (
+            <li key={r.name} className="grid gap-1.5">
+              <div className="flex items-center justify-between gap-2 text-sm">
+                <span className="truncate font-medium">{r.name}</span>
+                <span className="text-xs text-muted-foreground tabular-nums">{r.count} WO</span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-brand-rail" style={{ width: `${(r.count / max) * 100}%` }} />
               </div>
             </li>
-          );
-        })}
-      </ul>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
 
-/* ================================================================ Work order hari ini */
-export function TodayWorkOrdersCard() {
+/* ================================================================ Barang menipis */
+export function LowStockPanel({ data }: { data: NonNullable<DashboardData["lowStock"]> }) {
   return (
-    <section className={cn(card, "md:col-span-2 xl:col-span-5")}>
-      <CardHead
-        title={
-          <span className="flex items-center gap-3">
-            Work order hari ini
-            <span className="flex -space-x-2">
-              {["R", "A", "J"].map((m) => (
-                <span key={m} className="flex size-7 items-center justify-center rounded-full border-2 border-card bg-brand-blue-soft text-2xs font-semibold text-brand-blue-fg">
-                  {m}
-                </span>
-              ))}
-              <span className="flex size-7 items-center justify-center rounded-full border-2 border-card bg-brand-blue-ink text-white">
-                <Plus className="size-3.5" />
-              </span>
-            </span>
-          </span>
-        }
-      >
-        <div className="hidden items-center gap-3 sm:flex">
-          <GhostAction icon={Edit3}>Ubah</GhostAction>
-          <GhostAction icon={Share2}>Bagikan</GhostAction>
-        </div>
+    <section className={panel}>
+      <CardHead title={`${data.count} barang menipis`} hint="Buat PO sebelum stok habis">
+        {data.count > 0 && <Badge tone="red">Stok</Badge>}
       </CardHead>
-      <ul className="grid gap-1">
-        {todayWorkOrders.map((wo, i) => (
-          <li
-            key={wo.plate}
-            className={cn(
-              "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 rounded-sm p-3 sm:grid-cols-[minmax(0,1.5fr)_auto_minmax(110px,1fr)]",
-              i === 0 && "bg-card shadow-lg shadow-brand-blue-ink/10 ring-1 ring-border",
-            )}
-          >
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold">{wo.title}</p>
-              <p className="flex flex-wrap items-center gap-x-2 text-2xs text-muted-foreground">
-                <span className="font-mono font-medium text-foreground">{wo.plate}</span>
-                <span>{wo.start}</span>
-                <span className="flex items-center gap-0.5" title="Part dipakai">
-                  <Package className="size-3" /> {wo.parts}
-                </span>
-                <span className="flex items-center gap-0.5" title="Mekanik">
-                  <Wrench className="size-3" /> {wo.mechanic}
-                </span>
-              </p>
-            </div>
-            <div>
-              <p className="text-2xs text-muted-foreground">Durasi</p>
-              <p className="text-sm font-semibold tabular-nums">{wo.duration}</p>
-            </div>
-            <div className="col-span-2 flex items-center gap-2 sm:col-span-1">
-              <span className="w-11 text-sm font-semibold tabular-nums">{wo.progress}%</span>
-              <span className="h-1.5 flex-1 rounded-full bg-brand-blue-soft">
-                <span
-                  className={cn("block h-full rounded-full", wo.progress >= 80 ? "bg-brand-blue-ink" : "bg-brand-blue")}
-                  style={{ width: `${wo.progress}%` }}
-                />
+      {data.rows.length === 0 ? (
+        <p className="py-6 text-center text-sm text-muted-foreground">Semua stok di atas batas minimum.</p>
+      ) : (
+        <ul className="grid">
+          {data.rows.map((x) => (
+            <li key={x.item_id} className="flex items-center justify-between gap-3 border-t border-border py-2.5 first:border-t-0">
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-semibold">{x.name}</span>
+                <span className="block truncate font-mono text-2xs text-muted-foreground">{x.sku}</span>
               </span>
-            </div>
-          </li>
-        ))}
-      </ul>
+              <span className="shrink-0 text-right">
+                <span className="block text-sm font-semibold text-brand-red tabular-nums">
+                  {x.qty} / {x.min_stock}
+                </span>
+                <span className="block text-2xs text-muted-foreground">sisa / min</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <Link href="/pembelian" className="mt-4 flex h-10 items-center justify-center rounded-lg border border-border bg-card text-sm font-medium hover:bg-muted">
+        Buat purchase order
+      </Link>
     </section>
   );
 }
 
-/* ================================================================ Stok menipis (kartu sorotan merah) */
-export function LowStockCard() {
+/* ================================================================ Kas shift */
+export function ShiftPanel({ shift }: { shift: NonNullable<DashboardData["shift"]> | null }) {
   return (
-    <section className="relative flex min-w-0 flex-col items-center justify-center gap-3 overflow-hidden rounded-[28px] bg-brand-red p-6 text-center text-white shadow-xl shadow-brand-red/25 xl:col-span-3">
-      <div aria-hidden className="absolute -top-10 -right-10 size-32 rounded-full bg-white/10" />
-      <div aria-hidden className="absolute -bottom-12 -left-8 size-28 rounded-full bg-white/10" />
-      <span className="relative flex size-16 items-center justify-center rounded-sm bg-white/15">
-        <PackageX className="size-8" strokeWidth={1.5} />
-      </span>
-      <div className="relative">
-        <p className="text-2xl font-semibold"><span className="text-4xl font-bold tabular-nums">{lowStock.count}</span> barang menipis</p>
-        <p className="mt-1 text-sm text-white/85">
-          {lowStock.topItem} tersisa {lowStock.left} pcs. Buat PO sebelum stok habis.
-        </p>
-      </div>
-      <span className="relative mt-1 rounded-sm bg-white px-5 py-2.5 text-sm font-semibold text-brand-red shadow-md">Buat purchase order</span>
-    </section>
-  );
-}
-
-/* ================================================================ Target (cincin progres) */
-function Ring({ pct, tone }: { pct: number; tone: "blue" | "red" }) {
-  const r = 26;
-  const c = 2 * Math.PI * r;
-  return (
-    <svg viewBox="0 0 64 64" className="size-[72px] shrink-0 -rotate-90" aria-hidden>
-      <circle cx="32" cy="32" r={r} fill="none" stroke="var(--brand-blue-soft)" strokeWidth="6" />
-      <circle
-        cx="32"
-        cy="32"
-        r={r}
-        fill="none"
-        stroke={tone === "blue" ? "var(--brand-blue-ink)" : "var(--brand-red)"}
-        strokeWidth="6"
-        strokeLinecap="round"
-        strokeDasharray={`${(pct / 100) * c} ${c}`}
-      />
-    </svg>
-  );
-}
-
-export function TargetsCards() {
-  return (
-    <>
-      {targets.map((t) => (
-        <section key={t.label} className={cn(card, "flex flex-col gap-3 p-4")}>
-          <div className="min-w-0">
-            <p className={cn("text-2xs font-semibold tracking-wide uppercase", t.tone === "blue" ? "text-brand-blue-fg" : "text-brand-red")}>
-              {t.group}
+    <section className={panel}>
+      <CardHead title="Kas shift saya" hint={shift ? `${shift.shift_no} · kasir ${shift.cashier_name ?? "-"}` : "Belum ada shift terbuka"}>
+        <span className="flex size-9 items-center justify-center rounded-lg bg-brand-green-soft text-brand-green">
+          <Wallet className="size-[18px]" />
+        </span>
+      </CardHead>
+      {shift ? (
+        <>
+          <p className="text-xs text-muted-foreground">Kas seharusnya</p>
+          <p className="text-2xl font-semibold tabular-nums">{formatRupiah(shift.expected_now)}</p>
+          <div className="mt-3 grid gap-1.5 rounded-lg bg-muted/60 p-3 text-sm">
+            <p className="flex justify-between gap-2">
+              <span className="text-muted-foreground">Masuk tunai</span>
+              <span className="font-medium tabular-nums">{formatRupiah(shift.cash_in)}</span>
             </p>
-            <p className="text-sm font-semibold">{t.label}</p>
+            <p className="flex justify-between gap-2">
+              <span className="text-muted-foreground">Transfer / QRIS / kartu</span>
+              <span className="font-medium tabular-nums">{formatRupiah(shift.non_cash_in)}</span>
+            </p>
           </div>
-          <div className="flex items-center gap-2.5">
-            <div className="relative shrink-0">
-              <Ring pct={t.pct} tone={t.tone} />
-              <span className="absolute inset-0 flex items-center justify-center text-base font-bold tabular-nums">{t.pct}%</span>
-            </div>
-            <div className="grid min-w-0 gap-2">
-              <p className="text-xs leading-snug text-muted-foreground">{t.note}</p>
-              {t.action && <span className="w-fit rounded-sm bg-brand-blue-ink px-3 py-1 text-xs font-medium text-white">{t.action}</span>}
-            </div>
-          </div>
-        </section>
-      ))}
-    </>
-  );
-}
-
-/* ================================================================ Tutup kas shift */
-export function CashShiftCard() {
-  return (
-    <section className={cn(card, "col-span-2")}>
-      <CardHead title={cashShift.title}>
-        <GhostAction icon={Edit3}>Ubah</GhostAction>
-      </CardHead>
-      <p className="-mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
-        <span className="size-2 rounded-full bg-brand-blue" /> {cashShift.time}
-      </p>
-      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between xl:flex-col xl:items-stretch">
-        <p className="text-sm text-muted-foreground">{cashShift.detail}</p>
-        <div className="flex shrink-0 gap-2 xl:justify-end">
-          <span className="rounded-sm bg-brand-blue-soft px-4 py-2 text-sm font-medium text-brand-blue-deep">Lihat</span>
-          <span className="rounded-sm bg-brand-blue-ink px-4 py-2 text-sm font-medium text-white">Tutup shift</span>
-        </div>
-      </div>
+        </>
+      ) : (
+        <p className="py-4 text-sm text-muted-foreground">Buka shift untuk mulai menerima pembayaran di kasir.</p>
+      )}
+      <Link href="/kasir/shift" className="mt-4 flex h-10 items-center justify-center rounded-lg bg-primary text-sm font-medium text-primary-foreground hover:bg-primary/90">
+        {shift ? "Kelola shift" : "Buka shift"}
+      </Link>
     </section>
   );
 }

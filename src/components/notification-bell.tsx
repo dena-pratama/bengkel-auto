@@ -51,23 +51,25 @@ function Row({ n, unread, onOpen }: { n: NotificationItem; unread: boolean; onOp
   const Icon = ICON[n.severity];
   const inner = (
     <>
-      <span className={cn("mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full", TONE[n.severity])}>
+      <span className={cn("mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl", TONE[n.severity])}>
         <Icon className="size-4" />
       </span>
       <span className="min-w-0 flex-1">
         <span className="flex items-start justify-between gap-2">
-          <span className={cn("text-sm", unread ? "font-semibold" : "font-medium")}>{n.title}</span>
-          {unread && <span className="mt-1.5 size-2 shrink-0 rounded-full bg-brand-red" aria-label="Belum dibaca" />}
+          <span className={cn("text-xs leading-snug sm:text-sm", unread ? "font-bold text-foreground" : "font-medium text-foreground/90")}>
+            {n.title}
+          </span>
+          {unread && <span className="mt-1 size-2 shrink-0 rounded-full bg-brand-red" aria-label="Belum dibaca" />}
         </span>
-        {n.body && <span className="line-clamp-2 block text-xs text-muted-foreground">{n.body}</span>}
-        <span className="mt-0.5 block text-2xs text-muted-foreground">
+        {n.body && <span className="mt-0.5 line-clamp-2 block text-xs text-muted-foreground">{n.body}</span>}
+        <span className="mt-1 block text-[11px] text-muted-foreground">
           {timeAgo(n.created_at)}
           {n.actor_name && ` · ${n.actor_name}`}
         </span>
       </span>
     </>
   );
-  const cls = "flex gap-3 rounded-2xl px-3 py-2.5 text-left transition-colors hover:bg-muted/70";
+  const cls = "flex gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-muted/60";
   return n.link ? (
     <Link href={n.link} onClick={onOpen} className={cls}>
       {inner}
@@ -155,10 +157,10 @@ export function NotificationBell({ enabled }: { enabled: boolean }) {
 
   return (
     <div ref={wrap} className="relative">
-      <Button variant="ghost" size="icon" className="relative" aria-label={unread ? `Notifikasi, ${unread} belum dibaca` : "Notifikasi"} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <Bell className="size-5" />
+      <Button variant="outline" size="icon" className="relative size-10 text-muted-foreground" aria-label={unread ? `Notifikasi, ${unread} belum dibaca` : "Notifikasi"} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        <Bell className="size-[18px]" />
         {unread > 0 && (
-          <span className="absolute top-1 right-1 flex min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] leading-4 font-semibold text-white ring-2 ring-background">{unread > 99 ? "99+" : unread}</span>
+          <span className="absolute -top-1.5 -right-1.5 flex min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] leading-4 font-semibold text-white ring-2 ring-background">{unread > 99 ? "99+" : unread}</span>
         )}
       </Button>
 
@@ -168,24 +170,24 @@ export function NotificationBell({ enabled }: { enabled: boolean }) {
             {...slide}
             transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.7 }}
             style={{ transformOrigin: "top right" }}
-            className="fixed top-16 right-3 left-3 z-50 flex max-h-[min(70svh,34rem)] flex-col overflow-hidden rounded-3xl bg-card shadow-2xl shadow-brand-blue-deep/20 ring-1 ring-black/5 sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-2 sm:w-[26rem]"
+            className="fixed top-[60px] right-3 left-3 z-50 flex max-h-[min(70svh,34rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl ring-1 ring-border sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-2 sm:w-[28rem]"
             role="dialog"
             aria-label="Notifikasi"
           >
-            <div className="flex items-center justify-between gap-2 px-4 pt-4 pb-2">
-              <h2 className="text-base font-semibold">Notifikasi</h2>
-              <div className="flex items-center gap-1">
+            <div className="flex items-center justify-between gap-2 border-b border-border/60 px-5 pt-4 pb-3">
+              <h2 className="text-base font-bold text-foreground">Notifikasi</h2>
+              <div className="flex items-center gap-1.5">
                 {unread > 0 && (
-                  <Button variant="ghost" size="sm" onClick={() => void markRead()}>
-                    <CheckCheck className="size-4" /> Tandai dibaca
+                  <Button variant="ghost" size="sm" onClick={() => void markRead()} className="h-8 rounded-lg text-xs font-medium text-brand-blue hover:bg-brand-blue-soft">
+                    <CheckCheck className="size-3.5" /> Tandai dibaca
                   </Button>
                 )}
-                <Button variant="ghost" size="icon" aria-label="Tutup" onClick={() => setOpen(false)}>
+                <Button variant="ghost" size="icon" aria-label="Tutup" onClick={() => setOpen(false)} className="size-8 rounded-full">
                   <X className="size-4" />
                 </Button>
               </div>
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-2 [scrollbar-width:thin]">
+            <div className="min-h-0 flex-1 overflow-y-auto p-2 [scrollbar-width:thin]">
               {data === null ? (
                 <p className="px-3 py-6 text-center text-sm text-muted-foreground">Memuat...</p>
               ) : data.items.length === 0 ? (
@@ -194,8 +196,8 @@ export function NotificationBell({ enabled }: { enabled: boolean }) {
                 data.items.map((n) => <Row key={n.id} n={n} unread={new Date(n.created_at).getTime() > lastRead} onOpen={() => setOpen(false)} />)
               )}
             </div>
-            <Link href="/notifikasi" onClick={() => setOpen(false)} className="border-t border-border px-4 py-3 text-center text-sm font-medium text-brand-blue-fg hover:bg-muted/60">
-              Lihat semua notifikasi
+            <Link href="/notifikasi" onClick={() => setOpen(false)} className="border-t border-border px-4 py-3 text-center text-xs font-semibold text-brand-blue transition-colors hover:bg-muted/60">
+              Lihat semua notifikasi &rarr;
             </Link>
           </motion.div>
         )}
