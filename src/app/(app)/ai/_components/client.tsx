@@ -31,10 +31,10 @@ export function GenerateWeeklyButton() {
   );
 }
 
-export function AskBox({ providers }: { providers: { id: string; label: string; model: string }[] }) {
+export function AskBox({ providers, active }: { providers: { id: string; label: string; model: string }[]; active: string }) {
   const router = useRouter();
   const [q, setQ] = useState("");
-  const [provider, setProvider] = useState(providers[0]?.id ?? "");
+  const [provider, setProvider] = useState(active || (providers[0]?.id ?? ""));
   const enabled = providers.length > 0;
   const [answer, setAnswer] = useState<{ text: string; tools: string[]; label: string } | null>(null);
   const [error, setError] = useState("");

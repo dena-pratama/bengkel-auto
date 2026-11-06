@@ -1,7 +1,8 @@
 import "server-only";
+import { createClient } from "@/lib/supabase/server";
 
-// Daftar penyedia AI untuk "Tanya AI". Kunci API hanya dibaca dari environment server (tidak pernah dikirim ke browser).
-// Penyedia yang kuncinya belum diisi tidak ditampilkan di halaman.
+// Penyedia AI untuk "Tanya AI". Kunci API hanya dibaca dari environment server (tidak pernah disimpan di database
+// atau dikirim ke browser). Penyedia aktif dan nama model diatur di halaman Pengaturan (tabel settings).
 
 export type ProviderId = "anthropic" | "openai" | "gemini" | "openrouter";
 
@@ -20,20 +21,61 @@ export const PROVIDERS: ProviderDef[] = [
   { id: "openrouter", label: "OpenRouter", keyEnv: "OPENROUTER_API_KEY", modelEnv: "OPENROUTER_MODEL", defaultModel: "anthropic/claude-sonnet-4.5" },
 ];
 
-export type ConfiguredProvider = { id: ProviderId; label: string; model: string };
+export type AiProviderState = {
+  id: ProviderId;
+  label: string;
+  keyEnv: string;
+  /** Kunci terisi di environment server (nilainya tidak pernah ditampilkan) */
+  hasKey: boolean;
+  defaultModel: string;
+  /** Nama model yang disimpan di Pengaturan (kosong = pakai env atau bawaan) */
+  savedModel: string;
+  /** Model yang benar-benar dipakai */
+  model: string;
+};
 
-/** Penyedia yang sudah punya kunci di environment (aman dikirim ke browser: tanpa kunci). */
-export function configuredProviders(): ConfiguredProvider[] {
-  return PROVIDERS.filter((p) => Boolean(process.env[p.keyEnv]?.trim())).map((p) => ({
-    id: p.id,
-    label: p.label,
-    model: process.env[p.modelEnv]?.trim() || p.defaultModel,
-  }));
+/** Pengaturan AI dari tabel settings (dibaca sebagai pengguna yang login; RLS berlaku). */
+async function savedAiSettings(): Promise<Record<string, string>> {
+  const s = await createClient();
+  const { data, error } = await s.from("settings").select("key, value").like("key", "ai_%");
+  if (error) return {};
+  const out: Record<string, string> = {};
+  for (const r of data ?? []) out[r.key as string] = typeof r.value === "string" ? r.value : "";
+  return out;
 }
 
-export function getProvider(id: string): (ProviderDef & { key: string; model: string }) | null {
+/** Status semua penyedia untuk halaman Pengaturan dan Tanya AI. */
+export async function aiProviderStates(): Promise<{ provider: string; providers: AiProviderState[] }> {
+  const saved = await savedAiSettings();
+  const providers = PROVIDERS.map((p): AiProviderState => {
+    const savedModel = (saved[`ai_model_${p.id}`] ?? "").trim();
+    const envModel = process.env[p.modelEnv]?.trim() ?? "";
+    return {
+      id: p.id,
+      label: p.label,
+      keyEnv: p.keyEnv,
+      hasKey: Boolean(process.env[p.keyEnv]?.trim()),
+      defaultModel: p.defaultModel,
+      savedModel,
+      model: savedModel || envModel || p.defaultModel,
+    };
+  });
+  return { provider: (saved.ai_provider ?? "").trim(), providers };
+}
+
+/** Penyedia yang kuncinya terisi, plus penyedia aktif (dari Pengaturan; jika kosong, yang pertama). */
+export async function configuredProviders(): Promise<{ providers: { id: ProviderId; label: string; model: string }[]; active: string }> {
+  const st = await aiProviderStates();
+  const providers = st.providers.filter((p) => p.hasKey).map((p) => ({ id: p.id, label: p.label, model: p.model }));
+  const active = providers.some((p) => p.id === st.provider) ? st.provider : (providers[0]?.id ?? "");
+  return { providers, active };
+}
+
+/** Penyedia lengkap dengan kunci, untuk pemanggilan API. Null jika kunci belum diisi. */
+export async function getProvider(id: string): Promise<{ id: ProviderId; label: string; key: string; model: string } | null> {
   const def = PROVIDERS.find((p) => p.id === id);
   const key = def ? process.env[def.keyEnv]?.trim() : "";
   if (!def || !key) return null;
-  return { ...def, key, model: process.env[def.modelEnv]?.trim() || def.defaultModel };
+  const st = (await aiProviderStates()).providers.find((p) => p.id === def.id);
+  return { id: def.id, label: def.label, key, model: st?.model ?? def.defaultModel };
 }

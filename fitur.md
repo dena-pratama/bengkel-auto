@@ -1,6 +1,6 @@
 # Daftar Fitur Bengkel Mobil App
 
-Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.54.0**
+Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.55.0**
 
 ## Fondasi
 | Fitur | Status | Versi |
@@ -77,6 +77,7 @@ Status: ⬜ Belum · 🟨 Proses · ✅ Selesai · Versi saat ini: **0.54.0**
 | | Ekspor faktur pajak format DJP | ⬜ | Coming Soon |
 | AI | MCP server read-only (11 tools, token pribadi), skor kesehatan 9 indikator, ringkasan mingguan, log panggilan AI | ✅ | 0.17.0 |
 | | Tanya AI di aplikasi: pilihan penyedia (Anthropic, OpenAI, Gemini, OpenRouter) | 🟨 | 0.54.0 (belum diuji dengan kunci) |
+| | Pengaturan Tanya AI: penyedia default dan nama model di halaman Pengaturan | 🟨 | 0.55.0 (belum diuji lewat browser) |
 | | OAuth per pengguna untuk MCP, ambang skor bisa diatur, kirim ringkasan ke WhatsApp | ⬜ | Backlog / Fase 2 |
 | Audit | Audit log: pencatatan otomatis di DB (append-only) | ✅ | 0.2.0 |
 | Sistem | Layar pengaturan bengkel (diskon, retur, opname, stok minus, wajib scan part) | ✅ | 0.24.0 |

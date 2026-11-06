@@ -82,6 +82,7 @@ async function Content() {
   const ctx = await requireUser();
   if (!can(ctx, "ai_analyst", "view", false)) return <NoAccess />;
   const canManage = can(ctx, "ai_analyst", "create", false);
+  const askProviders = canManage ? await configuredProviders() : { providers: [], active: "" };
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
   const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
@@ -227,7 +228,7 @@ async function Content() {
                 <p className="text-xs text-muted-foreground">Tanyakan pertanyaan seputar tren servis, pelanggan, dan keuangan</p>
               </div>
             </div>
-            <AskBox providers={canManage ? configuredProviders() : []} />
+            <AskBox providers={askProviders.providers} active={askProviders.active} />
           </section>
         </div>
       </div>

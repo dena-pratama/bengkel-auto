@@ -1,3 +1,26 @@
+## [0.55.0] - 2026-11-06
+
+### Added - Pengaturan Tanya AI (Penyedia dan Model)
+- Halaman Pengaturan (Bengkel) punya bagian "Tanya AI (AI Analyst)": pilih penyedia default (atau otomatis) dan isi nama model per penyedia (Anthropic, OpenAI, Gemini, OpenRouter). Kosong = pakai nilai di environment atau bawaan.
+- Status kunci per penyedia ditampilkan sebagai "Kunci terisi" atau "Kunci belum diisi". Nilai kunci tidak pernah ditampilkan atau disimpan di database; tetap diisi di environment server.
+- Migrasi `supabase/migrations/20261106000032_ai_provider_settings.sql`: `save_settings` menerima kunci `ai_provider` (divalidasi: anthropic, openai, gemini, openrouter, atau kosong) dan `ai_model_*` (teks, maksimal 120 karakter, hanya huruf, angka, titik, garis miring, titik dua, minus).
+
+### Changed
+- `src/lib/ai/providers.ts`: model dan penyedia default dibaca dari Pengaturan, lalu environment, lalu bawaan. `configuredProviders` dan `getProvider` kini async.
+- `src/lib/ai/chat.ts`: memakai `getProvider` async.
+- Tanya AI di halaman AI Analyst memulai dari penyedia default yang dipilih di Pengaturan.
+- `src/lib/validation/settings.ts`: `aiSettingsSchema`. `src/app/(app)/pengaturan/actions.ts`: `saveAiSettingsAction`.
+
+### Verifikasi
+- Migrasi dijalankan ke database lokal (`supabase-db` di Docker) tanpa galat; fungsi `save_settings` sudah terganti.
+- `tsc`, `eslint`, `next build` lolos.
+- Belum diuji lewat browser (halaman di balik login) dan belum diuji validasi SQL dengan sesi pengguna sungguhan. Belum diuji dengan kunci penyedia sungguhan.
+
+### File terdampak
+`supabase/migrations/20261106000032_ai_provider_settings.sql` (baru), `src/lib/ai/providers.ts`, `src/lib/ai/chat.ts`, `src/lib/validation/settings.ts`, `src/app/(app)/pengaturan/actions.ts`, `src/app/(app)/pengaturan/_ai-form.tsx` (baru), `src/app/(app)/pengaturan/bengkel/page.tsx`, `src/app/(app)/ai/page.tsx`, `src/app/(app)/ai/_components/client.tsx`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.54.0] - 2026-11-05
 
 ### Added - Pilihan Penyedia AI untuk "Tanya AI"

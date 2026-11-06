@@ -210,7 +210,7 @@ export async function askAnalyst(
   question: string,
   providerId: string,
 ): Promise<{ ok: true; answer: string; tools: string[]; provider: string; model: string } | { ok: false; error: string }> {
-  const p = getProvider(providerId);
+  const p = await getProvider(providerId);
   if (!p) return { ok: false, error: "Penyedia AI ini belum aktif. Isi kuncinya di environment server." };
   const adapter = makeAdapter(p.id, p.key, p.model, question);
   const used: string[] = [];
