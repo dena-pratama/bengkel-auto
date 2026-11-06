@@ -1,3 +1,14 @@
+## [0.55.1] - 2026-11-06
+
+### Added - README.md Lengkap
+- `README.md` ditulis ulang dari dua baris menjadi dokumentasi proyek lengkap: ringkasan produk, fitur per modul, peran dan hak akses (5 peran bawaan, 27 modul x 6 aksi, RLS, PIN persetujuan), tech stack sesuai `package.json`, prinsip arsitektur, struktur folder, environment (dev/staging/production), langkah menjalankan di lokal, tabel variabel environment, daftar 32 migrasi, endpoint API v1 beserta method-nya, AI Analyst (11 tool MCP, token, Tanya AI multi penyedia, ringkasan mingguan), pengujian dan CI, deploy Docker + Coolify, pratinjau tanpa login, konvensi pengembangan, pemecahan masalah, roadmap, dan dokumen terkait.
+- Semua angka, nama tool, route, dan method dicocokkan langsung dengan kode dan migrasi.
+
+### File terdampak
+`README.md`, `devlog.md`, `fitur.md`, `VERSION`, `package.json`
+
+---
+
 ## [0.55.0] - 2026-11-06
 
 ### Added - Pengaturan Tanya AI (Penyedia dan Model)
